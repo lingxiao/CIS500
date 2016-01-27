@@ -322,17 +322,24 @@ Qed.
 (** Now prove commutativity of multiplication.  (You will probably
     need to define and prove a separate subsidiary theorem to be used
     in the proof of this one.  You may find that [plus_swap] comes in
-    handy.) *)
+    handy.) 
+*)
+Lemma peel : forall n m : nat,
+   n + n * m  = n * S m.
+Proof.
+  intros n m. induction n.
+    + simpl. reflexivity.
+    + simpl. rewrite -> plus_swap. rewrite -> IHn. reflexivity.
+Qed.      
+
 
 Theorem mult_comm : forall m n : nat,
   m * n = n * m.
 Proof.
   intros m n. induction m.
     + simpl. rewrite -> mult_0_r. reflexivity.
-    + simpl. rewrite -> IHm. induction n.
-        - simpl. reflexivity.
-        - rewrite <- IHm. simpl.
-
+    + simpl. rewrite -> IHm, peel. reflexivity.
+Qed.
 
 
   
