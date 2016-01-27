@@ -620,8 +620,8 @@ Proof. simpl. reflexivity. Qed.
 
 Fixpoint bin_un' (n : bin) : nat := match n with
   | BO       => O
-  | Odd n'   => 1 + bin_un' n' +  bin_un' n'
-  | Even n'  => bin_un' n' + bin_un' n'
+  | Odd n'   => 1 + 2 * ( bin_un' n')
+  | Even n'  => 2 * (bin_un' n')                  
   end.
 
 
@@ -630,13 +630,42 @@ Definition normalize (b: bin) : bin := un_bin (bin_un' b).
 Example normalize1 : normalize (Even (Even BO)) = BO.
 Proof. reflexivity. Qed.
 
+(* todo: shorten this proof using H *)
+Lemma bin_un_even : forall b : bin,
+   bin_un' b + bin_un' b = bin_un' (Even b).
+Proof.
+  intros b. induction b.
+    + reflexivity.
+    + simpl. rewrite -> plus_rt_id.
+      replace (bin_un' b + bin_un' b + 0) with (bin_un' b + bin_un' b).
+      reflexivity.
+        - replace ( bin_un' b + bin_un' b + 0) with ( bin_un' b + (bin_un' b + 0)).
+          rewrite -> plus_rt_id. reflexivity.
+            * rewrite -> plus_assoc. reflexivity.
+   + simpl. rewrite -> plus_rt_id.
+     replace (bin_un' b + bin_un' b + 0) with (bin_un' b + bin_un' b).
+     reflexivity.
+       - replace ( bin_un' b + bin_un' b + 0) with ( bin_un' b + (bin_un' b + 0)).
+          rewrite -> plus_rt_id. reflexivity.
+            * rewrite -> plus_assoc. reflexivity.
+Qed.
+
+(*
+
+try "forall b, bin_un' b = bin_un b", 
+
+"forall b, un_bin (bin_un (incr_bin b)) = incr_bin (un_bin (bin_un b))"
+
+n*)
+              
 Theorem bin_un_norm_roundtrip : forall b : bin,
-  un_bin (bin_un b) = normalize b.
+  un_bin (bin_un' b) = normalize b.
 Proof.
   intros b. induction b. 
     + simpl. reflexivity. 
-    + simpl.  
-Abort.      
+    + simpl. rewrite -> plus_rt_id.
+      
+
 
 
 (*  forall n : nat, bin_un (un_bin n) = n. *)
