@@ -179,8 +179,7 @@ Lemma double_plus : forall n, double n = n + n .
 Proof.
   intros n. induction n.
     + reflexivity.
-    + simpl. rewrite -> IHn. rewrite -> add_one_assoc.
-      reflexivity.
+    + simpl. rewrite -> IHn,add_one_assoc. reflexivity.
 Qed.
 
 (** **** Exercise: 2 stars, optional (evenb_S)  *)
