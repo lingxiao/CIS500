@@ -448,8 +448,11 @@ Qed.
 Theorem beq_nat_refl : forall n : nat, 
   true = beq_nat n n.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n. induction n.
+    + reflexivity.
+    + simpl. rewrite <- IHn. reflexivity.
+Qed.  
+
 
 (** **** Exercise: 2 stars, optional (plus_swap')  *)
 (** The [replace] tactic allows you to specify a particular subterm to
@@ -465,8 +468,16 @@ Proof.
 Theorem plus_swap' : forall n m p : nat, 
   n + (m + p) = m + (n + p).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m p. induction n.
+    + reflexivity.
+    + replace (S n + (m + p)) with (m + S n + p).
+      rewrite -> plus_assoc. reflexivity.
+
+      rewrite plus_assoc. replace (m + S n) with (S n + m).
+      reflexivity.
+
+      rewrite plus_comm. reflexivity.
+Qed.
 
 (** **** Exercise: 3 stars, recommended (binary_commute)  *)
 (** Recall the [increment] and [binary-to-unary] functions that you
