@@ -620,8 +620,8 @@ Proof. simpl. reflexivity. Qed.
 
 Fixpoint bin_un' (n : bin) : nat := match n with
   | BO       => O
-  | Odd n'   => 1 + 2 * ( bin_un' n')
-  | Even n'  => 2 * (bin_un' n')                  
+  | Odd n'   => 1 + bin_un' n' +  bin_un' n'
+  | Even n'  => bin_un' n' + bin_un' n'
   end.
 
 
