@@ -634,16 +634,15 @@ Fixpoint bin_un' (n : bin) : nat := match n with
 
 Definition normalize (b: bin) : bin := un_bin (bin_un' b).
 
-
 Example normalize1 : normalize (Even (Even BO)) = BO.
 Proof. reflexivity. Qed.
 
 Theorem bin_un_norm_roundtrip : forall b : bin,
-  un_bin (bin_un (normalize b)) = normalize b.
+  un_bin (bin_un b) = normalize b.
 Proof.
   intros b. induction b. 
     + simpl. reflexivity. 
-    + unfold un_bin in *. 
+    + simpl.
 Abort.      
 
   
