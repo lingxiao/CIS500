@@ -608,11 +608,12 @@ Fixpoint normalize (b: bin) : bin := match b with
   | _       => un_bin (bin_un b)
   end.                    
 
+
 Theorem bin_un_norm_roundtrip : forall b : bin,
-  un_bin (bin_un (normalize b)) = b.
+  un_bin (bin_un (normalize b)) = normalize b.
 Proof.
   intros b. induction b.
-    + simpl. reflexivity.
+    + simpl. reflexivity. 
     + simpl. 
 
   
