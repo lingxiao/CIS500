@@ -159,24 +159,29 @@ Qed.
 Theorem plus_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m p. induction n.
+    + reflexivity.
+    + simpl. rewrite -> IHn. reflexivity.
+Qed.  
 
 (** **** Exercise: 2 stars (double_plus)  *)
 (** Consider the following function, which doubles its argument: *)
 
 Fixpoint double (n:nat) :=
   match n with
-  | O => O
+  | O    => O
   | S n' => S (S (double n'))
   end.
 
 (** Use induction to prove this simple fact about [double]: *)
 
 Lemma double_plus : forall n, double n = n + n .
-Proof.  
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+Proof.
+  intros n. induction n.
+    + reflexivity.
+    + simpl. rewrite -> IHn. rewrite -> add_one_assoc.
+      reflexivity.
+Qed.
 
 (** **** Exercise: 2 stars, optional (evenb_S)  *)
 (** One inconveninent aspect of our definition of [evenb n] is that it
@@ -188,8 +193,9 @@ Proof.
 Theorem evenb_S : forall n : nat,
   evenb (S n) = negb (evenb n).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n. induction n.
+    + simpl. reflexivity.
+    + rewrite -> IHn. rewrite -> negb_involutive.
 
 (** **** Exercise: 1 star (destruct_induction)  *)
 (** Briefly explain the difference between the tactics
