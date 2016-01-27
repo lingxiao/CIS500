@@ -609,6 +609,16 @@ Proof. simpl. reflexivity. Qed.
         part is tricky!)
 *)
 
+(* binary addition *)
+Definition bin_plus (b1 b2 : bin) := un_bin (bin_un b1 + bin_un b2).
+
+
+Notation "b1 <+> b2" := (bin_plus b1 b2)
+                       (at level 50, left associativity)
+                       : nat_scope.
+
+
+
 (* note we use this def in [normalize] below *)
 (*
   | BO       => O
@@ -630,26 +640,11 @@ Definition normalize (b: bin) : bin := un_bin (bin_un' b).
 Example normalize1 : normalize (Even (Even BO)) = BO.
 Proof. reflexivity. Qed.
 
-(* todo: shorten this proof using H *)
-Lemma bin_un_even : forall b : bin,
-   bin_un' b + bin_un' b = bin_un' (Even b).
-Proof.
-  intros b. induction b.
-    + reflexivity.
-    + simpl. rewrite -> plus_rt_id.
-      replace (bin_un' b + bin_un' b + 0) with (bin_un' b + bin_un' b).
-      reflexivity.
-        - replace ( bin_un' b + bin_un' b + 0) with ( bin_un' b + (bin_un' b + 0)).
-          rewrite -> plus_rt_id. reflexivity.
-            * rewrite -> plus_assoc. reflexivity.
-   + simpl. rewrite -> plus_rt_id.
-     replace (bin_un' b + bin_un' b + 0) with (bin_un' b + bin_un' b).
-     reflexivity.
-       - replace ( bin_un' b + bin_un' b + 0) with ( bin_un' b + (bin_un' b + 0)).
-          rewrite -> plus_rt_id. reflexivity.
-            * rewrite -> plus_assoc. reflexivity.
-Qed.
-
+Lemma un_bin_distr : forall b1 b2 : bin,
+  un_bin (bin_un' b1 + bin_un' b2)
+  = un_bin (bin_un b1) <+> un_bin (bin_un b2)
+Proof. admit. Qed.
+  
 (*
 
 try "forall b, bin_un' b = bin_un b", 
@@ -663,7 +658,7 @@ Theorem bin_un_norm_roundtrip : forall b : bin,
 Proof.
   intros b. induction b. 
     + simpl. reflexivity. 
-    + simpl. rewrite -> plus_rt_id.
+    + simpl. rewrite -> plus_rt_id. 
       
 
 
