@@ -495,8 +495,9 @@ Qed.
 
 Inductive bin : Type :=
   | BO   : bin
-  | Even : bin -> bin    (* twice a binary number *)
-  | Odd  : bin -> bin.   (* one more than twice a binary number *)
+  | Odd  : bin -> bin   (* one more than twice a binary number *)
+  | Even : bin -> bin.  (* twice a binary number *)
+
 
 
 
@@ -542,8 +543,8 @@ Theorem bin_to_un_pres_incr:
 Proof.
   intros b. induction b.
     + reflexivity.
-    + reflexivity.
     + simpl. rewrite -> IHb. reflexivity.
+    + reflexivity.
 Qed.
 
   
@@ -593,11 +594,19 @@ Qed.
 
         Observe [Even : bin -> bin] construct twice a binary number,
         so we have an infinite number of representations of Zero.
+        so [bin_un] is surjective not injective.
 
 **)
 
 Example even_not_unique : bin_un BO = bin_un (Even BO).
 Proof. simpl. reflexivity. Qed.
+
+
+
+Compute (bin_un (BO)).
+Compute (bin_un (Even BO)).
+
+
 
 (**
     (c) Define a "direct" normalization function -- i.e., a function
@@ -608,25 +617,33 @@ Proof. simpl. reflexivity. Qed.
 *)
 
 (* note we use this def in [normalize] below *)
-Fixpoint bin_un' (n : bin) : nat := match n with
+(*
   | BO       => O
   | Even n'  => 2 * (bin_un' n')
   | Odd n'   => 1 + 2 * (bin_un' n')
   end.
+*)
 
 
-Fixpoint normalize (b: bin) : bin := match b with
-  | BO      => BO
-  | _       => un_bin (bin_un' b)
-  end.                    
+Fixpoint bin_un' (n : bin) : nat := match n with
+  | BO       => O
+  | Odd n'   => S ( bin_un' n' + bin_un' n')
+  | Even n'  => bin_un' n' + bin_un' n'                  
+  end.
 
+
+Definition normalize (b: bin) : bin := un_bin (bin_un' b).
+
+
+Example normalize1 : normalize (Even (Even BO)) = BO.
+Proof. reflexivity. Qed.
 
 Theorem bin_un_norm_roundtrip : forall b : bin,
   un_bin (bin_un (normalize b)) = normalize b.
 Proof.
   intros b. induction b. 
     + simpl. reflexivity. 
-    + simpl. rewrite -> plus_rt_id.
+    + unfold un_bin in *. 
 Abort.      
 
   
