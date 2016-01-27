@@ -479,6 +479,7 @@ Proof.
       rewrite plus_comm. reflexivity.
 Qed.
 
+(* ughhhh *) 
 (** **** Exercise: 3 stars, recommended (binary_commute)  *)
 (** Recall the [increment] and [binary-to-unary] functions that you
     wrote for the [binary] exercise in the [Basics] chapter.  Prove
