@@ -1,7 +1,7 @@
 (** * Poly: Polymorphism and Higher-Order Functions *)
 
 Require Export Lists.
-Require Import Coq.Classes.SetoidClass.
+
 
 (* ###################################################### *)
 (** * Polymorphism *)
@@ -1186,48 +1186,37 @@ Definition three : nat := @doit3times.
 (* n : forall X : Type, (X -> X) -> X -> X *)
 Definition succ (n : nat) : nat := fun X f x => f (n X f x).
 
-(* wtf: how do i say soething is true by def? *)
-Theorem isone : one = 
-  fun (X : Type) (f : X -> X) (x : X) => f x.
-Proof. admit. Qed.
 
 Example succ_1 : succ zero = one.
-Proof.
-  unfold succ. unfold zero.
-  rewrite -> isone. reflexivity.
-Qed.
+Proof. reflexivity. Qed.
 
   
 Example succ_2 : succ one = two.
-Proof.
-  unfold succ. unfold one.
-Abort.  
+Proof. reflexivity. Qed.
 
 
 Example succ_3 : succ two = three.
-Proof.
-  unfold succ, two.
-Abort.  
+Proof. reflexivity. Qed.
    
 
 (** Addition of two natural numbers: *)
 
-Definition plus (n m : nat) : nat :=
-  (* FILL IN HERE *) admit.
+Definition plus (n m : nat) : nat := fun X f x => n X f (m X f x).
+
 
 Example plus_1 : plus zero one = one.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example plus_2 : plus two three = plus three two.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example plus_3 :
   plus (plus two two) three = plus one (plus three three).
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 (** Multiplication: *)
 
-Definition mult (n m : nat) : nat :=
+Definition mult (n m : nat) : nat := 
   (* FILL IN HERE *) admit.
 
 Example mult_1 : mult one one = one.
