@@ -574,8 +574,7 @@ Qed.
 Theorem un_bin_roundtrip : forall n : nat,
   bin_un (un_bin n) = n.                               
 Proof.
-  intros n.
-  induction n as [|n' IHn'].
+  intros n. induction n as [|n' IHn'].
     + simpl. reflexivity.
     + rewrite -> bin_to_un_add_one.
       rewrite -> IHn'. reflexivity.
@@ -589,20 +588,13 @@ Qed.
         same number we started with.  However, this is not true!
         Explain what the problem is.
 
-        
-
-
+        Observe [Even : bin -> bin] construct twice a binary number,
+        so we have an infinite number of representations of Zero.
 
 **)
 
-(* try to see if it is false *)
-Theorem bin_un_roundtrip : forall b : bin,
-  un_bin (bin_un b) = b.
-Proof.
-  intros b. induction b.
-    + simpl. reflexivity.
-    + simpl. 
-Abort.  
+Example even_not_unique : bin_un BO = bin_un (Even BO).
+Proof. simpl. reflexivity. Qed.
 
 (**
     (c) Define a "direct" normalization function -- i.e., a function
@@ -610,18 +602,19 @@ Abort.
         for any binary number b, converting to a natural and then back
         to binary yields [(normalize b)].  Prove it.  (Warning: This
         part is tricky!)
-
-    Again, feel free to change your earlier definitions if this helps
-    here. 
 *)
-
-
-Fixpoint normalize (b: bin) : bin := admit.
+Fixpoint normalize (b: bin) : bin := match b with
+  | BO      => BO
+  | _       => un_bin (bin_un b)
+  end.                    
 
 Theorem bin_un_norm_roundtrip : forall b : bin,
   un_bin (bin_un (normalize b)) = b.
 Proof.
- Abort.
+  intros b. induction b.
+    + simpl. reflexivity.
+    + simpl. 
+
   
 (* ###################################################################### *)
 (** * Formal vs. Informal Proof (Optional) *)
