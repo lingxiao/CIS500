@@ -495,9 +495,8 @@ Qed.
 
 Inductive bin : Type :=
   | BO   : bin
-  | Odd  : bin -> bin   (* one more than twice a binary number *)
-  | Even : bin -> bin.  (* twice a binary number *)
-
+  | Even : bin -> bin   (* twice a binary number *)
+  | Odd  : bin -> bin.  (* one more than twice a binary number *)
 
 
 
@@ -543,8 +542,8 @@ Theorem bin_to_un_pres_incr:
 Proof.
   intros b. induction b.
     + reflexivity.
-    + simpl. rewrite -> IHb. reflexivity.
     + reflexivity.
+    + simpl. rewrite -> IHb. reflexivity.
 Qed.
 
   
@@ -602,12 +601,6 @@ Example even_not_unique : bin_un BO = bin_un (Even BO).
 Proof. simpl. reflexivity. Qed.
 
 
-
-Compute (bin_un (BO)).
-Compute (bin_un (Even BO)).
-
-
-
 (**
     (c) Define a "direct" normalization function -- i.e., a function
         [normalize] from binary numbers to binary numbers such that,
@@ -627,8 +620,8 @@ Compute (bin_un (Even BO)).
 
 Fixpoint bin_un' (n : bin) : nat := match n with
   | BO       => O
-  | Odd n'   => S ( bin_un' n' + bin_un' n')
-  | Even n'  => bin_un' n' + bin_un' n'                  
+  | Odd n'   => 1 + 2 * ( bin_un' n')
+  | Even n'  => 2 * (bin_un' n')                  
   end.
 
 
@@ -642,9 +635,11 @@ Theorem bin_un_norm_roundtrip : forall b : bin,
 Proof.
   intros b. induction b. 
     + simpl. reflexivity. 
-    + simpl.
+    + simpl.  
 Abort.      
 
+
+(*  forall n : nat, bin_un (un_bin n) = n. *)
   
 (* ###################################################################### *)
 (** * Formal vs. Informal Proof (Optional) *)
