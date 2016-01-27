@@ -479,7 +479,6 @@ Proof.
       rewrite plus_comm. reflexivity.
 Qed.
 
-(* ughhhh *) 
 (** **** Exercise: 3 stars, recommended (binary_commute)  *)
 (** Recall the [increment] and [binary-to-unary] functions that you
     wrote for the [binary] exercise in the [Basics] chapter.  Prove
@@ -494,9 +493,58 @@ Qed.
     wanting to change your original definitions to make the property
     easier to prove, feel free to do so! *)
 
-(* FILL IN HERE *)
-(** [] *)
+Inductive bin : Type :=
+  | BO   : bin
+  | Even : bin -> bin    (* twice a binary number *)
+  | Odd  : bin -> bin.   (* one more than twice a binary number *)
 
+
+
+(* (a) i. increment binary number by one *)
+Fixpoint incr_bin (n : bin) : bin := match n with
+  | BO      => Odd BO
+  | Even n' => Odd n'
+  | Odd n'  => Even (incr_bin n')                  
+  end.
+
+(* (a) ii. convert binary to unary number 
+   Note: Even n' is twice the value of n'
+         Odd  n' is one more than twice the value of n'
+*)
+Fixpoint bin_un (n : bin) : nat := match n with
+  | BO       => O
+  | Even n'  => double (bin_un n')
+  | Odd n'   => S (double (bin_un n'))
+  end.
+
+
+(* for convinience *)
+Fixpoint incrBinBy (b: bin) (n : nat) : bin := match n with
+  | O    => b
+  | S n' => incr_bin (incrBinBy b n')          
+end.           
+
+Notation "b +> n" := (incrBinBy b n)
+                       (at level 50, left associativity)
+                       : nat_scope.
+
+
+(*
+
+    Prove  incrementing a binary number and then converting it
+    to unary yields the same result as first converting it
+    to unary and then incrementing.
+*)
+Theorem bin_to_nat_pres_incr:
+  forall (b : bin), bin_un (incr_bin b) = 1 + bin_un b.
+Proof.
+  intros b. induction b.
+    + reflexivity.
+    + reflexivity.
+    + simpl. rewrite -> IHb. reflexivity.
+Qed.
+
+  
 
 (** **** Exercise: 5 stars, advanced (binary_inverse)  *)
 (** This exercise is a continuation of the previous exercise about
