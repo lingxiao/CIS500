@@ -312,7 +312,11 @@ Proof.
   intros n m p.
   assert (H: n + (m + p) = (n + m) + p). 
   rewrite -> plus_assoc. reflexivity.
-  
+    + rewrite -> plus_assoc, plus_assoc.
+      replace (m + n + p) with (n + m + p). reflexivity.
+        - replace (m + n) with (n + m). reflexivity.
+          rewrite -> plus_comm. reflexivity.
+Qed.
 
 
 (** Now prove commutativity of multiplication.  (You will probably
@@ -323,8 +327,13 @@ Proof.
 Theorem mult_comm : forall m n : nat,
   m * n = n * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros m n. induction m.
+    + simpl. rewrite -> mult_0_r. reflexivity.
+    + simpl. rewrite -> IHn
+
+
+
+  
 
 (** **** Exercise: 3 stars, optional (more_exercises)  *)
 (** Take a piece of paper.  For each of the following theorems, first
@@ -589,7 +598,7 @@ Proof.
  
 
 (** The next line imports all of our definitions from the
-    previous chapter. *)
+    previous chapter. 
 
 Require Export Basics.
 
@@ -846,3 +855,5 @@ Qed.
 [] *)
 
 (** $Date: 2016-01-13 12:02:23 -0500 (Wed, 13 Jan 2016) $ *)
+
+*)
