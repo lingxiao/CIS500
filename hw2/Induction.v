@@ -329,7 +329,9 @@ Theorem mult_comm : forall m n : nat,
 Proof.
   intros m n. induction m.
     + simpl. rewrite -> mult_0_r. reflexivity.
-    + simpl. rewrite -> IHn
+    + simpl. rewrite -> IHm. induction n.
+        - simpl. reflexivity.
+        - rewrite <- IHm. simpl.
 
 
 
