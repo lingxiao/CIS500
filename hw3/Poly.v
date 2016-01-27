@@ -1,6 +1,7 @@
 (** * Poly: Polymorphism and Higher-Order Functions *)
 
 Require Export Lists.
+Require Import Coq.Classes.SetoidClass.
 
 (* ###################################################### *)
 (** * Polymorphism *)
@@ -1147,6 +1148,7 @@ Proof. Abort.
 
 Module Church.
 
+
 Definition nat := forall X : Type, (X -> X) -> X -> X.
 
 
@@ -1181,17 +1183,32 @@ Definition three : nat := @doit3times.
 
 (** Successor of a natural number: *)
 
-Definition succ (n : nat) : nat := f nat.
+(* n : forall X : Type, (X -> X) -> X -> X *)
+Definition succ (n : nat) : nat := fun X f x => f (n X f x).
 
+(* wtf: how do i say soething is true by def? *)
+Theorem isone : one = 
+  fun (X : Type) (f : X -> X) (x : X) => f x.
+Proof. admit. Qed.
 
 Example succ_1 : succ zero = one.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  unfold succ. unfold zero.
+  rewrite -> isone. reflexivity.
+Qed.
 
+  
 Example succ_2 : succ one = two.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  unfold succ. unfold one.
+Abort.  
+
 
 Example succ_3 : succ two = three.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  unfold succ, two.
+Abort.  
+   
 
 (** Addition of two natural numbers: *)
 
