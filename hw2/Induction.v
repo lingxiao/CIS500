@@ -510,12 +510,14 @@ Fixpoint incr_bin (n : bin) : bin := match n with
 (* (a) ii. convert binary to unary number 
    Note: Even n' is twice the value of n'
          Odd  n' is one more than twice the value of n'
-*)
+
+ *)
+
 Fixpoint bin_un (n : bin) : nat := match n with
-  | BO       => O
-  | Even n'  => double (bin_un n')
-  | Odd n'   => S (double (bin_un n'))
-  end.
+    | BO       => O
+    | Even n'  => double (bin_un n')
+    | Odd n'   => S (double (bin_un n'))
+    end.
 
 
 (* for convinience *)
@@ -527,6 +529,7 @@ end.
 Notation "b +> n" := (incrBinBy b n)
                        (at level 50, left associativity)
                        : nat_scope.
+
 
 
 (*
@@ -603,9 +606,18 @@ Proof. simpl. reflexivity. Qed.
         to binary yields [(normalize b)].  Prove it.  (Warning: This
         part is tricky!)
 *)
+
+(* note we use this def in [normalize] below *)
+Fixpoint bin_un' (n : bin) : nat := match n with
+  | BO       => O
+  | Even n'  => 2 * (bin_un' n')
+  | Odd n'   => 1 + 2 * (bin_un' n')
+  end.
+
+
 Fixpoint normalize (b: bin) : bin := match b with
   | BO      => BO
-  | _       => un_bin (bin_un b)
+  | _       => un_bin (bin_un' b)
   end.                    
 
 
@@ -614,7 +626,7 @@ Theorem bin_un_norm_roundtrip : forall b : bin,
 Proof.
   intros b. induction b.
     + simpl. reflexivity. 
-    + simpl. 
+    + simpl. rewrite -> plus_rt_id.
 
   
 (* ###################################################################### *)
