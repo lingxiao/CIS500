@@ -610,7 +610,11 @@ Proof. simpl. reflexivity. Qed.
 *)
 
 (* binary addition *)
-Definition bin_plus (b1 b2 : bin) := un_bin (bin_un b1 + bin_un b2).
+Definition bin_plus (b1 b2 : bin) := match b1,b2 with
+  | BO, _ => b2
+  | _, BO => b1
+  | _, _  => un_bin (bin_un b1 + bin_un b2)
+  end.                  
 
 
 Notation "b1 <+> b2" := (bin_plus b1 b2)
@@ -618,6 +622,9 @@ Notation "b1 <+> b2" := (bin_plus b1 b2)
                        : nat_scope.
 
 
+Theorem bin_plus1 : forall b1 b2 : bin,
+  bin_un (b1 <+> b2) = bin_un b1 + bin_un b2.
+Proof. admit. Qed.
 
 (* note we use this def in [normalize] below *)
 (*
@@ -642,7 +649,7 @@ Proof. reflexivity. Qed.
 
 Lemma un_bin_distr : forall b1 b2 : bin,
   un_bin (bin_un' b1 + bin_un' b2)
-  = un_bin (bin_un b1) <+> un_bin (bin_un b2)
+  = un_bin (bin_un' b1) <+> un_bin (bin_un' b2).
 Proof. admit. Qed.
   
 (*
@@ -652,14 +659,14 @@ try "forall b, bin_un' b = bin_un b",
 "forall b, un_bin (bin_un (incr_bin b)) = incr_bin (un_bin (bin_un b))"
 
 n*)
-              
+
+(* how should you list out the induction hypos? *)
 Theorem bin_un_norm_roundtrip : forall b : bin,
   un_bin (bin_un' b) = normalize b.
 Proof.
-  intros b. induction b. 
-    + simpl. reflexivity. 
-    + simpl. rewrite -> plus_rt_id. 
-      
+  intros b. induction b.
+    + simpl. reflexivity.
+Abort.      
 
 
 
