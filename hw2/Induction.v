@@ -130,20 +130,31 @@ Proof.
     + simpl. rewrite -> IHn. reflexivity.
 Qed.
 
-Lemma plus_rt_id : forall n : nat,
+Theorem plus_rt_id : forall n : nat,
   n + 0 = n.                     
 Proof.
   intros n. induction n.
     + reflexivity.
     + simpl. rewrite -> IHn. reflexivity.
-Qed.  
+Qed.
 
+Lemma add_one_assoc :
+  forall n m: nat,
+     S (m + n) = m + S n.
+Proof.
+  intros n m. induction m.
+    + reflexivity.
+    + simpl. rewrite -> IHm. reflexivity.
+Qed. 
+
+(* hello world*)
 Theorem plus_comm : forall n m : nat,
   n + m = m + n.
 Proof.
   intros n m. induction n.
     + simpl. rewrite -> plus_rt_id. reflexivity.
-    + simpl. rewrite -> IHn. 
+    + simpl. rewrite -> IHn, add_one_assoc. reflexivity.
+Qed.
 
 Theorem plus_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
