@@ -194,16 +194,36 @@ Theorem evenb_S : forall n : nat,
 Proof.
   intros n. induction n.
     + simpl. reflexivity.
-    + rewrite -> IHn. rewrite -> negb_involutive.
+    + rewrite -> IHn, negb_involutive.
+      unfold evenb. reflexivity.
+Qed.
 
 (** **** Exercise: 1 star (destruct_induction)  *)
 (** Briefly explain the difference between the tactics
     [destruct] and [induction].  
 
-(* FILL IN HERE *)
+    suppose our data type [X] is not inductively defined,
+    [destruct] will destrut [X] into each value that inhabits [X].
+    Suppose [X] is inductively defined, then [destruct] decompose
+    [X] into two "items": its canonical value and the inductive step.
+
+    In practice suppose we have
+          [X = {x1, x2, x3 ... }],
+    where [X] may be inductively defined. Then
+    [destruct] allows us to assert relation of form
+          [P(x1), P(x2), ...]
+     on each value inhabiting [X], but there will be no relationship
+     between the value of [X].
+    Now suppose [X] inductively defined, then [induction] allows
+    us to assert relationship between some [x] and its successor
+    using the induction principle, ie:
+          [P(x1), P(x) -> P(s x)]
+    with this we can construct a proof of [P(X)] using finitely
+    many statements, even though [X] itself maybe of size aleph_o.
+    If we use [destruct] on [X], |X| = aleph_o, then our proof
+    will be as large as [X], thus never terminating.
 
 *)
-(** [] *)
 
 
 (* ###################################################################### *)
