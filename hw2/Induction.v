@@ -609,6 +609,57 @@ Proof. simpl. reflexivity. Qed.
         part is tricky!)
 *)
 
+
+Fixpoint eqZero (b : bin) : bool := match b with
+  | BO      => true
+  | Even b' => eqZero b'
+  | Odd  _  => false
+  end.
+
+Example eqZero1 : eqZero (Even (Even BO)) = true.
+Proof. reflexivity. Qed.
+
+Example eqZero2 : eqZero (Odd (Even BO))  = false.
+Proof. reflexivity. Qed.
+
+Fixpoint normalize (b : bin) : bin := match b with
+  | BO       => BO
+  | Even b'  => if eqZero b' then BO else Even (normalize b')
+  | Odd  b'  => Odd (normalize b')
+  end.
+
+
+(* some add hoc unit tests *)
+Example normalize_1 : normalize (Even BO) = BO.
+reflexivity.
+
+Example normalize_2 : normalize (Odd (Even BO)) = Odd BO.
+reflexivity.
+
+Example normalize_3 : normalize (Even (Odd BO)) = Even (Odd BO).
+reflexivity.
+
+Example normalize_4 : normalize (Even (Even BO)) = BO.
+reflexivity.
+
+Example normalize_5 : normalize (Even (Odd ((Even BO)))) = Even (Odd BO).
+reflexivity.
+
+Example normalize_6 : normalize (Odd (Even (Odd BO))) = Odd (Even (Odd BO)).
+reflexivity.
+
+
+(* how should you list out the induction hypos? *)
+Theorem bin_un_norm_roundtrip : forall b : bin,
+  un_bin (bin_un b) = normalize b.
+Proof.
+  intros b. induction b.
+    + simpl. reflexivity.
+Abort.
+
+
+(* Depricated
+
 (* binary addition *)
 Definition bin_plus (b1 b2 : bin) := match b1,b2 with
   | BO, _ => b2
@@ -641,61 +692,6 @@ Fixpoint bin_un' (b : bin) : nat := match b with
   | Odd b'   => 1 + 2 * ( bin_un' b')
   end.
 
-Fixpoint eqZero (b : bin) : bool := match b with
-  | BO      => true
-  | Even b' => eqZero b'
-  | Odd  _  => false
-  end.
-
-Example eqZero1 : eqZero (Even (Even BO)) = true.
-Proof. reflexivity. Qed.
-
-Example eqZero2 : eqZero (Odd (Even BO))  = false.
-Proof. reflexivity. Qed.
-
-Fixpoint evenCase (b : bin) : bin := match b with
-  | Even b' => b
-  | _       => b
-  end.
-
-Fixpoint normalize (b : bin) : bin := match b with
-  | BO       => BO
-  | Even b'  => if eqZero b' then BO else Even (normalize b')
-  | Odd  b'  => Odd (normalize b')
-  end.
-
-
-(* some add hoc unit tests *)
-Example normalize_1 : normalize (Even BO) = BO.
-reflexivity.
-
-Example normalize_2 : normalize (Odd (Even BO)) = Odd BO.
-reflexivity.
-
-Example normalize_3 : normalize (Even (Odd BO)) = Even (Odd BO).
-reflexivity.
-
-Example normalize_4 : normalize (Even (Even BO)) = BO.
-reflexivity.
-
-Example normalize_5 : normalize (Even (Odd ((Even BO)))) = Even (Odd BO).
-reflexivity.
-
-Example normalize_6 : normalize (Odd (Even (Odd BO))) = Odd (Even (Odd BO)).
-reflexivity.
-
-
-(* how should you list out the induction hypos? *)
-Theorem bin_un_norm_roundtrip : forall b : bin,
-  un_bin (bin_un' b) = normalize b.
-Proof.
-  intros b. induction b.
-    + simpl. reflexivity.
-    + simpl. rewrite -> plus_rt_id. unfold normalize in *. 
-Abort.
-
-
-(* Depricated 
 
 (* check that a binary number [b] has no leading zeros. *)
 Fixpoint isCanon (b: bin) : bool := match b with
