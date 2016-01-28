@@ -635,30 +635,70 @@ Proof. admit. Qed.
 *)
 
 
-Fixpoint bin_un' (n : bin) : nat := match n with
+Fixpoint bin_un' (b : bin) : nat := match b with
   | BO       => O
-  | Odd n'   => 1 + 2 * ( bin_un' n')
-  | Even n'  => 2 * (bin_un' n')                  
+  | Even b'  => 2 * (bin_un' b')                  
+  | Odd b'   => 1 + 2 * ( bin_un' b')
   end.
+
+Fixpoint eqZero (b : bin) : bool := match b with
+  | BO      => true
+  | Even b' => eqZero b'
+  | Odd  _  => false
+  end.
+
+Example eqZero1 : eqZero (Even (Even BO)) = true.
+Proof. reflexivity. Qed.
+
+Example eqZero2 : eqZero (Odd (Even BO))  = false.
+Proof. reflexivity. Qed.
+
+(* check that a binary number [b] has no leading zeros. *)
+Fixpoint isCanon (b: bin) : bool := match b with
+  | BO      => true
+  | Even b' => if eqZero b' then false else isCanon b'
+  | Odd  b' => isCanon b'
+  end.
+
+Example isCanon1 : isCanon (Even BO) = false.
+Proof. reflexivity. Qed.
+
+Example isCanon2 : isCanon (Odd (Even BO)) = false.
+Proof. reflexivity. Qed.
+
+Example isCanon3 : isCanon (Even (Odd BO)) = true.
+reflexivity.
+
+Example isCanon4 : isCanon (Odd (Even (Even BO))) = false.
+reflexivity.
 
 
 Definition normalize (b: bin) : bin := un_bin (bin_un' b).
 
+(* we show that [normalize b] indeed gives us the canonical
+   representation of each [b].
+*)
+Theorem normalize_canon : forall b : bin,
+  isCanon (normalize b) = true.
+Proof.
+  intros b. induction b.
+    + reflexivity.
+    + unfold normalize in *. simpl. rewrite -> plus_rt_id. 
+      unfold isCanon in *.
+      
+Qed.
+
+(* ad hoc example *)
 Example normalize1 : normalize (Even (Even BO)) = BO.
 Proof. reflexivity. Qed.
 
-Lemma un_bin_distr : forall b1 b2 : bin,
-  un_bin (bin_un' b1 + bin_un' b2)
-  = un_bin (bin_un' b1) <+> un_bin (bin_un' b2).
-Proof. admit. Qed.
-  
 (*
 
 try "forall b, bin_un' b = bin_un b", 
 
 "forall b, un_bin (bin_un (incr_bin b)) = incr_bin (un_bin (bin_un b))"
 
-n*)
+*)
 
 (* how should you list out the induction hypos? *)
 Theorem bin_un_norm_roundtrip : forall b : bin,
@@ -666,7 +706,11 @@ Theorem bin_un_norm_roundtrip : forall b : bin,
 Proof.
   intros b. induction b.
     + simpl. reflexivity.
-Abort.      
+    + simpl. rewrite -> plus_rt_id. unfold normalize in *. simpl.
+      rewrite -> plus_rt_id. reflexivity.
+    + simpl. rewrite -> plus_rt_id. unfold normalize. 
+      
+      
 
 
 

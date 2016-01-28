@@ -1242,10 +1242,29 @@ Inductive baz : Type :=
 
 (* FILL IN HERE *)
 
-   baz has 
+ Suppose we have
+ 
+
+
+  
+  Inductive natprod : Type :=
+    | pair : nat -> nat -> natprod.
+
+
+  Inductive list : Type :=
+    | nil           : list
+    | cons          : nat -> list -> list
+
+  list = nil | cons nat list
+
+  Inductive list (X:Type) : Type :=
+    | nil  : list X
+    | cons : X -> list X -> list X.
 
 
 *)
+
+
 
 
 
