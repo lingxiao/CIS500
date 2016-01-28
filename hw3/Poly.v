@@ -1260,25 +1260,25 @@ Proof. reflexivity. Qed.
 
 (* nat := forall X : Type, (X -> X) -> X -> X *)
 (* really I want to take a function n * n and apply it f(m) times *)
-Definition exp (n m : nat) : nat := fun X f x => (n X f) (m X f x).
+Definition exp (n m : nat) : nat := fun X f x => m X (n X f) x.
 
 
 
 Example exp_4 : exp three one = three.
 Proof.
   unfold exp, three, one, doit3times.
-  unfold mult. 
-Abort.  
+  unfold mult. reflexivity.
+Qed.
 
 Example exp_5 : exp zero three = zero.
 Proof.
   unfold exp, three, zero, one, doit3times, mult. reflexivity.
-Abort.
+Qed.
 
 Example exp_3 : exp three zero = one.
 Proof.
-  unfold exp, three, zero, one, doit3times, mult. 
-Abort.
+  unfold exp, three, zero, one.
+Qed.
   
 Example exp_2 : exp three two = plus (mult two (mult two two)) one.
 Proof.
