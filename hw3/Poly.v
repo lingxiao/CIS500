@@ -938,6 +938,8 @@ Example fold_example3 :
 Proof. reflexivity. Qed.
 
 
+
+
 (** **** Exercise: 1 star, advanced (fold_types_different)  *)
 (** Observe that the type of [fold] is parameterized by _two_ type
     variables, [X] and [Y], and the parameter [f] is a binary operator
@@ -1045,7 +1047,6 @@ Qed.
 
 
 
-
 (** **** Exercise: 3 stars (fold_map)  *)
 (** We can also define [map] in terms of [fold].  Finish [fold_map]
     below. *)
@@ -1124,18 +1125,25 @@ Qed.
 
 (** **** Exercise: 2 stars, advanced (nth_error_informal)  *)
 (** Recall the definition of the [nth_error] function:
+
    Fixpoint nth_error {X : Type} (l : list X) (n : nat) : option X :=
      match l with
      | [] => None
      | a :: l' => if beq_nat n O then Some a else nth_error l' (pred n)
      end.
    Write an informal proof of the following theorem:
+
    forall X n l, length l = n -> @nth_error X l n
 (* FILL IN HERE *)
 *)
-(** todo: finish exercise above *)
-Theorem foo : forall x : Type, x = x.
+
+Compute (@nth_error nat [1;2;3] 3).
+
+Theorem nth_error_formal : forall (X: Type) (l : list X) (n : nat),
+  length l = n -> @nth_error X l n = None.
 Proof. Abort.
+
+
 
 
 (** **** Exercise: 4 stars, advanced (church_numerals)  *)
@@ -1288,7 +1296,7 @@ Proof.
   unfold exp, plus.
   unfold two, mult, one.
   reflexivity.
-Abort.
+
 
 
 
@@ -1298,4 +1306,4 @@ End Church.
 
 End Exercises.
 
-(** $Date: 2016-01-13 11:14:59 -0500 (Wed, 13 Jan 2016) $ *)
+
