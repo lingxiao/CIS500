@@ -1120,8 +1120,9 @@ Proof.
   intros X Y Z f p. destruct p.
   unfold prod_uncurry, prod_curry. reflexivity.
 Qed.  
-  
 
+Definition ls := [1;2;3].
+Compute (@nth_error nat ls (length ls)).
 
 (** **** Exercise: 2 stars, advanced (nth_error_informal)  *)
 (** Recall the definition of the [nth_error] function:
@@ -1134,10 +1135,11 @@ Qed.
    Write an informal proof of the following theorem:
 
    forall X n l, length l = n -> @nth_error X l n
-(* FILL IN HERE *)
+
+
+
 *)
 
-Compute (@nth_error nat [1;2;3] 3).
 
 Theorem nth_error_formal : forall (X: Type) (l : list X) (n : nat),
   length l = n -> @nth_error X l n = None.
@@ -1191,7 +1193,9 @@ Definition three : nat := @doit3times.
 (** Successor of a natural number: *)
 
 (* n : forall X : Type, (X -> X) -> X -> X *)
-Definition succ (n : nat) : nat := fun X f x => f (n X f x).
+Definition succ (n : nat) : nat
+  := fun (X : Type) (f : X -> X) (x : X)
+  => f (n X f x).
 
 
 Example succ_1 : succ zero = one.
@@ -1208,7 +1212,9 @@ Proof. reflexivity. Qed.
 
 (** Addition of two natural numbers: *)
 
-Definition plus (n m : nat) : nat := fun X f x => n X f (m X f x).
+Definition plus (n m : nat) : nat
+  := fun (X : Type) (f : X -> X) (x : X)
+  => n X f (m X f x).
 
 
 Example plus_1 : plus zero one = one.
@@ -1227,7 +1233,9 @@ Proof. reflexivity. Qed.
 
 (** Multiplication: *)
 
-Definition mult (n m : nat) : nat := fun X f x => m X (n X f) x.
+Definition mult (n m : nat) : nat
+  := fun (X : Type) (f : X -> X) (x : X)
+  => m X (n X f) x.
 
 Example mult_1 : mult one one = one.
 Proof. reflexivity. Qed.
@@ -1262,40 +1270,42 @@ Proof. reflexivity. Qed.
     a "Universe inconsistency" error, try iterating over a different
     type: [nat] itself is usually problematic.) *)
 
+(* todo: really understand this one, why does it work?? *)
 (* nat := forall X : Type, (X -> X) -> X -> X *)
-Definition exp (n m : nat) : nat := fun X f x => m X f (n X f x).
+Definition exp (n m : nat) : nat
+  := fun (X : Type)
+  => m (X -> X) (n X).
 
+
+Example exp_1 : exp two two = plus two two.
+Proof. 
+  unfold exp, plus.
+  unfold two, mult, one.
+  reflexivity.
+Qed.  
+
+Example exp_2 : exp three two = plus (mult two (mult two two)) one.
+Proof.
+  unfold exp, three, two, one.
+  unfold doit3times, mult, plus.
+  reflexivity.
+Qed.
+
+
+Example exp_3 : exp three zero = one.
+Proof. 
+  unfold exp, three, zero, one. reflexivity.
+Qed.
 
 Example exp_4 : exp three one = three.
 Proof.
-  unfold exp, three, one, doit3times.
-  unfold mult. reflexivity.
+  unfold exp, three, one, doit3times. reflexivity.
 Qed.
 
 Example exp_5 : exp zero three = zero.
 Proof.
   unfold exp, three, zero, one, doit3times, mult. reflexivity.
 Qed.
-
-Example exp_3 : exp three zero = one.
-Proof.
-  unfold exp, three, zero, one.
-
-
-  
-Example exp_2 : exp three two = plus (mult two (mult two two)) one.
-Proof.
-  unfold exp, three, two, one.
-  unfold doit3times, mult, plus.
-Abort.
-
-
-  
-Example exp_1 : exp two two = plus two two.
-Proof. 
-  unfold exp, plus.
-  unfold two, mult, one.
-  reflexivity.
 
 
 
