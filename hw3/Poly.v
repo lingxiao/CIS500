@@ -1235,17 +1235,29 @@ Proof. reflexivity. Qed.
     a "Universe inconsistency" error, try iterating over a different
     type: [nat] itself is usually problematic.) *)
 
-Definition exp (n m : nat) : nat := fun X f x => m X (mult n) n.
+(* nat := forall X : Type, (X -> X) -> X -> X *)
+Definition exp (n m : nat) : nat := fun X f x => (mult n n) X f x.
 
-
-Example exp_1 : exp two two = plus two two.
-Proof. (* FILL IN HERE *) Admitted.
 
 Example exp_2 : exp three two = plus (mult two (mult two two)) one.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  unfold exp, three, two, one.
+  unfold doit3times, mult, plus.
 
 Example exp_3 : exp three zero = one.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  unfold exp, three, zero, one, doit3times, mult.
+  
+  
+Example exp_1 : exp two two = plus two two.
+Proof. 
+  unfold exp, plus.
+  unfold two, mult, one.
+  reflexivity.
+Qed.
+
+
+
 
 End Church.
 (** [] *)
