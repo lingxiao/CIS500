@@ -1235,7 +1235,7 @@ Proof. reflexivity. Qed.
     a "Universe inconsistency" error, try iterating over a different
     type: [nat] itself is usually problematic.) *)
 
-Definition exp (n m : nat) : nat := admit.
+Definition exp (n m : nat) : nat := fun X f x => m X (mult n) n.
 
 
 Example exp_1 : exp two two = plus two two.
