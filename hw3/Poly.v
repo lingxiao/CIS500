@@ -188,7 +188,6 @@ Check (cons mumble c) (nil mumble).
       - [d bool (b a 5)]
       - [e bool true]
       - [e mumble (b c 0)]
-
       - [e bool (b c 0)]
       - [c]
 (* FILL IN HERE *)
@@ -467,7 +466,7 @@ Theorem rev_app_distr: forall X (l1 l2 : list X),
   rev (l1 ++ l2) = rev l2 ++ rev l1.
 Proof.
   intros X l1 l2. induction l1.
-    + simpl. rewrite -> app_r_id. reflexivity.
+    + simpl. rewrite -> app_nil_r. reflexivity.
     + simpl. rewrite -> IHl1. rewrite -> app_assoc. reflexivity.
 Qed.   
 
@@ -1248,9 +1247,6 @@ Example mult_7 : mult (plus three three) zero = zero.
 Proof. reflexivity. Qed.
 
 
-
-
-
 (** Exponentiation: *)
 
 (** (_Hint_: Polymorphism plays a crucial role here.  However,
@@ -1259,9 +1255,7 @@ Proof. reflexivity. Qed.
     type: [nat] itself is usually problematic.) *)
 
 (* nat := forall X : Type, (X -> X) -> X -> X *)
-(* really I want to take a function n * n and apply it f(m) times *)
-Definition exp (n m : nat) : nat := fun X f x => m X (n X f) x.
-
+Definition exp (n m : nat) : nat := fun X f x => m X f (n X f x).
 
 
 Example exp_4 : exp three one = three.
@@ -1278,7 +1272,8 @@ Qed.
 Example exp_3 : exp three zero = one.
 Proof.
   unfold exp, three, zero, one.
-Qed.
+
+
   
 Example exp_2 : exp three two = plus (mult two (mult two two)) one.
 Proof.
