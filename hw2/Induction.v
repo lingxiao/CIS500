@@ -673,11 +673,49 @@ Example isCanon4 : isCanon (Odd (Even (Even BO))) = false.
 reflexivity.
 
 
-Definition normalize (b: bin) : bin := un_bin (bin_un' b).
+Definition normalizeObv (b: bin) : bin := un_bin (bin_un' b).
+
+Fixpoint normalize (b : bin) : bin := match b with
+  | BO       => BO
+  | Even b'  => if eqZero b' then BO else Even (normalize b')
+  | Odd  b'  => Odd (normalize b')
+  end.
+
+
+(* some add hoc unit tests *)
+Example normalize_1 : normalize (Even BO) = BO.
+reflexivity.
+
+Example normalize_2 : normalize (Odd (Even BO)) = Odd BO.
+reflexivity.
+
+Example normalize_3 : normalize (Even (Odd BO)) = Even (Odd BO).
+reflexivity.
+
+Example normalize_4 : normalize (Even (Even BO)) = BO.
+reflexivity.
+
+Example normalize_5 : normalize (Even (Odd ((Even BO)))) = Even (Odd BO).
+reflexivity.
+
+Example normalize_6 : normalize (Odd (Even (Odd BO))) = Odd (Even (Odd BO)).
+reflexivity.
+
+
+(* how should you list out the induction hypos? *)
+Theorem bin_un_norm_roundtrip : forall b : bin,
+  un_bin (bin_un' b) = normalize b.
+Proof.
+  intros b. induction b.
+    + simpl. reflexivity.
+    + simpl. rewrite -> plus_rt_id. rewrite <- IHb.
+      
+
+
 
 (* we show that [normalize b] indeed gives us the canonical
    representation of each [b].
-*)
+
 Theorem normalize_canon : forall b : bin,
   isCanon (normalize b) = true.
 Proof.
@@ -692,13 +730,7 @@ Qed.
 Example normalize1 : normalize (Even (Even BO)) = BO.
 Proof. reflexivity. Qed.
 
-(*
 
-try "forall b, bin_un' b = bin_un b", 
-
-"forall b, un_bin (bin_un (incr_bin b)) = incr_bin (un_bin (bin_un b))"
-
-*)
 
 (* how should you list out the induction hypos? *)
 Theorem bin_un_norm_roundtrip : forall b : bin,
@@ -710,7 +742,7 @@ Proof.
       rewrite -> plus_rt_id. reflexivity.
     + simpl. rewrite -> plus_rt_id. unfold normalize. 
       
-      
+*)      
 
 
 

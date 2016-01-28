@@ -1238,38 +1238,18 @@ Inductive baz : Type :=
   | Baz1 : baz -> baz
   | Baz2 : baz -> bool -> baz.
 
+
 (** How _many_ elements does the type [baz] have?
 
 (* FILL IN HERE *)
 
- Suppose we have
- 
-
-
-  
-  Inductive natprod : Type :=
-    | pair : nat -> nat -> natprod.
-
-
-  Inductive list : Type :=
-    | nil           : list
-    | cons          : nat -> list -> list
-
-  list = nil | cons nat list
-
-  Inductive list (X:Type) : Type :=
-    | nil  : list X
-    | cons : X -> list X -> list X.
-
+  [baz] is not inhabited so it has no elements. In order to construct
+  some [Baz1], we need some [x : baz], but we do not have this type.
+  Similarly to construct [Baz2], we need some term of type [baz],
+  which we do not have. 
 
 *)
 
-
-
-
-
-
-(** [] *)
 
 
 (** $Date: 2016-01-13 11:14:59 -0500 (Wed, 13 Jan 2016) $ *)
