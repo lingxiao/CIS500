@@ -691,8 +691,7 @@ Theorem bin_un_norm_roundtrip : forall b : bin,
 Proof.
   intros b. induction b.
     + simpl. reflexivity.
-    + simpl. rewrite -> plus_rt_id. unfold normalize in *. induction b.
-        - simpl. reflexivity.
+    + simpl. rewrite -> plus_rt_id. unfold normalize in *. 
 Abort.
 
 
