@@ -653,27 +653,10 @@ Proof. reflexivity. Qed.
 Example eqZero2 : eqZero (Odd (Even BO))  = false.
 Proof. reflexivity. Qed.
 
-(* check that a binary number [b] has no leading zeros. *)
-Fixpoint isCanon (b: bin) : bool := match b with
-  | BO      => true
-  | Even b' => if eqZero b' then false else isCanon b'
-  | Odd  b' => isCanon b'
+Fixpoint evenCase (b : bin) : bin := match b with
+  | Even b' => b
+  | _       => b
   end.
-
-Example isCanon1 : isCanon (Even BO) = false.
-Proof. reflexivity. Qed.
-
-Example isCanon2 : isCanon (Odd (Even BO)) = false.
-Proof. reflexivity. Qed.
-
-Example isCanon3 : isCanon (Even (Odd BO)) = true.
-reflexivity.
-
-Example isCanon4 : isCanon (Odd (Even (Even BO))) = false.
-reflexivity.
-
-
-Definition normalizeObv (b: bin) : bin := un_bin (bin_un' b).
 
 Fixpoint normalize (b : bin) : bin := match b with
   | BO       => BO
@@ -708,9 +691,36 @@ Theorem bin_un_norm_roundtrip : forall b : bin,
 Proof.
   intros b. induction b.
     + simpl. reflexivity.
-    + simpl. rewrite -> plus_rt_id. rewrite <- IHb.
-      
+    + simpl. rewrite -> plus_rt_id. unfold normalize in *. induction b.
+        - simpl. reflexivity.
+Abort.
 
+
+(* Depricated 
+
+(* check that a binary number [b] has no leading zeros. *)
+Fixpoint isCanon (b: bin) : bool := match b with
+  | BO      => true
+  | Even b' => if eqZero b' then false else isCanon b'
+  | Odd  b' => isCanon b'
+  end.
+
+Example isCanon1 : isCanon (Even BO) = false.
+Proof. reflexivity. Qed.
+
+Example isCanon2 : isCanon (Odd (Even BO)) = false.
+Proof. reflexivity. Qed.
+
+Example isCanon3 : isCanon (Even (Odd BO)) = true.
+reflexivity.
+
+Example isCanon4 : isCanon (Odd (Even (Even BO))) = false.
+reflexivity.
+
+
+Definition normalizeObv (b: bin) : bin := un_bin (bin_un' b).
+
+*)
 
 
 (* we show that [normalize b] indeed gives us the canonical
