@@ -1197,7 +1197,7 @@ Proof. reflexivity. Qed.
 
 Example succ_3 : succ two = three.
 Proof. reflexivity. Qed.
-   
+
 
 (** Addition of two natural numbers: *)
 
@@ -1214,19 +1214,42 @@ Example plus_3 :
   plus (plus two two) three = plus one (plus three three).
 Proof. reflexivity. Qed.
 
+Example plus_4 : plus one zero = one.
+Proof. reflexivity. Qed.
+
+
 (** Multiplication: *)
 
 Definition mult (n m : nat) : nat := fun X f x => m X (n X f) x.
 
-
 Example mult_1 : mult one one = one.
 Proof. reflexivity. Qed.
 
+(* left annilator *)
 Example mult_2 : mult zero (plus three three) = zero.
 Proof. reflexivity. Qed.
 
 Example mult_3 : mult two three = plus three three.
 Proof. reflexivity. Qed.
+
+Example mult_4 : mult three two = plus three three.
+Proof. reflexivity. Qed.
+
+(* right id *)
+Example mult_5 : mult three one = three.
+Proof. reflexivity. Qed.
+
+(* left id *)
+Example mult_6 : mult one three = three.
+Proof. reflexivity. Qed.
+
+(* right annilator *)
+Example mult_7 : mult (plus three three) zero = zero.
+Proof. reflexivity. Qed.
+
+
+
+
 
 (** Exponentiation: *)
 
@@ -1236,25 +1259,39 @@ Proof. reflexivity. Qed.
     type: [nat] itself is usually problematic.) *)
 
 (* nat := forall X : Type, (X -> X) -> X -> X *)
-Definition exp (n m : nat) : nat := fun X f x => (mult n n) X f x.
+(* really I want to take a function n * n and apply it pred m times *)
+Definition exp (n m : nat) : nat := fun X f x => m X ((mult n n) X f) x.
 
+Example exp_4 : exp three one = three.
+Proof.
+  unfold exp, three, one, doit3times.
+  unfold mult.
+Abort.  
 
+Example exp_5 : exp zero three = zero.
+Proof.
+  unfold exp, three, zero, one, doit3times, mult. 
+Abort.
+
+Example exp_3 : exp three zero = one.
+Proof.
+  unfold exp, three, zero, one, doit3times, mult. 
+Abort.
+  
 Example exp_2 : exp three two = plus (mult two (mult two two)) one.
 Proof.
   unfold exp, three, two, one.
   unfold doit3times, mult, plus.
+Abort.
 
-Example exp_3 : exp three zero = one.
-Proof.
-  unfold exp, three, zero, one, doit3times, mult.
-  
+
   
 Example exp_1 : exp two two = plus two two.
 Proof. 
   unfold exp, plus.
   unfold two, mult, one.
   reflexivity.
-Qed.
+Abort.
 
 
 
