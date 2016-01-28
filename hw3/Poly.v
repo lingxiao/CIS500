@@ -1259,18 +1259,20 @@ Proof. reflexivity. Qed.
     type: [nat] itself is usually problematic.) *)
 
 (* nat := forall X : Type, (X -> X) -> X -> X *)
-(* really I want to take a function n * n and apply it pred m times *)
-Definition exp (n m : nat) : nat := fun X f x => m X ((mult n n) X f) x.
+(* really I want to take a function n * n and apply it f(m) times *)
+Definition exp (n m : nat) : nat := fun X f x => (n X f) (m X f x).
+
+
 
 Example exp_4 : exp three one = three.
 Proof.
   unfold exp, three, one, doit3times.
-  unfold mult.
+  unfold mult. 
 Abort.  
 
 Example exp_5 : exp zero three = zero.
 Proof.
-  unfold exp, three, zero, one, doit3times, mult. 
+  unfold exp, three, zero, one, doit3times, mult. reflexivity.
 Abort.
 
 Example exp_3 : exp three zero = one.
