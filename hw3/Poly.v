@@ -1134,16 +1134,64 @@ Compute (@nth_error nat ls (length ls)).
      end.
    Write an informal proof of the following theorem:
 
-   forall X n l, length l = n -> @nth_error X l n
+   forall X n l, length l = n -> @nth_error X l n = None
 
+   Proof by induction on n.
 
+   Suppose [n = 0] so [length l = 0] and [l = []], then we know
+   [@nth_error X l n = None] by definition of [nth_error].
 
-*)
+   Suppose [n = S n'] so [length l = S n'] so [l = x :: l'] where
+   [length l = n']. Our goal is then to show
 
+        [ length (x::l') = S n' -> nth_error X (x::l') (S n') = None]
+
+   and our inductive hypothesis is that:
+
+        [ length l' = n' -> nth_error X l' n' = None].
+
+   By definition of [nth_error] we are at the second branch, and since
+   [S n' > 0] we are evaluating:
+        [nth_error l' (pred (S n')) = nth_error X 'l n']
+
+   this is true by the inductive hypothesis, so we are done.
+   
+           
+   Proof by induction on l.
+
+   Case: suppose [l = []], then by def of [nth_error] we are done.
+
+   Case: suppose [l = x::l'] so [length l = S n'],
+
+   and let our inductive hypothesis be:
+
+        [length l' = n' -> nth_error X l' n = None].
+
+   our goal is to show that:
+
+        [length (x::l') = S n' -> @nth_error X (x::l') (S n') = None
+
+    by definition of [nth_error] we are at the second branch,
+    and since [S n' > 0] our function reduces to [nth_error X l' n'],
+    since [length l' = n'] by assumption, then by inductive hypothesis
+    we know  [nth_error X l' n' = None].
+
+   And we are done.
+
+   
+ *)
+
+Lemma empty_list : forall (X: Type) (l : list X), length l = 0 -> l = [].
+Proof. admit. Qed.  
 
 Theorem nth_error_formal : forall (X: Type) (l : list X) (n : nat),
   length l = n -> @nth_error X l n = None.
-Proof. Abort.
+Proof.
+  intros X l n. induction l.
+    + simpl. reflexivity.
+    + simpl. 
+Abort.
+  
 
 
 
