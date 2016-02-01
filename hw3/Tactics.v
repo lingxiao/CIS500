@@ -407,7 +407,17 @@ Proof.
     are trying to prove [L2], it suffices to prove [L1].
 
     Here is a variant of a proof from above, using forward reasoning
-    throughout instead of backward reasoning. *)
+    throughout instead of backward reasoning.
+
+
+    forward reasoning:
+          apply L in H  := suppose L1 -> L2 and L1, we have L2
+
+    backward reasoning:
+          apply L       := suppose L1 -> L2, it suffice to show L1.
+
+
+ *)
 
 Theorem silly3' : forall (n : nat),
   (beq_nat n 5 = true -> beq_nat (S (S n)) 7 = true) ->
@@ -417,6 +427,7 @@ Proof.
   intros n eq H.
   symmetry in H. apply eq in H. symmetry in H.
   apply H.  Qed.
+
 
 (** Forward reasoning starts from what is _given_ (premises,
     previously proven theorems) and iteratively draws conclusions from
@@ -438,8 +449,8 @@ Theorem plus_n_n_injective : forall n m,
      n = m.
 Proof.
   intros n. induction n as [| n'].
-    (* FILL IN HERE *) Admitted.
-(** [] *)
+    + 
+
 
 (* ###################################################### *)
 (** * Varying the Induction Hypothesis *)
