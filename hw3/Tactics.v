@@ -282,6 +282,8 @@ Proof.
   inversion H1. inversion H2. rewrite H0. reflexivity.
 Qed.
 
+
+
 (** While the injectivity of constructors allows us to reason
     that [forall (n m : nat), S n = S m -> n = m], the reverse
     direction of the implication is an instance of a more general fact
@@ -354,8 +356,9 @@ Example inversion_ex6 : forall (X : Type) (x y z : X) (l j : list X),
   y :: l = z :: j ->
   x = z.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros X x y z l j H1 H2.
+  inversion H1.
+Qed.
 
 (** To summarize this discussion, suppose [H] is a hypothesis in the
     context or a previously proven lemma of the form
