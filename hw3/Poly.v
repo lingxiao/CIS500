@@ -1319,7 +1319,28 @@ Proof. reflexivity. Qed.
     type: [nat] itself is usually problematic.) *)
 
 (* todo: really understand this one, why does it work?? *)
-(* nat := forall X : Type, (X -> X) -> X -> X *)
+(*
+
+  So we see that:
+  exp :: forall X : Type, (X -> X) -> X -> X
+  n X :: (X -> X) -> X -> X
+  m x :: ((X -> X) -> (X -> X)) -> (X -> X) -> (X -> X)
+
+  but this does not give the correct type signature? which is forall X?
+  so we let the X in forall X  to be X -> X ?
+
+*)
+
+Definition m := two.
+Definition n := three.
+Definition X := Type.
+
+Check (m (X -> X)).
+Check (n X).
+Check (m (X -> X) (n X)).
+Check (m (X -> X) (n X)).
+
+
 Definition exp (n m : nat) : nat
   := fun (X : Type)
   => m (X -> X) (n X).
