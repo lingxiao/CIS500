@@ -282,6 +282,8 @@ Proof.
   inversion H1. inversion H2. rewrite H0. reflexivity.
 Qed.
 
+
+
 (** While the injectivity of constructors allows us to reason
     that [forall (n m : nat), S n = S m -> n = m], the reverse
     direction of the implication is an instance of a more general fact

@@ -181,8 +181,8 @@ Proof.
     [o] with [[e,f]].  However, the matching process doesn't determine
     an instantiation for [m]: we have to supply one explicitly by
     adding [with (m:=[c,d])] to the invocation of [apply]. *)
-  apply trans_eq with (m:=[c;d]). apply eq1. apply eq2.
-Qed.
+
+  apply trans_eq with (m:=[c;d]). apply eq1. apply eq2.   Qed.
 
 (**  Actually, we usually don't have to include the name [m]
     in the [with] clause; Coq is often smart enough to
@@ -190,21 +190,19 @@ Qed.
     instead write: [apply trans_eq with [c,d]]. *)
 
 (** **** Exercise: 3 stars, optional (apply_with_exercise)  *)
-(*
-  todo: what am I suppose to see here ??
-*)
 Example trans_eq_exercise : forall (n m o p : nat),
      m = (minustwo o) ->
      (n + p) = m ->
      (n + p) = (minustwo o).
 Proof.
   intros n m o p H1 H2.
-  (* rewrite H2. rewrite H1. reflexivity.*)
-Abort.  
-  
 
   
+  (* rewrite H2. rewrite H1. reflexivity.*)
   
+
+
+
 
 (* ###################################################### *)
 (** * The [inversion] tactic *)
@@ -278,9 +276,8 @@ Example inversion_ex3 : forall (X : Type) (x y z : X) (l j : list X),
   y :: l = x :: j ->
   x = y.
 Proof.
-  intros X x y z l j H1 H2.
-  inversion H1. inversion H2. rewrite H0. reflexivity.
-Qed.
+  (* FILL IN HERE *) Admitted.
+(** [] *)
 
 (** While the injectivity of constructors allows us to reason
     that [forall (n m : nat), S n = S m -> n = m], the reverse
