@@ -206,11 +206,9 @@ Example trans_eq_exercise : forall (n m o p : nat),
      (n + p) = (minustwo o).
 Proof.
   intros n m o p H1 H2.
-  (* rewrite H2. rewrite H1. reflexivity.*)
-Abort.  
-  
+  rewrite H2. apply H1.
+Qed.
 
-  
   
 
 (* ###################################################### *)
@@ -290,7 +288,6 @@ Proof.
 Qed.
 
 
-
 (** While the injectivity of constructors allows us to reason
     that [forall (n m : nat), S n = S m -> n = m], the reverse
     direction of the implication is an instance of a more general fact
@@ -331,7 +328,8 @@ Proof.
     that the subgoal we are working on is impossible, and therefore
     removes it from further consideration. *)
 
-    intros H. inversion H. Qed.
+    intros H. inversion H.
+Qed.
 
 (** This is an instance of a more general logical principle
     known as the _principle of explosion_, which asserts that a
@@ -342,7 +340,25 @@ Theorem inversion_ex4 : forall (n : nat),
   S n = O ->
   2 + 2 = 5.
 Proof.
-  intros n contra. inversion contra. Qed.
+  intros n contra. inversion contra.
+Qed.
+
+
+Theorem inversion_ex4_1 : forall (n : nat),
+  false = true ->
+  2 + 2 = 5.
+Proof.
+  intros n contra. inversion contra.
+Qed.
+
+
+Theorem inversion_ex4_2 : forall (x y : bool), x = y -> y = x.
+Proof.
+  intros x y H.
+  inversion H.
+  reflexivity.
+Qed.
+
 
 Theorem inversion_ex5 : forall (n m : nat),
   false = true ->
@@ -398,7 +414,8 @@ Theorem S_inj : forall (n m : nat) (b : bool),
      beq_nat (S n) (S m) = b  ->
      beq_nat n m = b.
 Proof.
-  intros n m b H. simpl in H. apply H.  Qed.
+  intros n m b H. simpl in H. apply H.
+Qed.
 
 (** Similarly, the tactic [apply L in H] matches some
     conditional statement [L] (of the form [L1 -> L2], say) against a
@@ -413,16 +430,20 @@ Proof.
     "backward reasoning" -- it says that if we know [L1->L2] and we
     are trying to prove [L2], it suffices to prove [L1].
 
+   forward:
+    H1  : L1
+    H2  : L1 -> L2
+    now we  apply H1 in H2: "so we have L1, now we need to show L2"
+    H2' : L2
+
+   backward:
+    H1 : L1 -> L2
+    goal: L2
+    apply H1 - "we know L1 implies L2, so now it suffices to prove L1"
+    goal: L1
+
     Here is a variant of a proof from above, using forward reasoning
     throughout instead of backward reasoning.
-
-
-    forward reasoning:
-          apply L in H  := suppose L1 -> L2 and L1, we have L2
-
-    backward reasoning:
-          apply L       := suppose L1 -> L2, it suffice to show L1.
-
 
  *)
 
@@ -433,7 +454,8 @@ Theorem silly3' : forall (n : nat),
 Proof.
   intros n eq H.
   symmetry in H. apply eq in H. symmetry in H.
-  apply H.  Qed.
+  apply H.
+Qed.
 
 
 (** Forward reasoning starts from what is _given_ (premises,
@@ -459,8 +481,8 @@ Theorem plus_n_n_injective : forall n m,
      n + n = m + m ->
      n = m.
 Proof.
-  intros n. induction n as [| n' Ihn'].	
-    + simpl. 
+  intros n. induction n as [| n' Ihn'].
+    + simpl. intros m H. symmetry in H. 
 
 
 
