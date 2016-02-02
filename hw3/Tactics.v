@@ -36,7 +36,9 @@ Proof.
     can achieve the same effect in a single step by using the [apply]
     tactic instead: *)
 
-  apply eq2.  Qed.
+  apply eq2. (* apply the fact of [eq2] in goal *)
+
+Qed.
 
 (** The [apply] tactic also works with _conditional_ hypotheses
     and lemmas: if the statement being applied is an implication, then
@@ -69,7 +71,10 @@ Theorem silly2a : forall (n m : nat),
      [n] = [m].
 Proof.
   intros n m eq1 eq2.
-  apply eq2. apply eq1.  Qed.
+  (* we know a -> b, suppose a, then we have b*)
+  apply eq2.
+  (* now we need to prove what's on the left of the [->] *)
+  apply eq1.  Qed.
 
 (** **** Exercise: 2 stars, optional (silly_ex)  *)
 (** Complete the following proof without using [simpl]. *)
@@ -80,7 +85,8 @@ Theorem silly_ex :
      oddb 4 = true.
 Proof.
   intros H1 H2.
-  apply H1. apply H2.
+  apply H1.    (* we need to show b, suppose a  and a -> b, then we have b*)
+  apply H2.
 Qed.  
 
 
@@ -152,7 +158,8 @@ Example trans_eq_example : forall (a b c d e f : nat),
      [a;b] = [e;f].
 Proof.
   intros a b c d e f eq1 eq2.
-  rewrite -> eq1. rewrite -> eq2. reflexivity.  Qed.
+  rewrite -> eq1. rewrite -> eq2. reflexivity.
+Qed.
 
 (** Since this is a common pattern, we might like to pull it out
     as a lemma recording, once and for all, the fact that equality is
@@ -442,14 +449,19 @@ Proof.
 
 (** **** Exercise: 3 stars, recommended (plus_n_n_injective)  *)
 (** Practice using "in" variants in this exercise.  (Hint: use
-    [plus_n_Sm].) *)
+    [plus_n_Sm].)
+
+    plus_Sn_m: forall n m : nat, S n + m = S (n + m)
+
+ *)
 
 Theorem plus_n_n_injective : forall n m,
      n + n = m + m ->
      n = m.
 Proof.
-  intros n. induction n as [| n'].
-    + 
+  intros n. induction n as [| n' Ihn'].	
+    + simpl. 
+
 
 
 (* ###################################################### *)

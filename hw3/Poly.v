@@ -1338,12 +1338,11 @@ Definition X := Type.
 Check (m (X -> X)).
 Check (n X).
 Check (m (X -> X) (n X)).
-Check (m (X -> X) (n X)).
 
 
 Definition exp (n m : nat) : nat
-  := fun (X : Type)
-  => m (X -> X) (n X).
+  := fun (X : Type) (f : X -> X) (x : X)
+  => (m (X -> X) (n X)) f x.
 
 
 Example exp_1 : exp two two = plus two two.
