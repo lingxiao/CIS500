@@ -431,16 +431,14 @@ Qed.
     are trying to prove [L2], it suffices to prove [L1].
 
    forward:
-    H1  : L1
-    H2  : L1 -> L2
-    now we  apply H1 in H2: "so we have L1, now we need to show L2"
-    H2' : L2
+    [H1 : L1     H2 : L1 -> L2        goal: L2]
+       [apply H1 in H2]: "so we have L1, now we need to show L2"
+    [H2' : L2]
 
    backward:
-    H1 : L1 -> L2
-    goal: L2
-    apply H1 - "we know L1 implies L2, so now it suffices to prove L1"
-    goal: L1
+    [H1 : L1 -> L2   goal: L2]
+       [apply H1] - "we know L1 implies L2, so now it suffices to prove L1"
+    [goal: L1]
 
     Here is a variant of a proof from above, using forward reasoning
     throughout instead of backward reasoning.
@@ -477,13 +475,14 @@ Qed.
 
  *)
 
+(* todo: finish this one!! *)
 Theorem plus_n_n_injective : forall n m,
      n + n = m + m ->
      n = m.
 Proof.
   intros n. induction n as [| n' Ihn'].
     + simpl. intros m H. symmetry in H. 
-
+Abort.
 
 
 (* ###################################################### *)
