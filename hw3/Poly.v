@@ -1136,62 +1136,74 @@ Compute (@nth_error nat ls (length ls)).
 
    forall X n l, length l = n -> @nth_error X l n = None
 
-   Proof by induction on n.
 
-   Suppose [n = 0] so [length l = 0] and [l = []], then we know
-   [@nth_error X l n = None] by definition of [nth_error].
+Theorem nth_error_formal: forall (n : nat) (X : Type) (l : list X),
+     length l = n ->
+     nth_error l n = None.
+Proof.
+  intros n X l. generalize dependent n. induction l as [|l'].
+    + induction n as [|n'].
+        - intros H. reflexivity.
+        - intros contra. inversion contra.
+    + induction n as [|n'].
+        - intros contra. inversion contra.
+        - simpl. intros H. apply IHl. apply S_injective in H. apply H.
+Qed.
 
-   Suppose [n = S n'] so [length l = S n'] so [l = x :: l'] where
-   [length l = n']. Our goal is then to show
 
-        [ length (x::l') = S n' -> nth_error X (x::l') (S n') = None]
+    we show
+          ∀ n X l. length l = n -> nth_error l n = None
+    by induction on l.
 
-   and our inductive hypothesis is that:
+    + suppose l = []. then our goals is:
+          ∀ n X. length [] = n -> nth_error [] n = None,
+      and we do induction on n.
+       - if we let n = 0 then we have
+          ∀ X. length [] = 0 -> nth_error [] 0 = None,
+          which is immediately true by def of nth-error.
+       - let n = S n' and we have to show:
+          ∀ X. length [] = S n' -> nth_error [] (S n') = None.
+         but this cannot be true by def of length.
 
-        [ length l' = n' -> nth_error X l' n' = None].
+     + suppose l = x:l' and we show:
+           ∀ n X. length (x:l') = n -> nth_error (x:l') n = None,
+       and our induction hypothesis is:
+            [InH] := ∀ n X. length l' = n -> nth_error l' n = None.
+       Let's do induction on n.
+          - for n = 0 we have
+               ∀ X. length (x:l') = 0 -> nth_error (x:l') 0 = None.
+             but length (x:l') cannot be 0 and we are done.
+          - pick n = S n' so that:
+               ∀ X. length (x:l') = S n'.
+            or by def of length
+               ∀ X. S (lenth l') = S n'
+            which by injectivitiy of successor [S] reduces to:
+               ∀ X. length l' = n'.
+            So we need to show
+               nth_error (x:l') (S n') = None.
+            which reduces to:
+               [H] := nth_error l' n' = None
+            by def of nth_error. And by [InH] the statement above is true if
+               length l' = n',
+             which is true by [H]
 
-   By definition of [nth_error] we are at the second branch, and since
-   [S n' > 0] we are evaluating:
-        [nth_error l' (pred (S n')) = nth_error X 'l n']
-
-   this is true by the inductive hypothesis, so we are done.
-   
-           
-   Proof by induction on l.
-
-   Case: suppose [l = []], then by def of [nth_error] we are done.
-
-   Case: suppose [l = x::l'] so [length l = S n'],
-
-   and let our inductive hypothesis be:
-
-        [length l' = n' -> nth_error X l' n = None].
-
-   our goal is to show that:
-
-        [length (x::l') = S n' -> @nth_error X (x::l') (S n') = None
-
-    by definition of [nth_error] we are at the second branch,
-    and since [S n' > 0] our function reduces to [nth_error X l' n'],
-    since [length l' = n'] by assumption, then by inductive hypothesis
-    we know  [nth_error X l' n' = None].
-
-   And we are done.
-
-   
+     []
  *)
 
-Lemma empty_list : forall (X: Type) (l : list X), length l = 0 -> l = [].
-Proof. admit. Qed.  
-
-Theorem nth_error_formal : forall (X: Type) (l : list X) (n : nat),
-  length l = n -> @nth_error X l n = None.
+Theorem nth_error_formal: forall (n : nat) (X : Type) (l : list X),
+     length l = n ->
+     nth_error l n = None.
 Proof.
-  intros X l n. induction l.
-    + simpl. reflexivity.
-    + simpl. 
-Abort.
-  
+  intros n X l. generalize dependent n. induction l as [|l'].
+    + induction n as [|n'].
+        - intros H. reflexivity.
+        - intros contra. inversion contra.
+    + induction n as [|n'].
+        - intros contra. inversion contra.
+        - simpl. intros H. apply IHl. apply S_injective in H. apply H.
+Qed.
+
+
 
 
 

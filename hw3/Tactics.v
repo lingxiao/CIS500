@@ -822,25 +822,27 @@ _Proof_: Let [m] be a [nat]. We prove by induction on [m] that, for
 (** **** Exercise: 3 stars, recommended (gen_dep_practice)  *)
 (** Prove this by induction on [l]. *)
 
-(* todo: go back to poly.v and rewrite the informal proof using this *)
 Theorem nth_error_after_last: forall (n : nat) (X : Type) (l : list X),
      length l = n ->
      nth_error l n = None.
 Proof.
-  intros n X l. generalize dependent n. induction l as [|l'].
+  intros n X l. generalize dependent n. induction l as [|x l'].
     + induction n as [|n'].
         - intros H. reflexivity.
         - intros contra. inversion contra.
     + induction n as [|n'].
         - intros contra. inversion contra.
-        - intros H. 
-  
+        - simpl. intros H. apply IHl'. apply S_injective in H. apply H.
+Qed.
   
 
 
 (** **** Exercise: 3 stars, optional (app_length_cons)  *)
 (** Prove this by induction on [l1], without using [app_length]
     from [Lists]. *)
+(*
+  todo: finish these optional questions.
+*)
 
 Theorem app_length_cons : forall (X : Type) (l1 l2 : list X)
                                   (x : X) (n : nat),
