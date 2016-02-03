@@ -696,19 +696,18 @@ Qed.
      - let m = 0 and our goal is:
              beq_nat (S n') 0 = true -> S n' = 0,
        this is false by construction on natrual numbers.
-     - next let m = S m' and our goal is:
+     - next let m = S m' so that:
              beq_nat (S n') (S m') = true -> S n' = S m'.
-       So suppose
-             [H] := beq_nat (S n') (S m') = true,
-       then we have to show
-             S n' = S m'   or n ' = m'
-       by lemma [f_eq]. Using the induction hypothesis and let m = m'
+       Since the choice of m is arbitrary we know:
+             [H] := beq_nat (S n') (S m') = true.
+       Then we have to show
+             S n' = S m' or by lemma f_eq n ' = m'.
+       Using the induction hypothesis and let m = m'
        we know that our goal n' = m' is true if
              beq_nat n' m' = true.
        and we know this is true since [H] is true and
             [H] -> beq_nat n' m' = true.
-
-        and we are done!
+       []
 
 *)
 
@@ -823,12 +822,21 @@ _Proof_: Let [m] be a [nat]. We prove by induction on [m] that, for
 (** **** Exercise: 3 stars, recommended (gen_dep_practice)  *)
 (** Prove this by induction on [l]. *)
 
+(* todo: go back to poly.v and rewrite the informal proof using this *)
 Theorem nth_error_after_last: forall (n : nat) (X : Type) (l : list X),
      length l = n ->
      nth_error l n = None.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n X l. generalize dependent n. induction l as [|l'].
+    + induction n as [|n'].
+        - intros H. reflexivity.
+        - intros contra. inversion contra.
+    + induction n as [|n'].
+        - intros contra. inversion contra.
+        - intros H. 
+  
+  
+
 
 (** **** Exercise: 3 stars, optional (app_length_cons)  *)
 (** Prove this by induction on [l1], without using [app_length]
