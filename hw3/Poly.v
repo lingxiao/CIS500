@@ -1137,21 +1137,8 @@ Compute (@nth_error nat ls (length ls)).
    forall X n l, length l = n -> @nth_error X l n = None
 
 
-Theorem nth_error_formal: forall (n : nat) (X : Type) (l : list X),
-     length l = n ->
-     nth_error l n = None.
-Proof.
-  intros n X l. generalize dependent n. induction l as [|l'].
-    + induction n as [|n'].
-        - intros H. reflexivity.
-        - intros contra. inversion contra.
-    + induction n as [|n'].
-        - intros contra. inversion contra.
-        - simpl. intros H. apply IHl. apply S_injective in H. apply H.
-Qed.
 
-
-    we show
+    We show
           ∀ n X l. length l = n -> nth_error l n = None
     by induction on l.
 
@@ -1176,7 +1163,7 @@ Qed.
           - pick n = S n' so that:
                ∀ X. length (x:l') = S n'.
             or by def of length
-               ∀ X. S (lenth l') = S n'
+               ∀ X. S (length l') = S n'
             which by injectivitiy of successor [S] reduces to:
                ∀ X. length l' = n'.
             So we need to show
@@ -1185,7 +1172,7 @@ Qed.
                [H] := nth_error l' n' = None
             by def of nth_error. And by [InH] the statement above is true if
                length l' = n',
-             which is true by [H]
+             which is true by [H].
 
      []
  *)
