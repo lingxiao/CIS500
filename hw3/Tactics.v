@@ -1044,9 +1044,7 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
 Proof.
   intros X Y l l1 l2.
   unfold combine. destruct l.
-    + admit.
-    + admit.  
-Qed.      
+Abort.
     
   
 
@@ -1114,11 +1112,14 @@ Proof.
         + (* e5 = false *) inversion eq.  Qed.
 
 (** **** Exercise: 2 stars (destruct_eqn_practice)  *)
-Theorem bool_fn_applied_thrice :
-  forall (f : bool -> bool) (b : bool),
+Theorem bool_fn_applied_thrice : forall (f : bool -> bool) (b : bool),
   f (f (f b)) = f b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f b. destruct b eqn:Heq3.
+    (* suppose b = true *)
+    + 
+  
+
 (** [] *)
 
 (* ################################################################## *)
