@@ -438,7 +438,7 @@ Qed.
     [H2' : L2]
 
    backward:
-    [H1 : L1 -> L2   goal: L2]
+    [H1 : L1 -> L2                    goal: L2]
        [apply H1] - "we know L1 implies L2, so now it suffices to prove L1"
     [goal: L1]
 
@@ -493,6 +493,7 @@ Proof.
         - reflexivity.
         - inversion H1.
    + intros m H2.
+Abort.     
 
 
 (* ###################################################### *)
@@ -578,7 +579,14 @@ Proof.
     tried to prove [R] from [Q], we would say something like "Suppose
     [double (S n) = 10]..." but then we'd be stuck: knowing that
     [double (S n)] is [10] tells us nothing about whether [double n]
-    is [10], so [Q] is useless.) *)
+    is [10], so [Q] is useless.)
+
+     todo: why does this make sense?
+     double (S n) = 10 -> S n = 5 -> n = 4
+     so double n = 8 /= 10
+
+
+*)
 
 (** To summarize: Trying to carry out this proof by induction on [n]
     when [m] is already in the context doesn't work because we are
@@ -621,7 +629,7 @@ Proof.
 
     + (* m = S m' *)
       apply f_equal.
-
+      
 (** At this point, since we are in the second branch of the [destruct
     m], the [m'] mentioned in the context at this point is actually
     the predecessor of the one we started out talking about.  Since we
@@ -642,15 +650,64 @@ Proof.
 Theorem beq_nat_true : forall n m,
     beq_nat n m = true -> n = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n. induction n as [|n'].
+     (* let n = 0 *)
+    + induction m as [|m'].
+        - reflexivity.
+        - simpl. intros contra. inversion contra.
+     (* now let n = S n' *)
+    + induction m as [|m'].
+        - intros contra. inversion contra.
+        - simpl. intros H. apply f_equal.
+          (*
+            we want to show [n' = m'], which would be true if
+            forall m. [beq_nat n' m = true] by IHn'.
+            so we apply IHn' and now it suffices to show [beq_nat n' m = true].
+            but that's true by hypothesis H. and we are done
+          *)
+          apply IHn'. inversion H.
+Qed.      
+
 
 (** **** Exercise: 2 stars, advanced (beq_nat_true_informal)  *)
 (** Give a careful informal proof of [beq_nat_true], being as explicit
     as possible about quantifiers. *)
+(*
+  we show
+       ∀ n m. beq_nat n m = true -> n = m
+  by induction on n.
+    
+  suppose n = 0. then our goal becomes
+       ∀ m. beq_nat 0 m = true -> 0 = m.
+    now we do induction on m.
+    let m = 0 and we have
+            beq_nat 0 0 = true -> 0 = 0.
+    This is clearly true.
+    next let m = S m' and we have to show
+            beq_nat 0 (S m') = true -> 0 = S m',
+    which is clearly false by construction of natrual numbers.
 
-(* FILL IN HERE *)
-(** [] *)
+  Now let n = S n' and our goal is:
+       ∀ m. beq_nat (S n') m = true -> S n' = m,
+  and our induction hypothesis is
+        ∀ m. beq_nat n' m = true -> n' = m.
+
+     now we do induction on m.
+     let m = 0 and our goal is:
+             beq_nat (S n') 0 = true -> S n' = 0,
+     this is false by construction on natrual numbers.
+     next let m = S m' and our goal is:
+             beq_nat (S n') (S m') = true -> S n' = S m'.
+     
+   
+
+  
+  
+ 
+
+
+
+*)
 
 (** While we're at it, let's use [beq_nat_true] to prove a similar
     property about identifiers: *)
