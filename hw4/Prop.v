@@ -19,6 +19,7 @@ Definition even (n:nat) : Prop :=
     returns [true] when applied to [n]."  
 
     Note that here we have given a name
+
     to a proposition using a [Definition], just as we have
     given names to expressions of other sorts. This isn't a fundamentally
     new kind of proposition;  it is still just an equality. *)
@@ -30,7 +31,7 @@ Definition even (n:nat) : Prop :=
     presenting _evidence_ that a number is even. *)
 
 Inductive ev : nat -> Prop :=
-  | ev_0 : ev O
+  | ev_0  : ev O
   | ev_SS : forall n:nat, ev n -> ev (S (S n)).
 
 
@@ -53,9 +54,9 @@ Inductive ev : nat -> Prop :=
 Theorem double_even : forall n,
   ev (double n).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
+ intros n. induction n.
+   + simpl. 
+   + 
 
 
 (* ##################################################### *)
