@@ -414,7 +414,9 @@ Theorem S_inj : forall (n m : nat) (b : bool),
      beq_nat (S n) (S m) = b  ->
      beq_nat n m = b.
 Proof.
-  intros n m b H. simpl in H. apply H.
+  intros n m b H.
+  simpl in H.
+  apply H.
 Qed.
 
 (** Similarly, the tactic [apply L in H] matches some
@@ -451,6 +453,11 @@ Theorem silly3' : forall (n : nat),
   true = beq_nat (S (S n)) 7.
 Proof.
   intros n eq H.
+  (*
+     eq : L1 -> L2  where L1 [n == 5 = true -> (S S n) == 7 = true]
+     H  : L1
+     do : apply eq in H  -> forward reasoning
+  *)
   symmetry in H. apply eq in H. symmetry in H.
   apply H.
 Qed.
