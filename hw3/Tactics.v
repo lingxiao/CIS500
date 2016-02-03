@@ -1042,7 +1042,9 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  intros X Y l l1 l2. induction l.
+  intros X Y l l1 l2. destruct l.
+    + simpl. intros H.
+      
 
     
     
