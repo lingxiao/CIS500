@@ -480,9 +480,12 @@ Theorem plus_n_n_injective : forall n m,
      n + n = m + m ->
      n = m.
 Proof.
-  intros n. induction n as [| n' Ihn'].
-    + simpl. intros m H. symmetry in H. 
-Abort.
+  intros n. induction n as [| n' ].
+    + simpl.  intros m H1. symmetry in H1.
+      induction m.  (* now we massage the hypothesis *)
+        - reflexivity.
+        - inversion H1.
+   + intros m H2.
 
 
 (* ###################################################### *)
