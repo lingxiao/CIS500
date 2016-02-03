@@ -665,7 +665,7 @@ Proof.
             so we apply IHn' and now it suffices to show [beq_nat n' m = true].
             but that's true by hypothesis H. and we are done
           *)
-          apply IHn'. inversion H.
+          apply IHn'. inversion H. reflexivity.
 Qed.      
 
 
@@ -677,35 +677,38 @@ Qed.
        ∀ n m. beq_nat n m = true -> n = m
   by induction on n.
     
-  suppose n = 0. then our goal becomes
+  + Suppose n = 0. then our goal becomes
        ∀ m. beq_nat 0 m = true -> 0 = m.
     now we do induction on m.
-    let m = 0 and we have
+    - let m = 0 and we have
             beq_nat 0 0 = true -> 0 = 0.
-    This is clearly true.
-    next let m = S m' and we have to show
+      This is clearly true.
+    - next let m = S m' and we have to show
             beq_nat 0 (S m') = true -> 0 = S m',
-    which is clearly false by construction of natrual numbers.
+      which is clearly false by construction of natrual numbers.
 
-  Now let n = S n' and our goal is:
+  + Now let n = S n' and our goal is:
        ∀ m. beq_nat (S n') m = true -> S n' = m,
   and our induction hypothesis is
         ∀ m. beq_nat n' m = true -> n' = m.
 
      now we do induction on m.
-     let m = 0 and our goal is:
+     - let m = 0 and our goal is:
              beq_nat (S n') 0 = true -> S n' = 0,
-     this is false by construction on natrual numbers.
-     next let m = S m' and our goal is:
+       this is false by construction on natrual numbers.
+     - next let m = S m' and our goal is:
              beq_nat (S n') (S m') = true -> S n' = S m'.
-     
-   
+       So suppose
+             [H] := beq_nat (S n') (S m') = true,
+       then we have to show
+             S n' = S m'   or n ' = m'
+       by lemma [f_eq]. Using the induction hypothesis and let m = m'
+       we know that our goal n' = m' is true if
+             beq_nat n' m' = true.
+       and we know this is true since [H] is true and
+            [H] -> beq_nat n' m' = true.
 
-  
-  
- 
-
-
+        and we are done!
 
 *)
 
