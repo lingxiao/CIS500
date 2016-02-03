@@ -493,7 +493,7 @@ Proof.
         - reflexivity.
         - inversion H1.
    + intros m H2.
-Abort.     
+Abort.     (* todo *)
 
 
 (* ###################################################### *)
@@ -1042,9 +1042,10 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  intros X Y l l1 l2.
-  unfold combine. destruct l.
-Abort.
+  intros X Y l. unfold combine, split.
+    
+    
+
     
   
 
@@ -1211,8 +1212,14 @@ Qed.
 Theorem beq_nat_sym : forall (n m : nat),
   beq_nat n m = beq_nat m n.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n. induction n as [|n IHn'].
+    + induction m.
+        - reflexivity.
+        - reflexivity.
+    + induction m.
+        - reflexivity.
+        - apply IHn'.
+Qed.
 
 (** **** Exercise: 3 stars, advanced, optional (beq_nat_sym_informal)  *)
 (** Give an informal proof of this lemma that corresponds to your
@@ -1222,6 +1229,8 @@ Proof.
 
    Proof:
    (* FILL IN HERE *)
+   todo: finish this
+
 []
  *)
 
