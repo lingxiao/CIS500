@@ -1297,9 +1297,12 @@ Theorem filter_exercise : forall (X : Type) (test : X -> bool)
      filter test l = x :: lf ->
      test x = true.
 Proof.
-  intros X test x l lf. induction l as [|a l'].
-    + intros contra. inversion contra.
-    + 
+  intros X test x l lf.
+  generalize dependent test. generalize dependent x. generalize dependent lf.
+  induction l as [|a l'].
+    + intros lf x test contra. inversion contra.
+    + intros lf x test H. 
+      
   
   
 
