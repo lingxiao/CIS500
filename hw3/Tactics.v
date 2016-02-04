@@ -482,12 +482,7 @@ Qed.
 
  *)
 
-Lemma incr_inj : forall (n m : nat), S n = S m -> n = m.
-Proof.
- admit.
-Qed.
-  
-(* todo: finish this one!! not optional  *)
+
 Theorem plus_n_n_injective : forall n m,
      n + n = m + m ->
      n = m.
@@ -505,8 +500,8 @@ Proof.
           simpl in H. apply S_injective in H. symmetry in H.
           apply IHn' in H.
           (* massage the goal *)
-          rewrite incr_inj.
-          
+          apply f_equal. apply H.
+Qed.          
 
           
           
