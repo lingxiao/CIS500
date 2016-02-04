@@ -1352,7 +1352,59 @@ Qed.
     [existsb'] and [existsb] have the same behavior.
 *)
 
-(* FILL IN HERE *)
-(** [] *)
+
+Fixpoint forallb {X : Type} (p : X -> bool) (l : list X) : bool :=
+  match l with
+    | []    => true
+    | x::l' => p x && forallb p l'
+  end.
+
+
+Fixpoint existsb  {X : Type} (p : X -> bool) (l : list X) : bool :=
+  match l with
+    | []    => false
+    | x::l' => p x || forallb p l'
+  end.
+
+Definition existsb' {X : Type} (p : X -> bool) (l : list X) : bool :=
+  negb (forallb p l).
+
+
+Theorem existsb_existsb : forall (X: Type) (p : X -> bool) (l : list X),
+  existsb p l = existsb' p l.
+Proof.
+  intros X p l. induction l.
+    + reflexivity.
+    + simpl.
+  
+
+
+(* some ad hoc tests *)
+Example forallb1 : forallb oddb [1;3;5;7;9] = true.
+Proof. reflexivity. Qed.
+
+Example forallb2 : forallb negb [false;false] = true.
+reflexivity.
+
+Example forallb3 : forallb evenb [0;2;4;5] = false.
+reflexivity.
+
+Example forallb4 : forallb (beq_nat 5) [] = true.
+reflexivity.
+
+
+Example existsb1' : existsb (beq_nat 5) [0;2;3;6] = false.
+reflexivity.
+
+Example existsb2' : existsb (andb true) [true;true;false] = true.
+reflexivity.
+
+Example existsb3' : existsb oddb [1;0;0;0;0;3] = true.
+reflexivity.
+
+Example existsb4' : existsb evenb [] = false.
+reflexivity.
+
+
 
 (** $Date: 2016-01-13 12:20:50 -0500 (Wed, 13 Jan 2016) $ *)
