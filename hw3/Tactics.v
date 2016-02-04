@@ -482,19 +482,32 @@ Qed.
 
  *)
 
-(* todo: finish this one!! *)
+(* todo: finish this one!! not optional  *)
 Theorem plus_n_n_injective : forall n m,
      n + n = m + m ->
      n = m.
 Proof.
-  intros n. induction n as [| n' ].
-    + simpl.  intros m H1. symmetry in H1.
-      induction m.  (* now we massage the hypothesis *)
+  intros n. induction n as [|n'].
+    + simpl. intros. symmetry in H. destruct m.
         - reflexivity.
-        - inversion H1.
-   + intros m H2.
-Abort.     (* todo *)
+        - inversion H.
+    + intros. destruct m.
+        - inversion H.
+        - simpl in H.
+          (* massage the goal *)
+          
 
+          
+          (* massage the hypothesis *)
+          apply S_injective in H. rewrite plus_comm in H.
+          simpl in H. symmetry in H. rewrite plus_comm in H.
+          simpl in H. apply S_injective in H. symmetry in H.
+          apply IHn' in H.
+
+          
+
+
+      
 
 (* ###################################################### *)
 (** * Varying the Induction Hypothesis *)
@@ -1310,7 +1323,6 @@ Qed.
       
 
       
-  
 (** **** Exercise: 4 stars, advanced, recommended (forall_exists_challenge)  *)
 (** Define two recursive [Fixpoints], [forallb] and [existsb].  The
     first checks whether every element in a list satisfies a given
