@@ -1363,7 +1363,7 @@ Fixpoint forallb {X : Type} (p : X -> bool) (l : list X) : bool :=
 Fixpoint existsb  {X : Type} (p : X -> bool) (l : list X) : bool :=
   match l with
     | []    => false
-    | x::l' => p x || forallb p l'
+    | x::l' => p x || existsb p l'
   end.
 
 Definition existsb' {X : Type} (p : X -> bool) (l : list X) : bool :=
@@ -1375,8 +1375,8 @@ Theorem existsb_existsb : forall (X: Type) (p : X -> bool) (l : list X),
 Proof.
   intros X p l. induction l.
     + reflexivity.
-    + simpl.
-  
+    + simpl. 
+Abort.  
 
 
 (* some ad hoc tests *)
