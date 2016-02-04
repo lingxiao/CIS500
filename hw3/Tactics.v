@@ -1370,13 +1370,14 @@ Definition existsb' {X : Type} (p : X -> bool) (l : list X) : bool :=
   negb (forallb p l).
 
 
-Theorem existsb_existsb : forall (X: Type) (p : X -> bool) (l : list X),
+Theorem existsb_existsb' : forall (X: Type) (p : X -> bool) (l : list X),
   existsb p l = existsb' p l.
 Proof.
   intros X p l. induction l.
     + reflexivity.
-    + simpl. 
-Abort.  
+    + simpl. destruct (p x) eqn: Hpx.
+        - simpl. unfold existsb'. simpl. rewrite Hpx. simpl.
+          
 
 
 (* some ad hoc tests *)
