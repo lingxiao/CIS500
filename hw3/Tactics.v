@@ -1376,8 +1376,13 @@ Proof.
   intros X p l. induction l.
     + reflexivity.
     + simpl. unfold existsb'. destruct (p x) eqn: Hpx.
-        - simpl. rewrite Hpx. simpl.
-          unfold existsb' in IHl. rewrite <- IHl. 
+        - simpl. rewrite Hpx. simpl. unfold forallb. destruct l.
+            * 
+
+
+          simpl. rewrite Hpx. simpl.
+          unfold existsb' in IHl. rewrite <- IHl.
+          
           
 
 

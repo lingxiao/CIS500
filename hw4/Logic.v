@@ -178,7 +178,7 @@ Qed.
 Lemma and_example2' :
   forall n m : nat, n = 0 /\ m = 0 -> n + m = 0.
 Proof.
-  intros n m [Hn Hm].
+  intros n m [Hn Hm].   (* pattern match in intro directly *)
   rewrite Hn. rewrite Hm.
   reflexivity.
 Qed.
@@ -240,7 +240,8 @@ Proof.
   intros P Q [HP HQ].
   split.
     - (* left *) apply HQ.
-    - (* right *) apply HP.  Qed.
+    - (* right *) apply HP.
+Qed.
   
 (** **** Exercise: 2 stars (and_assoc)  *)
 (** (In the following proof of associativity, notice how the _nested_
@@ -317,6 +318,7 @@ Proof.
   - right. reflexivity.
 Qed.
 
+
 (** **** Exercise: 1 star (mult_eq_0)  *)
 Lemma mult_eq_0 :
   forall n m, n * m = 0 -> n = 0 \/ m = 0.
@@ -369,7 +371,9 @@ Theorem ex_falso_quodlibet : forall (P:Prop),
 Proof.
   (* WORKED IN CLASS *)
   intros P contra.
-  destruct contra.  Qed.
+  (* inversion contra *)
+  destruct contra.
+Qed.
 
 (** The Latin _ex falso quodlibet_ means, literally, "from falsehood
     follows whatever you like"; this is another common name for the
@@ -390,6 +394,7 @@ Proof.
 
 Theorem zero_not_one : ~(0 = 1).
 Proof.
+  (* unfold not. intros H. inversion H.*)
   intros contra. inversion contra.
 Qed.
 
@@ -414,14 +419,16 @@ Qed.
 Theorem not_False :
   ~ False.
 Proof.
-  unfold not. intros H. destruct H. Qed.
+  unfold not. intros H. destruct H.
+Qed.
 
 Theorem contradiction_implies_anything : forall P Q : Prop,
   (P /\ ~P) -> Q.
 Proof.
   (* WORKED IN CLASS *)
   intros P Q [HP HNA]. unfold not in HNA.
-  apply HNA in HP. destruct HP.  Qed.
+  apply HNA in HP. inversion HP.
+Qed.
 
 Theorem double_neg : forall P : Prop,
   P -> ~~P.
