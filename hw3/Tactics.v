@@ -1381,7 +1381,9 @@ Definition existsb' {X : Type} (p : X -> bool) (l : list X) : bool :=
 Lemma deMorgan : forall (a b : bool),
   (negb (a && b)) = (negb a) || (negb b).
 Proof.  
-  admit.
+  intros a b. destruct a.
+    + reflexivity.
+    + reflexivity.
 Qed.
 
 Theorem existsb_existsb' : forall (X: Type) (p : X -> bool) (l : list X),
