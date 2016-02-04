@@ -559,15 +559,24 @@ Fixpoint combine {X Y : Type} (lx : list X) (ly : list Y)
     [split].  Make sure it passes the given unit test. *)
 
 
-(* why isn't there a forall infront of X and Y ?? *)
+(* why isn't there a forall infront of X and Y ?? 
 Fixpoint map_ {X Y:Type} (f:X->Y) (l:list X) : (list Y) :=
   match l with
   | []     => []
   | h :: t => (f h) :: (map_ f t)
   end.
 
-Fixpoint split {X Y : Type} (l : list (X*Y)) : (list X) * (list Y) :=
+Fixpoint split2 {X Y : Type} (l : list (X*Y)) : (list X) * (list Y) :=
   (map_ fst l, map_ snd l).
+
+*)
+
+Fixpoint split {X Y : Type} (l : list (X * Y)) : (list X) * (list Y) :=
+  match l with
+    | []         => ([], [])
+    | (x, y)::l' =>  let l'' := split l' in (x::(fst l''), (y::(snd l'')))
+  end.
+
 
 Example test_split:
   split [(1,false);(2,false)] = ([1;2],[false;false]).
@@ -1175,23 +1184,6 @@ Compute (@nth_error nat ls (length ls)).
 
      []
  *)
-
-Theorem nth_error_formal: forall (n : nat) (X : Type) (l : list X),
-     length l = n ->
-     nth_error l n = None.
-Proof.
-  intros n X l. generalize dependent n. induction l as [|l'].
-    + induction n as [|n'].
-        - intros H. reflexivity.
-        - intros contra. inversion contra.
-    + induction n as [|n'].
-        - intros contra. inversion contra.
-        - simpl. intros H. apply IHl. apply S_injective in H. apply H.
-Qed.
-
-
-
-
 
 
 (** **** Exercise: 4 stars, advanced (church_numerals)  *)

@@ -1284,6 +1284,8 @@ Proof.
     + intros l2. simpl. destruct l2.
         - intros contra. inversion contra.
         - intros H. simpl in H. apply S_injective in H.
+          simpl.
+          
 
 
           
