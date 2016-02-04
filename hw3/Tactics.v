@@ -1365,7 +1365,6 @@ Fixpoint existsb  {X : Type} (p : X -> bool) (l : list X) : bool :=
     | []    => false
     | x::l' => p x || existsb p l'
   end.
-
 (*
   forall P_i  i = 1 .. n
          x_i  i = 1 ... n
