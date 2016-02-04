@@ -1375,8 +1375,9 @@ Theorem existsb_existsb' : forall (X: Type) (p : X -> bool) (l : list X),
 Proof.
   intros X p l. induction l.
     + reflexivity.
-    + simpl. destruct (p x) eqn: Hpx.
-        - simpl. unfold existsb'. simpl. rewrite Hpx. simpl.
+    + simpl. unfold existsb'. destruct (p x) eqn: Hpx.
+        - simpl. rewrite Hpx. simpl.
+          unfold existsb' in IHl. rewrite <- IHl. 
           
 
 
