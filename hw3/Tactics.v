@@ -1281,9 +1281,10 @@ Proof.
   intros X l1. induction l1 as [|a l1'].
     + simpl. intros l2 H. symmetry in H. apply length0 in H.
       rewrite H. reflexivity.
-    + intros l2. induction l2 as [|b l2'].
+    + intros l2. simpl. destruct l2.
         - intros contra. inversion contra.
         - intros H. simpl in H. apply S_injective in H.
+
 
           
 
