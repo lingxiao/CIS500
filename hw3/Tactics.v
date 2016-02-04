@@ -1284,14 +1284,8 @@ Proof.
     + intros l2. simpl. destruct l2.
         - intros contra. inversion contra.
         - intros H. simpl in H. apply S_injective in H.
-          simpl.
-          
-
-
-          
-
-          
-
+          simpl. rewrite IHl1'. reflexivity. apply H.
+Qed.
   
 
 (** **** Exercise: 3 stars, advanced (filter_exercise)  *)
