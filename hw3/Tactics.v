@@ -1044,7 +1044,7 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
 Proof.
   intros X Y l. induction l as [|x l'].
     + simpl. intros l1 l2 H.  inversion H. reflexivity.
-    + intros l1 l2. 
+    + intros l1 l2 H. 
 Abort.      
 
     
@@ -1297,8 +1297,11 @@ Theorem filter_exercise : forall (X : Type) (test : X -> bool)
      filter test l = x :: lf ->
      test x = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros X test x l lf. induction l as [|a l'].
+    + intros contra. inversion contra.
+    + 
+  
+  
 
 (** **** Exercise: 4 stars, advanced, recommended (forall_exists_challenge)  *)
 (** Define two recursive [Fixpoints], [forallb] and [existsb].  The
