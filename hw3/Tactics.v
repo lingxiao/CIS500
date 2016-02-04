@@ -1042,17 +1042,12 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  intros X Y l l1 l2. destruct l.
-    + simpl. intros H.
-      
+  intros X Y l. induction l as [|x l'].
+    + simpl. intros l1 l2 H.  inversion H. reflexivity.
+    + intros l1 l2. 
+Abort.      
 
     
-    
-
-    
-  
-
-
 (** Sometimes, doing a [destruct] on a compound expression (a
     non-variable) will erase information we need to complete a proof. *)
 (** For example, suppose
@@ -1257,14 +1252,40 @@ Proof.
     [combine]. Then, prove that the property holds. (Be sure to leave
     your induction hypothesis general by not doing [intros] on more
     things than necessary.  Hint: what property do you need of [l1]
-    and [l2] for [split] [combine l1 l2 = (l1,l2)] to be true?)  *)
+    and [l2] for [split (combine l1 l2) = (l1,l2)] to be true?)  *)
 
-Definition split_combine_statement : Prop :=
-(* FILL IN HERE *) admit.
+
+(*
+   split is the inverse of combine
+   combine l1 l2 = l -> split l = (l1,l2)
+
+  Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
+    split l = (l1, l2) ->
+    combine l1 l2 = l.
+
+*)
+Fact length0 : forall (X: Type) (l: list X),
+  length l = 0 -> l = [].                 
+Proof.
+  intros X l. induction l.
+    + intros H. reflexivity.
+    + intros H. inversion H.
+Qed.
+  
+Definition split_combine_statement :=
+  forall X (l1 l2 : list X),
+    length l1 = length l2 -> split (combine l1 l2) = (l1, l2).
 
 Theorem split_combine : split_combine_statement.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros X l1. induction l1 as [|a l1'].
+    + simpl. intros l2 H. symmetry in H. apply length0 in H.
+      rewrite H. reflexivity.
+    + intros l2. induction l2 as [|b l2'].
+        - intros contra. inversion contra.
+        - simpl. intros H. apply 
+
+  
 
 
 

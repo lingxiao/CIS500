@@ -1137,7 +1137,6 @@ Compute (@nth_error nat ls (length ls)).
    forall X n l, length l = n -> @nth_error X l n = None
 
 
-
     We show
           ∀ n X l. length l = n -> nth_error l n = None
     by induction on l.
