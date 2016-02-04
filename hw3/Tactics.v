@@ -1366,24 +1366,35 @@ Fixpoint existsb  {X : Type} (p : X -> bool) (l : list X) : bool :=
     | x::l' => p x || existsb p l'
   end.
 
-Definition existsb' {X : Type} (p : X -> bool) (l : list X) : bool :=
-  negb (forallb p l).
+(*
+  forall P_i  i = 1 .. n
+         x_i  i = 1 ... n
+  forall:  true ^ P x_i ^  Px_{i+1} ^ ...
+  exixts:  false \/ P x_i \/ P x_{i+1} \/ ...
 
+
+   we have : A ^ B      , we need A \/ B :=: not ( not A ^ not B)
+ 
+*)
+Definition existsb' {X : Type} (p : X -> bool) (l : list X) : bool :=
+  negb (forallb (fun x => negb (p x)) l).
+
+Lemma deMorgan : forall (a b : bool),
+  (negb (a && b)) = (negb a) || (negb b).
+Proof.  
+  admit.
+Qed.
 
 Theorem existsb_existsb' : forall (X: Type) (p : X -> bool) (l : list X),
   existsb p l = existsb' p l.
-Proof.
+Proof.	
   intros X p l. induction l.
     + reflexivity.
-    + simpl. unfold existsb'. destruct (p x) eqn: Hpx.
-        - simpl. rewrite Hpx. simpl. unfold forallb. destruct l.
-            * 
+    + unfold existsb'. simpl. rewrite -> IHl. unfold existsb'.
+      rewrite deMorgan. rewrite negb_involutive. reflexivity.
+Qed.      
+      
 
-
-          simpl. rewrite Hpx. simpl.
-          unfold existsb' in IHl. rewrite <- IHl.
-          
-          
 
 
 (* some ad hoc tests *)
