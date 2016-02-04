@@ -1292,20 +1292,25 @@ Qed.
 (** This one is a bit challenging.  Pay attention to the form of your
     induction hypothesis. *)
 
+(* todo: go over this one with steve - forward/backward reasoning. logic of proof *)
 Theorem filter_exercise : forall (X : Type) (test : X -> bool)
                              (x : X) (l lf : list X),
      filter test l = x :: lf ->
      test x = true.
 Proof.
-  intros X test x l lf.
-  generalize dependent test. generalize dependent x. generalize dependent lf.
+  intros X test x l. generalize dependent x. 
   induction l as [|a l'].
-    + intros lf x test contra. inversion contra.
-    + intros lf x test H. 
+    + intros lf x contra. inversion contra.
+    + intros x lf H. simpl in H. destruct (test a) eqn : Hta.
+          (* todo:  what is the thought process here? *)
+          (* why can't you apply IHl' here? *)
+        - inversion H. rewrite <- H1. apply Hta. 
+        - apply IHl' in H. apply H.
+Qed.          
+      
+
       
   
-  
-
 (** **** Exercise: 4 stars, advanced, recommended (forall_exists_challenge)  *)
 (** Define two recursive [Fixpoints], [forallb] and [existsb].  The
     first checks whether every element in a list satisfies a given
