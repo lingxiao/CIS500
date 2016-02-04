@@ -1283,13 +1283,13 @@ Proof.
       rewrite H. reflexivity.
     + intros l2. induction l2 as [|b l2'].
         - intros contra. inversion contra.
-        - simpl. intros H. apply 
+        - intros H. simpl in H. apply S_injective in H.
+
+          
+
+          
 
   
-
-
-
-(** [] *)
 
 (** **** Exercise: 3 stars, advanced (filter_exercise)  *)
 (** This one is a bit challenging.  Pay attention to the form of your
