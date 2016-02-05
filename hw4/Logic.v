@@ -763,6 +763,11 @@ Qed.
 (** Prove that "[P] holds for all [x]" implies "there is no [x] for
     which [P] does not hold." *)
 
+(* might this be helpful?? *)
+Theorem forall_imply_exists: forall (X : Type) (P : X -> Prop),
+  (forall x, P x) -> (exists x, P x).
+Proof. admit. Qed.
+
 (* todo: finish this why is this one hard?*)
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
