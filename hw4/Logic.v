@@ -833,6 +833,10 @@ Qed.
     Note, in the next, how [In] starts out applied to a variable and
     only gets expanded when we do case analysis on this variable: *)
 
+(*
+  forall ...
+  if x in l   ==>   f x  in  (f <$> l)
+*)
 Lemma In_map :
   forall (A B : Type) (f : A -> B) (l : list A) (x : A),
     In x l ->
@@ -857,13 +861,21 @@ Qed.
     of strengths and limitations. *)
 
 (** **** Exercise: 2 stars (In_map_iff)  *)
+(*
+   forall ...
+   In y (map f l)   iff    there exists x so that f x = y  and x is in l
+*)
 Lemma In_map_iff :
   forall (A B : Type) (f : A -> B) (l : list A) (y : B),
     In y (map f l) <->
     exists x, f x = y /\ In x l.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros A B f l y. split.
+    + induction l as [|x' l'].
+        - simpl. intros contra. inversion contra.
+        - simpl. intros H. 
+  	
+
 
 (** **** Exercise: 2 stars (in_app_iff)  *)
 Lemma in_app_iff : forall A l l' (a:A),
