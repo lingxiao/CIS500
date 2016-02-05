@@ -1334,6 +1334,11 @@ Definition exp (n m : nat) : nat
   := fun (X : Type) (f : X -> X) (x : X)
   => (m (X -> X) (n X)) f x.
 
+(* make coq do the work *)
+Definition exp2 (n m : nat) : nat
+  := fun (X : Type) (f : X -> X) (x : X)
+  => (m (_) (n X)) f x.
+
 
 Example exp_1 : exp two two = plus two two.
 Proof. 
