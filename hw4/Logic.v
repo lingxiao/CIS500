@@ -411,18 +411,15 @@ Qed.
 (** Show that Coq's definition of negation implies the intuitive one
     mentioned above: *)
 
+(* to ask: what is the logic here?  *)
 Fact not_implies_our_not : forall (P:Prop),
   ~ P -> (forall (Q:Prop), P -> Q).
 Proof.
-  intros P H Q. destruct H.
-  
+  intros P h Q p.
+  (* and we are left with P, contradicting ~P*)
+  destruct h.
+  apply p.
 Qed.
-  
-  
-  
-  
-
-
   
 
 (** This is how we use [not] to state that [0] and [1] are different
@@ -430,8 +427,8 @@ Qed.
 
 Theorem zero_not_one : ~(0 = 1).
 Proof.
-  (* unfold not. intros H. inversion H.*)
-  intros contra. inversion contra.
+  unfold not. intros contra. inversion contra.
+  (* intros contra. inversion contra.*)
 Qed.
 
 (** Such inequality statements are frequent enough to warrant a
@@ -442,6 +439,7 @@ Check (0 <> 1).
 
 Theorem zero_not_one' : 0 <> 1.
 Proof.
+  (* unfold not. intros H. inversion H.*)
   intros H. inversion H.
 Qed.
 
@@ -468,10 +466,11 @@ Qed.
 
 Theorem double_neg : forall P : Prop,
   P -> ~~P.
-  Proof.
+Proof.
   (* WORKED IN CLASS *)
   intros P H. unfold not. intros G.
-  apply G. (* backward logic *)
+  (* apply G in H. inversion H.*)
+  apply G. 
   apply H.
 Qed.
 
@@ -488,8 +487,13 @@ Qed.
 
    _Theorem_: [P] implies [~~P], for any proposition [P].
 
-   _Proof_:
-(* FILL IN HERE *)
+   _Proof_:   By  definition of ~ we have
+                   P ==> ~~ P  :=   P ==> (P ==> False) ==> False
+
+              Suppose we have some P, let P implies False as hypothesized.
+              But since we know P and we know P ==> False, we
+              may conclude False. Since False leads to any conclusion,
+              we are done.
    []
 *)
 
@@ -497,21 +501,29 @@ Qed.
 Theorem contrapositive : forall P Q : Prop,
   (P -> Q) -> (~Q -> ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros P Q H G.
+  unfold not in G. unfold not. intros P1.
+  apply H in P1. apply G in P1. inversion P1.
+Qed.  
+
 
 (** **** Exercise: 1 star (not_both_true_and_false)  *)
 Theorem not_both_true_and_false : forall P : Prop,
   ~ (P /\ ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros P. unfold not. intros [H1 H2].
+  apply H2 in H1. inversion H1.
+Qed. 
 
 (** **** Exercise: 1 star, advanced (informal_not_PNP)  *)
 (** Write an informal proof (in English) of the proposition [forall P
     : Prop, ~(P /\ ~P)]. *)
 
-(* FILL IN HERE *)
+(*
+    Proof.
+
+
+*)
 (** [] *)
 
 (** Similarly, since inequality involves a negation, it requires a
