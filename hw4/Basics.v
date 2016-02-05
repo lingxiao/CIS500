@@ -1,5 +1,8 @@
 (** * Basics: Functional Programming in Coq *)
 
+(* IMPORTANT: Please do not put solutions to the exercises in
+   publicly accessible places!  (See the [Preface] for why.) *)
+
 (*
    [Admitted] is Coq's "escape hatch" that says accept this definition
    without proof.  We use it to mark the 'holes' in the development
@@ -588,7 +591,7 @@ Proof. simpl. reflexivity.  Qed.
     this one, define it in terms of a previously defined function. *)
 
 Definition blt_nat (n m : nat) : bool :=
-  andb (ble_nat n m) (negb (beq_nat n m)).
+  (* FILL IN HERE *) admit.
 
 Example test_blt_nat1:             (blt_nat 2 2) = false.
 (* FILL IN HERE *) Admitted.
@@ -1166,4 +1169,4 @@ Fixpoint plus' (n : nat) (m : nat) : nat :=
 (* FILL IN HERE *)
 (** [] *)
 
-(** $Date: 2016-01-15 17:30:08 -0500 (Fri, 15 Jan 2016) $ *)
+(** $Date: 2016-01-30 17:02:58 -0500 (Sat, 30 Jan 2016) $ *)

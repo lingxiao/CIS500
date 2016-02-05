@@ -20,7 +20,8 @@ Require Export Basics.
      - From the command line:
    
          Run [coqc Basics.v]
-*)
+
+    *)
 
 (* ###################################################################### *)
 (** * Proof by Induction *)
@@ -30,8 +31,8 @@ Require Export Basics.
     simplification.  The fact that it is also a neutral element on the
     _right_... *)
 
-Theorem plus_0_r_firsttry : forall n:nat,
-  n + 0 = n.
+Theorem plus_n_O_firsttry : forall n:nat,
+  n = n + 0.
 
 (** ... cannot be proved in the same simple way.  Just applying
   [reflexivity] doesn't work, since the [n] in [n + 0] is an arbitrary
@@ -50,11 +51,10 @@ Abort.
    get one step further, but, since [n] can be arbitrarily large, if we
    try to keep on like this we'll never be done. *)
 
-Theorem plus_0_r_secondtry : forall n:nat,
-  n + 0 = n.
+Theorem plus_n_O_secondtry : forall n:nat,
+  n = n + 0.
 Proof.
-  intros n.
-  destruct n as [| n'].
+  intros n. destruct n as [| n'].
   - (* n = 0 *)
     reflexivity. (* so far so good... *)
   - (* n = S n' *)
@@ -80,15 +80,12 @@ Abort.
     subgoals: first showing [P(O)] and then showing [P(n') -> P(S
     n')].  Here's how this works for the theorem at hand: *)
 
-Theorem plus_0_r : forall n:nat, n + 0 = n.
-Proof.
-  intros n.
-    induction n as [| n' IHn'].
-  - reflexivity.                  (* n = 0 *)
-  - simpl.                        (* apply def of [+] *)
-  rewrite -> IHn'. reflexivity.   (* n = S n' *)
-Qed.
 
+Theorem plus_n_O : forall n:nat, n = n + 0.
+Proof.
+  intros n. induction n as [| n' IHn'].
+  - (* n = 0 *)    reflexivity.
+  - (* n = S n' *) simpl. rewrite <- IHn'. reflexivity.  Qed.
 
 (** Like [destruct], the [induction] tactic takes an [as...]
     clause that specifies the names of the variables to be introduced
@@ -101,18 +98,16 @@ Qed.
     rather than letting Coq choose one arbitrarily). The goal in this
     case becomes [(S n') + 0 = S n'], which simplifies to [S (n' + 0)
     = S n'], which in turn follows from [IHn']. *)
-Theorem minus_diag : forall n, minus n n = 0.
+
+Theorem minus_diag : forall n,
+  minus n n = 0.
 Proof.
   (* WORKED IN CLASS *)
-  intros n.
-  induction n as [| n' IHn'].
+  intros n. induction n as [| n' IHn'].
   - (* n = 0 *)
     simpl. reflexivity.
   - (* n = S n' *)
-    simpl. rewrite -> IHn'. reflexivity.
-Qed.
-
-
+    simpl. rewrite -> IHn'. reflexivity.  Qed.
 
 (** **** Exercise: 2 stars, recommended (basic_induction)  *)
 (** Prove the following using induction. You might need previously
@@ -121,66 +116,32 @@ Qed.
 Theorem mult_0_r : forall n:nat,
   n * 0 = 0.
 Proof.
-  intros n.
-  induction n as [| n' IHn'].
-  - simpl. reflexivity.                    (* n = 0 case *)
-  - simpl. rewrite -> IHn'. reflexivity.   (* n = S n' case *)
-Qed.
-
+  (* FILL IN HERE *) Admitted.
 
 Theorem plus_n_Sm : forall n m : nat, 
   S (n + m) = n + (S m).
-Proof.
-  intros n m.
-  induction n as [| n' IHn'].  (* [n = 0] and [n = S n']*)
-  - simpl. reflexivity.        (* s (0 + m) = 0 + S m*)
-  (* S (S n' + m ) = S n' + S m *)
-  - simpl. rewrite -> IHn'. reflexivity.  
-Qed.
-
-(* m + (n + 1) = (1 + m) + n*)
-Lemma add_one : forall n m : nat, m + S n = S m + n.
-Proof. intros n m. simpl. rewrite -> plus_n_Sm. reflexivity. Qed.  
+Proof. 
+  (* FILL IN HERE *) Admitted.
 
 
-Theorem plus_rt_id : forall n : nat, n + 0 = n.
-Proof.
-  intros n. induction n.
-    + reflexivity.
-    + simpl. rewrite -> IHn. reflexivity.
-Qed.
-
-  
 Theorem plus_comm : forall n m : nat,
   n + m = m + n.
 Proof.
-  intros n m.
-  induction n as [|n' IHn']. simpl.
-    + rewrite -> plus_rt_id. reflexivity.
-    + simpl. rewrite -> IHn'. 
-    induction m as [|m' IHm'].
-      - simpl. reflexivity.
-      - simpl. rewrite -> plus_n_Sm. reflexivity.
-Qed.
+  (* FILL IN HERE *) Admitted.
 
 
-(* why does it suffice to show for n ? *)
 Theorem plus_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
 Proof.
-  intros n m p.
-  induction n as [|n' IHn'].
-    + simpl. reflexivity.
-    + simpl.  rewrite -> IHn'. reflexivity.
-Qed.
-
+  (* FILL IN HERE *) Admitted.
+(** [] *)
 
 (** **** Exercise: 2 stars (double_plus)  *)
 (** Consider the following function, which doubles its argument: *)
 
 Fixpoint double (n:nat) :=
   match n with
-  | O    => O
+  | O => O
   | S n' => S (S (double n'))
   end.
 
@@ -188,13 +149,10 @@ Fixpoint double (n:nat) :=
 
 Lemma double_plus : forall n, double n = n + n .
 Proof.  
-  intros n.
-  induction n as [|n' IHn'].
-    + simpl. reflexivity.
-    + simpl. rewrite -> IHn'. rewrite -> plus_n_Sm. reflexivity.
-Qed.
+  (* FILL IN HERE *) Admitted.
+(** [] *)
 
-   (** **** Exercise: 2 stars, optional (evenb_S)  *)
+(** **** Exercise: 2 stars, optional (evenb_S)  *)
 (** One inconveninent aspect of our definition of [evenb n] is that it
     may need to perform a recursive call on [n - 2]. This makes proofs
     about [evenb n] harder when done by induction on [n], since we may
@@ -204,37 +162,17 @@ Qed.
 Theorem evenb_S : forall n : nat,
   evenb (S n) = negb (evenb n).
 Proof.
-  intros n. induction n as [|n' IHn'].
-    + simpl. reflexivity.
-    + rewrite -> IHn'. simpl. rewrite -> negb_involutive. reflexivity.
-Qed.
-  
+  (* FILL IN HERE *) Admitted.
+(** [] *)
 
 (** **** Exercise: 1 star (destruct_induction)  *)
 (** Briefly explain the difference between the tactics
     [destruct] and [induction].  
 
-(* TODO: flesh this out *)
 (* FILL IN HERE *)
 
-  Suppose we have some universe:
-              [A = a | b | c | ...]
-  that *may be* inductively defined. Destruct allow us to prove properties
-  on each element of the universe via:
-              [ P(a), P(b), P(c), .. ]
-  but [destruct] does not allow us to assert [P(a) -> P(b)] and so on.
-
-  Now suppose we have inductively defined universe:
-              [B = a | b | c |  ...]
-  where [b = f (a), c = f(b)] for some inductive relation [f], then [induction]
-  allow use to construct argument of form:
-              [ P(a), P(a) -> P(f(a))]
-
-  In practice, if we are to prove [P(A)] using [destruct], then
-  then cardinality of proof of P(A) will be the same as cardinality of [A].
-  [induction] allow use to construct finite sized proofs on infinite universes.
-  
 *)
+(** [] *)
 
 
 (* ###################################################################### *)
@@ -320,13 +258,7 @@ Proof.
 Theorem plus_swap : forall n m p : nat, 
   n + (m + p) = m + (n + p).
 Proof.
-  intros n m p.
-  rewrite -> plus_comm.
-  assert (H: n + p = p + n).
-  { rewrite -> plus_comm. reflexivity. }
-  rewrite -> H.
-  rewrite -> plus_assoc. reflexivity.
-Qed.
+  (* FILL IN HERE *) Admitted.
 
 
 (** Now prove commutativity of multiplication.  (You will probably
@@ -334,41 +266,12 @@ Qed.
     in the proof of this one.  You may find that [plus_swap] comes in
     handy.) *)
 
-(* helper for [mult_comm] *)
-Lemma distrb_1 : forall m n : nat,
-  n * S m = n + n * m. 
-Proof.
-  intros m n.
-  induction n as [|n' IHn'].
-    (* let n = 0 *)
-    + simpl. reflexivity.
-    (* let n = S n' *)
-    + simpl. rewrite -> plus_swap. rewrite -> IHn'. reflexivity.
-Qed.
-
-  
 Theorem mult_comm : forall m n : nat,
   m * n = n * m.
 Proof.
-  intros m n. induction m as [|m' IHm'].
-  (* goal: 0 * n = n * 0 *)
-  + simpl.
-    - induction n as [|n' IHn'].
-        (* goal: 0 * 0 = 0 * 0*)
-        * simpl. reflexivity.
-        (* goal: 0 * S n' = S n' * 0 *)
-        * simpl. rewrite <- IHn'. reflexivity.
-  (* goal: S m' * n = n * S m' *)
-  + simpl.
-    - induction n as [|n' IHn'].
-        (* goal: S m' * 0 = 0 * S m'  *)
-        * simpl. rewrite -> IHm'. simpl. reflexivity.
-        (* goal: S m' * S n' = S n' * S m' *)
-        * rewrite -> IHm'. simpl.
-          rewrite -> plus_swap. rewrite -> distrb_1. reflexivity.
-Qed.          
+  (* FILL IN HERE *) Admitted.
+(** [] *)
 
-  
 (** **** Exercise: 3 stars, optional (more_exercises)  *)
 (** Take a piece of paper.  For each of the following theorems, first
     _think_ about whether (a) it can be proved using only
@@ -381,85 +284,52 @@ Qed.
 Theorem leb_refl : forall n:nat,
   true = leb n n.
 Proof.
-  intros n.
-  induction n as [|n' IHn'].
-    + reflexivity.
-    + simpl. rewrite -> IHn'. reflexivity.
-Qed.
+  (* FILL IN HERE *) Admitted.
 
 Theorem zero_nbeq_S : forall n:nat,
   beq_nat 0 (S n) = false.
 Proof.
-  intros n.
-  induction n as [|n' IHn'].
-    + simpl. reflexivity.
-    + simpl. reflexivity.
-Qed.      
+  (* FILL IN HERE *) Admitted.
 
 Theorem andb_false_r : forall b : bool,
   andb b false = false.
 Proof.
-  intros b. destruct b.
-    + reflexivity.
-    + reflexivity.
-Qed.  
+  (* FILL IN HERE *) Admitted.
 
 Theorem plus_ble_compat_l : forall n m p : nat, 
   leb n m = true -> leb (p + n) (p + m) = true.
 Proof.
-  intros n m p H.
-  induction p as [|p' IHp'].
-    + simpl. rewrite -> H. reflexivity.
-    + simpl. rewrite -> IHp'. reflexivity.
-Qed.
-  
+  (* FILL IN HERE *) Admitted.
 
 Theorem S_nbeq_0 : forall n:nat,
   beq_nat (S n) 0 = false.
 Proof.
-  intros n.
-  induction n.
-    + reflexivity.
-    + reflexivity.
-Qed.  
-  
+  (* FILL IN HERE *) Admitted.
 
 Theorem mult_1_l : forall n:nat, 1 * n = n.
 Proof.
-  intros n. simpl.
-  rewrite -> plus_comm. simpl. reflexivity.
-Qed.  
+  (* FILL IN HERE *) Admitted.
 
 Theorem all3_spec : forall b c : bool,
-  b && c || (negb b || negb c) = true.                      
+    orb
+      (andb b c)
+      (orb (negb b)
+               (negb c))
+  = true.
 Proof.
-  intros b c.
-  destruct b.
-    + simpl. destruct c.
-        - simpl. reflexivity.
-        - simpl. reflexivity.
-   + simpl. reflexivity.
-Qed.
+  (* FILL IN HERE *) Admitted.
 
 Theorem mult_plus_distr_r : forall n m p : nat,
   (n + m) * p = (n * p) + (m * p).
 Proof.
-  intros n m p.
-  induction n.
-    + simpl. reflexivity.
-    + simpl. rewrite -> IHn. rewrite -> plus_assoc. reflexivity.
-Qed.
-
+  (* FILL IN HERE *) Admitted.
 
 Theorem mult_assoc : forall n m p : nat,
   n * (m * p) = (n * m) * p.
 Proof.
-  intros n m p. simpl.
-  induction n. 
-    + reflexivity.
-    + simpl. rewrite -> mult_plus_distr_r. rewrite -> IHn. reflexivity.
-Qed.
-  
+  (* FILL IN HERE *) Admitted.
+(** [] *)
+
 (** **** Exercise: 2 stars, optional (beq_nat_refl)  *)
 (** Prove the following theorem.  (Putting the [true] on the left-hand
     side of the equality may look odd, but this is how the theorem is
@@ -470,12 +340,9 @@ Qed.
 Theorem beq_nat_refl : forall n : nat, 
   true = beq_nat n n.
 Proof.
-  intros n.
-  induction n as [|n' IHn'].
-    + simpl. reflexivity.
-    + simpl. rewrite -> IHn'. reflexivity.
-Qed.    
-  
+  (* FILL IN HERE *) Admitted.
+(** [] *)
+
 (** **** Exercise: 2 stars, optional (plus_swap')  *)
 (** The [replace] tactic allows you to specify a particular subterm to
    rewrite and what you want it rewritten to: [replace (t) with (u)]
@@ -490,13 +357,8 @@ Qed.
 Theorem plus_swap' : forall n m p : nat, 
   n + (m + p) = m + (n + p).
 Proof.
-  intros n m p.
-  rewrite -> plus_comm.
-  replace (n+p) with (p + n).
-  rewrite -> plus_assoc. reflexivity.
-  + rewrite -> plus_comm. reflexivity.
-Qed.    
-
+  (* FILL IN HERE *) Admitted.
+(** [] *)
 
 (** **** Exercise: 3 stars, recommended (binary_commute)  *)
 (** Recall the [increment] and [binary-to-unary] functions that you
@@ -512,112 +374,25 @@ Qed.
     wanting to change your original definitions to make the property
     easier to prove, feel free to do so! *)
 
-Inductive bin : Type :=
-  | BO   : bin
-  | Even : bin -> bin    (* twice a binary number *)
-  | Odd  : bin -> bin.   (* one more than twice a binary number *)
-
-
-(* (a) i. increment binary number by one *)
-Fixpoint incr_bin (n : bin) : bin := match n with
-  | BO      => Odd BO
-  | Even n' => Odd n'
-  | Odd n'  => Even (incr_bin n')                  
-  end.                
-
-
-(* for convinience *)
-Fixpoint incrBinBy (b: bin) (n : nat) : bin := match n with
-  | O    => b
-  | S n' => incr_bin (incrBinBy b n')          
-end.           
-
-Notation "b +> n" := (incrBinBy b n)
-                       (at level 50, left associativity)
-                       : nat_scope.
-
-
-(* (a) ii. convert binary to unary number 
-   Note: Even n' is twice the value of n'
-         Odd  n' is one more than twice the value of n'
-*)
-Fixpoint bin_nat (b : bin) : nat := match b with
-  | BO       => O
-  | Even b'  => double (bin_nat b')
-  | Odd b'   => S (double (bin_nat b'))
-  end.
-
-
-(* we show that [bin_nat (b +> 1) = 1 + (bin_nat b)] *)
-Theorem bin_to_nat_pres_incr : forall b : bin,
-  bin_nat (incr_bin b) = S (bin_nat b).
-Proof.
-  intros b. induction b.
-    + simpl. reflexivity.
-    + simpl. reflexivity.
-    + simpl. rewrite -> IHb. simpl. reflexivity.
-Qed.
+(* FILL IN HERE *)
+(** [] *)
 
 
 (** **** Exercise: 5 stars, advanced (binary_inverse)  *)
+(** This exercise is a continuation of the previous exercise about
+    binary numbers.  You will need your definitions and theorems from
+    there to complete this one.
 
-(*
     (a) First, write a function to convert natural numbers to binary
         numbers.  Then prove that starting with any natural number,
         converting to binary, then converting back yields the same
         natural number you started with.
-*)
-
-Fixpoint nat_bin (n: nat) : bin := match n with
-  | O    => BO
-  | S n' => incr_bin (nat_bin n')
-  end.
-
-(* we show [bin_nat . nat_bin $ (n + 1) = 1 + (bin_nat . nat_bin $ n)] *)
-Lemma bin_to_nat_add_one : forall n : nat,
-  bin_nat (nat_bin (S n)) = S (bin_nat (nat_bin n)).
-Proof.  
-  intros n.
-  induction n as [|n' IHn'].
-    + simpl. reflexivity.
-    + simpl. rewrite -> bin_to_nat_pres_incr. reflexivity.
-Qed.
-      
-
-Theorem nat_bin_roundtrip : forall n : nat,
-  bin_nat (nat_bin n) = n.                               
-Proof.
-  intros n.
-  induction n as [|n' IHn'].
-    + simpl. reflexivity.
-    + rewrite -> bin_to_nat_add_one.
-      rewrite -> IHn'. reflexivity.
-Qed.
-      
-
-(*
 
     (b) You might naturally think that we should also prove the
         opposite direction: that starting with a binary number,
         converting to a natural, and then back to binary yields the
         same number we started with.  However, this is not true!
         Explain what the problem is.
-
-        we show there is a  [b : bin] where [nat_bin (bin_nat b) /= b].
- 
-*)
-
-(* try to see if it is false *)
-Theorem bin_nat_roundtrip : forall b : bin,
-  nat_bin (bin_nat b) = b.
-Proof.
-  intros b. induction b.
-    + simpl. reflexivity.
-    + simpl. 
-Abort.  
-                              
-    
-(*
 
     (c) Define a "direct" normalization function -- i.e., a function
         [normalize] from binary numbers to binary numbers such that,
@@ -628,8 +403,6 @@ Abort.
     Again, feel free to change your earlier definitions if this helps
     here. 
 *)
-
-Fixpoint direct (b: bin) : bin := admit.
 
 (* FILL IN HERE *)
 (** [] *)
@@ -702,8 +475,7 @@ Proof.
   - (* n = 0 *)
     reflexivity.
   - (* n = S n' *)
-    simpl. rewrite -> IHn'. reflexivity.
-Qed.
+    simpl. rewrite -> IHn'. reflexivity.   Qed.
 
 (** ... and if you're used to Coq you may be able to step
     through the tactics one after the other in your mind and imagine
@@ -745,27 +517,9 @@ Qed.
 
 (** Theorem: Addition is commutative.
  
-    we show that [forall m n : nat, n + m = m + n].
-
-    _Proof_ : By induction on [n].
-
-    - first let [n = 0] so we must show
-              [0 + m = m + 0]
-      but this follows directly from the def of [+].
-
-    - Now let [n = S n'] and our induction hypothesis is that
-              [n' + m = m + n'].
-      so we must show
-              [S n' + m = m + S n']
-      by def of [+] we have
-              [S (n' + m) = m + S n']
-      by induction hypothesis we have
-              [S (m + n') = m + S n']
-      they are equal by [plus_n_Sm].
-
-      Qed.
-
+    Proof: (* FILL IN HERE *)
 *)
+(** [] *)
 
 (** **** Exercise: 2 stars, optional (beq_nat_refl_informal)  *)
 (** Write an informal proof of the following theorem, using the
@@ -774,21 +528,7 @@ Qed.
  
     Theorem: [true = beq_nat n n] for any [n].
     
-    Proof: By induction on [n].
-
-    let [n = 0] and we have [true = beq_nat 0 0], this follows from def of [beq_nat].
-    now let [n = S n'] and our induction hypo is:
-            [true = beq_nat n' n'],
-    and our goal is:
-            [true = beq_nat (S n') (S n')].
-    By def of [beq_nat] we are evaluating the branch:
-    [S n'] and our [m] is matched with [S n'].
-    Thus the inductive step reduces to [beq_nat n' n'].
-    This is true by the inductive hypothesis.
-
-    Qed.
-
-
+    Proof: (* FILL IN HERE *) 
 [] *)
 
-(** $Date: 2016-01-13 12:02:23 -0500 (Wed, 13 Jan 2016) $ *)
+(** $Date: 2016-01-15 17:30:08 -0500 (Fri, 15 Jan 2016) $ *)

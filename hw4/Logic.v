@@ -763,13 +763,6 @@ Qed.
 (** Prove that "[P] holds for all [x]" implies "there is no [x] for
     which [P] does not hold." *)
 
-Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
-  (forall x, P x) -> ~ (exists x, ~ P x).
-Proof.
-  intros X P H1. unfold not. intros [x Hx].
-  apply Hx. apply H1.
-Qed.
-
 
 (** **** Exercise: 2 stars (dist_exists_or)  *)
 (** Prove that existential quantification distributes over
@@ -810,9 +803,10 @@ Qed.
 
 Fixpoint In {A : Type} (x : A) (l : list A) : Prop :=
   match l with
-  | [] => False
+  | []       => False
   | x' :: l' => x' = x \/ In x l'
   end.
+
 
 (** When [In] is applied to a concrete list, it expands into a
     concrete sequence of nested conjunctions. *)
