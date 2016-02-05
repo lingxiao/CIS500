@@ -478,8 +478,6 @@ Qed.
 Theorem class_quiz : forall (X : Type) (a b : X),
   a = b /\ a /= b -> false.                       
 Proof.
-  admit.
-Qed.  
 *)
   
 (** **** Exercise: 2 stars, advanced, recommended (double_neg_inf)  *)
@@ -597,9 +595,9 @@ Proof. apply I. Qed.
 
 Module MyIff.
 
-Definition iff (P Q : Prop) := (P -> Q) /\ (Q -> P).
+  Definition iff (P Q : Prop) := (P -> Q) /\ (Q -> P).
 
-Notation "P <-> Q" := (iff P Q)
+  Notation "P <-> Q" := (iff P Q)
                       (at level 95, no associativity)
                       : type_scope.
 
@@ -612,7 +610,8 @@ Proof.
   intros P Q [HAB HBA].
   split.
   - (* -> *) apply HBA.
-  - (* <- *) apply HAB.  Qed.
+  - (* <- *) apply HAB.
+Qed.
 
 Lemma not_true_iff_false : forall b,
   b <> true <-> b = false.
@@ -631,20 +630,28 @@ Qed.
 Theorem iff_refl : forall P : Prop,
   P <-> P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P. split.
+    + intros P1. apply P1.
+    + intros P1. apply P1.
+Qed.  
+
 
 Theorem iff_trans : forall P Q R : Prop,
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros P Q R [H1a H1b] [H2a H2b]. split.
+    + intros H. apply H1a in H. apply H2a in H. apply H.
+    + intros H. apply H2b in H. apply H1b in H. apply H.
+Qed.      
+   
 
 (** **** Exercise: 3 stars (or_distributes_over_and)  *)
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros. split. intros [Hp | [Hq Hr]].
+    + 
+  
 
 (** Some of Coq's tactics treat [iff] statements specially, avoiding
     the need for some low-level proof-state manipulation.  In
