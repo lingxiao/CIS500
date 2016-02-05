@@ -675,6 +675,7 @@ Qed.
     to import a special Coq library that allows rewriting with other
     formulas besides equality: *)
 
+(* to ask: understand this section, some more how to use coq stuff *)
 Require Import Coq.Setoids.Setoid.
 
 (** Here is a simple example demonstrating how these tactics work with
@@ -751,11 +752,12 @@ Qed.
 
 Theorem exists_example_2 : forall n,
   (exists m, n = 4 + m) ->
-  (exists o, n = 2 + o).
+  (exists o, n = 2 + o). 
 Proof.
-  intros n [m Hm].
+  intros n [m Hm]. 
   exists (2 + m).
-  apply Hm.  Qed.
+  apply Hm.
+Qed.
 
 (** **** Exercise: 1 star (dist_not_exists)  *)
 (** Prove that "[P] holds for all [x]" implies "there is no [x] for
@@ -764,8 +766,10 @@ Proof.
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros X P H1. unfold not. intros H2.
+  
+  
+
 
 (** **** Exercise: 2 stars (dist_exists_or)  *)
 (** Prove that existential quantification distributes over
