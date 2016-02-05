@@ -521,10 +521,17 @@ Qed.
 
 (*
     Proof.
+    By definition of [~] we have:
+         forall P. (P /\ (P ==> False)) ==> False
+
+    So suppose we have some P, as well as:  P and (P -> False), then we
+    have to show this premise implies False.
+    But if we have P and P implies False then we are left with False as desired.
+    
+    []      
 
 
 *)
-(** [] *)
 
 (** Similarly, since inequality involves a negation, it requires a
     little practice to be able to work with it fluently.  Here is one
@@ -553,6 +560,7 @@ Qed.
 Theorem not_true_is_false' : forall b : bool,
   b <> true -> b = false.
 Proof.
+  (*intros b H. destruct b.*)
   intros [] H.
   - (* b = false *)
     unfold not in H.
