@@ -414,7 +414,9 @@ Qed.
 Fact not_implies_our_not : forall (P:Prop),
   ~ P -> (forall (Q:Prop), P -> Q).
 Proof.
-  intros P H Q. inversion H.
+  intros P H Q. destruct H.
+  
+Qed.
   
   
   
