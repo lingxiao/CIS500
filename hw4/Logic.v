@@ -657,10 +657,14 @@ Proof.
         - split.
             * right. apply Hq.
             * right. apply Hr.
-   + intros [[Hp | _] [_ | _]].
+   + intros [[Hp | Hq] [Hp1 | Hr]].
         - left. apply Hp.
         - left. apply Hp.
-Qed.           
+        - left. apply Hp1.
+        - right. split.
+            * apply Hq.
+            * apply Hr.
+Qed.
  
   
 
