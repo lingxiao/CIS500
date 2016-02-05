@@ -21,6 +21,7 @@ Require Export Tactics.
 Check 3 = 3.
 (* ===> Prop *)
 
+
 Check forall n m : nat, n + m = m + n.
 (* ===> Prop *)
 
@@ -75,6 +76,7 @@ Check is_three.
     polymorphic property defining the familiar notion of an _injective
     function_. *)
 
+(* read: f is injective if forall x y. f x = f y -> x = y *)
 Definition injective {A B} (f : A -> B) :=
   forall x y : A, f x = f y -> x = y.
 
@@ -95,9 +97,6 @@ Check @eq.
 (** (Notice that we wrote [@eq] instead of [eq]: The type argument [A]
     to [eq] is declared as implicit, so we need to turn off implicit
     arguments to see the full type of [eq].) *)
-
-
-
 
 
 (* #################################################################### *)
@@ -138,11 +137,14 @@ Qed.
     Since applying a theorem with hypotheses to some goal has the
     effect of generating as many subgoals as there are hypotheses for
     that theorem, we can, apply [and_intro] to achieve the same effect
-    as [split]. *)
+    as [split].
+*)
 
 Example and_example' : 3 + 4 = 7 /\ 2 * 2 = 4.
 Proof.
+  (* suppose and_intro is true *)
   apply and_intro.
+  (* now it suffices to show [3 + 4 = 6] and [2 * 2 = 4] are true *)
   - (* 3 + 4 = 7 *) reflexivity.
   - (* 2 + 2 = 4 *) reflexivity.
 Qed.
@@ -151,8 +153,12 @@ Qed.
 Example and_exercise :
   forall n m : nat, n + m = 0 -> n = 0 /\ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m. induction n.
+    + intros H. split.
+        - reflexivity.
+        - simpl in H. apply H.
+    + intros contra. inversion contra.
+Qed.      
 
 (** So much for proving conjunctive statements.  To go in the other
     direction -- i.e., to _use_ a conjunctive hypothesis to prove
