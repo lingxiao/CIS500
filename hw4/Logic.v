@@ -212,7 +212,7 @@ Lemma and_example3 :
 Proof.
   intros n m H.
   assert (H' : n = 0 /\ m = 0).
-  { apply and_exercise. apply H. }
+  { apply and_exercise. apply H. }  (*   forall n m : nat, n + m = 0 -> n = 0 /\ m = 0 *)
   destruct H' as [Hn Hm].
   rewrite Hn. reflexivity.
 Qed.
@@ -225,14 +225,16 @@ Lemma proj1 : forall P Q : Prop,
   P /\ Q -> P.
 Proof.
   intros P Q [HP HQ].
-  apply HP.  Qed.
+  apply HP.
+Qed.
 
 (** **** Exercise: 1 star, optional (proj2)  *)
 Lemma proj2 : forall P Q : Prop,
   P /\ Q -> Q.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros P Q [_ HQ].
+  apply HQ.
+Qed.  
 
 (** Finally, we sometimes need to rearrange the order of conjunctions
     and/or the grouping of conjuncts in multi-way conjunctions.  The
@@ -259,15 +261,19 @@ Theorem and_assoc : forall P Q R : Prop,
   P /\ (Q /\ R) -> (P /\ Q) /\ R.
 Proof.
   intros P Q R [HP [HQ HR]].
-(* FILL IN HERE *) Admitted.
-(** [] *)
+  split. split.
+  apply HP. apply HQ. apply HR.
+Qed.
+
 
 (** By the way, the infix notation [/\] is actually just syntactic
     sugar for [and A B].  That is, [and] is a Coq operator that takes
     two propositions as arguments and yields a proposition. *)
 
 Check and.
+Check or.
 (* ===> and : Prop -> Prop -> Prop *)
+(* ===> or  : Prop -> Prop -> Prop *)
 
 (** ** Disjunction *)
 
