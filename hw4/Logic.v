@@ -657,9 +657,9 @@ Proof.
         - split.
             * right. apply Hq.
             * right. apply Hr.
-   + intros [[Hp | Hq] H2].
+   + intros [[Hp | _] [_ | _]].
         - left. apply Hp.
-        - left. 
+        - left. apply Hp.
 Qed.           
  
   
