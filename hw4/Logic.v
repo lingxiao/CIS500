@@ -331,12 +331,27 @@ Proof.
 Qed.
 
 
+(* to ask: why doesn't this work? *)
+Lemma blah: forall n m, n = 0 \/ m = 0.
+Proof.
+  (*apply or_intro.*)
+Abort.  
+
 (** **** Exercise: 1 star (mult_eq_0)  *)
 Lemma mult_eq_0 :
   forall n m, n * m = 0 -> n = 0 \/ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m. apply or_example.
+
+  
+  intros [|n'].
+    + left. reflexivity.
+    + right. symmetry in H. apply mult_n_O in H.  
+  
+      
+
+
+  
 
 (** **** Exercise: 1 star (or_commut)  *)
 Theorem or_commut : forall P Q : Prop,
