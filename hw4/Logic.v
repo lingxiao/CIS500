@@ -763,13 +763,12 @@ Qed.
 (** Prove that "[P] holds for all [x]" implies "there is no [x] for
     which [P] does not hold." *)
 
+(* todo: finish this why is this one hard?*)
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
 Proof.
   intros X P H1. unfold not. intros [x Hx].
-  
-  
-  
+Abort.    
 
 
 (** **** Exercise: 2 stars (dist_exists_or)  *)
@@ -779,8 +778,15 @@ Proof.
 Theorem dist_exists_or : forall (X:Type) (P Q : X -> Prop),
   (exists x, P x \/ Q x) <-> (exists x, P x) \/ (exists x, Q x).
 Proof.
-   (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros X P Q. split.
+    + intros [x [Px | Qx]].
+        - left. exists x. apply Px.
+        - right. exists x. apply Qx.
+    + intros [[x Px] | [x Qx]].  
+        - exists x.  left.  apply Px.
+        - exists x. right. apply Qx.
+Qed.                 
+
 
 (* #################################################################### *)
 (** * Programming with Propositions *)
