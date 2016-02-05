@@ -342,12 +342,16 @@ Abort.
   forall n m : nat, n = 0 \/ m = 0 -> n * m = 0.*)
 
 (** **** Exercise: 1 star (mult_eq_0)  *)
+(* todo: why is this one giving you so much trouble??
+         what concepts are you missing out one??
+*)
 Lemma mult_eq_0 :
   forall n m, n * m = 0 -> n = 0 \/ m = 0.
 Proof.
-admit.  
-Qed.  
-      
+  intros n m. destruct n as [|n'] eqn: Hn.
+    + intros H. left. reflexivity.
+    + intros H. left. 
+Abort.
 
 (** **** Exercise: 1 star (or_commut)  *)
 Theorem or_commut : forall P Q : Prop,
