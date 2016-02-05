@@ -432,10 +432,21 @@ Qed.
 
 Theorem double_neg : forall P : Prop,
   P -> ~~P.
-Proof.
+  Proof.
   (* WORKED IN CLASS *)
-  intros P H. unfold not. intros G. apply G. apply H.  Qed.
+  intros P H. unfold not. intros G.
+  apply G. (* backward logic *)
+  apply H.
+Qed.
 
+(** **** class quiz 
+Theorem class_quiz : forall (X : Type) (a b : X),
+  a = b /\ a /= b -> false.                       
+Proof.
+  admit.
+Qed.  
+*)
+  
 (** **** Exercise: 2 stars, advanced, recommended (double_neg_inf)  *)
 (** Write an informal proof of [double_neg]:
 
