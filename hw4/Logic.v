@@ -904,6 +904,14 @@ Proof.
         - simpl. intros [H1 | H2].
             * left. left. apply H1.
             * rewrite <- or_assoc. right. apply IHls. apply H2.
+    + induction l as [|x' ls].
+        - simpl. intros [H1 | H2].
+            * inversion H1.
+            * apply H2.
+        - simpl. intros [[H1 | H2] | H3].
+            * left. apply H1.
+            * right. apply IHls. left. apply H2.
+            * right. apply IHls. right. apply H3.
 Qed.
 
 
