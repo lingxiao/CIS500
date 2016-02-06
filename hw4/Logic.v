@@ -787,7 +787,6 @@ Proof.
         - exists x. right. apply Qx.
 Qed.                 
 
-
 (* #################################################################### *)
 (** * Programming with Propositions *)
 
@@ -842,8 +841,9 @@ Qed.
 
 (*
   forall ...
-  if x in l   ==>   f x  in  (f <$> l)
+  if x in l  then   f x  in  (f <$> l)
 *)
+
 Lemma In_map :
   forall (A B : Type) (f : A -> B) (l : list A) (x : A),
     In x l ->
@@ -854,9 +854,13 @@ Proof.
   - (* l = nil, contradiction *)
     simpl. intros [].
   - (* l = x' :: l' *)
-    simpl. intros [H | H].
-    + rewrite H. left. reflexivity.
-    + right. apply IHl'. apply H.
+    (*
+            x' = x   \/  In x l'
+       -> f x' = f x \/  In (f x) (map f l')
+    *)
+    simpl. intros [H1 | H2].
+      + rewrite H1. left. reflexivity.
+      + right. apply IHl'. apply H2.
 Qed.
 
 (** This way of defining propositions, though convenient in some
@@ -883,7 +887,8 @@ Proof.
         - simpl. intros contra. inversion contra.
           (* either x is x' or x in l'
              so either y = f x' or y in f <$> l' *)
-        - intros H. simpl. simpl in H.
+        - simpl. intros [H1 | H2].
+            * 
 Abort.          
   	
 
@@ -893,7 +898,7 @@ Lemma in_app_iff : forall A l l' (a:A),
   In a (l++l') <-> In a l \/ In a l'.
 Proof.
   intros A l l' a. split.
-    + intros H. left. 
+    + intros H.
 
 
 (** **** Exercise: 3 stars (All)  *)
