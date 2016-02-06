@@ -766,7 +766,8 @@ Qed.
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
 Proof.
-  intros X P H1. unfold not. intros [x Hx].
+  intros X P H1.
+  unfold not. intros [x Hx].
   apply Hx. apply H1.
 Qed.  
 
@@ -887,11 +888,6 @@ Proof.
         - simpl. intros contra. inversion contra.
         - simpl. intros [H1 | H2].
             * 
-         
-             
-
-              
-          
 Abort.          
   	
 
@@ -930,16 +926,22 @@ Qed.
     restate the left-hand side of [All_In].) *)
 
 Fixpoint All {T} (P : T -> Prop) (l : list T) : Prop :=
-  (* FILL IN HERE *) admit.
+  match l with
+  | []       => True
+  | x :: l'  => P x /\ All P l'
+  end.                
 
 Lemma All_In :
-  forall T (P : T -> Prop) (l : list T),
+  forall (T : Type) (P : T -> Prop) (l : list T),
     (forall x, In x l -> P x) <->
     All P l.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
+  intros T P l. split.
+    + induction l as [|x' l'].
+        - simpl. intros H. admit.  (* what do you do when True appears in goal? *)
+        - simpl. intros H. split.
+            * 
+          
 (** **** Exercise: 3 stars (combine_odd_even)  *)
 (** Complete the definition of the [combine_odd_even] function below.
     It takes as arguments two properties of numbers, [Podd] and
