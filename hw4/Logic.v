@@ -988,12 +988,12 @@ Theorem combine_odd_even_intro :
     combine_odd_even Podd Peven n.
 Proof.
   intros Podd Peven n H1 H2. induction n as [|n'].
-    + unfold combine_odd_even.
-  
-  
-  
+    + apply H2. reflexivity.
+    + unfold combine_odd_even. destruct (oddb (S n')).
+        - apply H1. reflexivity.
+        - apply H2. reflexivity.
+Qed.
 
-  
 
 
   
@@ -1004,7 +1004,10 @@ Theorem combine_odd_even_elim_odd :
     oddb n = true ->
     Podd n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Podd Peven n H1 H2. induction n as [|n'].
+    + 
+  
+
 
 Theorem combine_odd_even_elim_even :
   forall (Podd Peven : nat -> Prop) (n : nat),
