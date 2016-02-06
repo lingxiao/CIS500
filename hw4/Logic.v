@@ -863,7 +863,7 @@ Qed.
 (** **** Exercise: 2 stars (In_map_iff)  *)
 (*
    forall ...
-   In y (map f l)   iff    there exists x so that f x = y  and x is in l
+   y is in (map f l)   <==>   there exists x so that f x = y  and x is in l
 *)
 Lemma In_map_iff :
   forall (A B : Type) (f : A -> B) (l : list A) (y : B),
@@ -873,7 +873,11 @@ Proof.
   intros A B f l y. split.
     + induction l as [|x' l'].
         - simpl. intros contra. inversion contra.
-        - simpl. intros H. 
+          (* either x is x' or x in l'
+             so either y = f x' or y in f <$> l' *)
+        - intros H. simpl. simpl in H. 
+
+          
   	
 
 
