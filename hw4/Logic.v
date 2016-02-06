@@ -894,7 +894,7 @@ Proof.
             * apply H1.
             * left. reflexivity.
             * exists x'. split.
-               apply IHl' in H2. destruct H2 as [z [Hl  Hr]]. admit.
+               apply IHl' in H2. 
                left. reflexivity.
    + induction l as [|x' l'].
        - intros [x [H1 H2]]. inversion H2.
