@@ -994,8 +994,6 @@ Proof.
         - apply H2. reflexivity.
 Qed.
 
-
-
   
 
 Theorem combine_odd_even_elim_odd :
@@ -1004,8 +1002,20 @@ Theorem combine_odd_even_elim_odd :
     oddb n = true ->
     Podd n.
 Proof.
-  intros Podd Peven n H1 H2. induction n as [|n'].
-    + 
+  intros Podd Peven n. destruct (oddb n).
+    + intros H G. induction n as [| n'].
+        - 
+          
+    + intros _ contra. inversion contra.
+
+
+
+  induction n as [|n'].
+    + unfold oddb. simpl. intros _ contra. inversion contra.
+    + intros H.  unfold oddb. destruct (evenb (S n')).
+        - simpl. intros contra. inversion contra.
+        - simpl. intros G. 
+    
   
 
 
