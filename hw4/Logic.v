@@ -882,26 +882,32 @@ Qed.
    is there an easier way???
 
 *)
+
 Lemma In_map_iff :
   forall (A B : Type) (f : A -> B) (l : list A) (y : B),
     In y (map f l) <->
     exists x, f x = y /\ In x l.
 Proof.
   intros A B f l y. split.
-    + induction l as [|x' l'].
-        - simpl. intros contra. inversion contra.
-        - intros [H1 | H2]. exists x'. split.
-            * apply H1.
-            * left. reflexivity.
-            * exists x'. split.
-               apply IHl' in H2. 
-               left. reflexivity.
-   + induction l as [|x' l'].
-       - intros [x [H1 H2]]. inversion H2.
-       - intros [x [H1 H2]]. simpl.
-         right. apply IHl'. exists x'. split.
-           
-Abort.          
+      (* first we show forward direction by induction on l *)
+    + intros H. induction l as [|x' l'].
+          (* if l = [] then y not in l, so trivially our premise is false *)
+        - simpl in H.  inversion H.
+          (* if l = x : l', *)
+        - destruct H. exists x'. split.
+            * apply H.
+            * simpl. left. reflexivity.
+            * apply IHl' in H. destruct H.
+              exists x. split.
+                apply H.
+                simpl. right. apply H.
+   + intros [x [H1 H2]]. induction l as [|x' l'].
+       - simpl in H2. inversion H2.
+       - simpl. destruct H2. rewrite H in *.
+           * left. apply H1.
+           * right. apply IHl' in H. apply H.
+Qed.             
+
   	
 
 
