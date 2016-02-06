@@ -877,39 +877,46 @@ Qed.
    forall ...
    y is in (map f l)   <==>   there exists x so that f x = y  and x is in l
 *)
-(*
-   todo: finish this !!
-   is there an easier way???
-
-*)
-
 Lemma In_map_iff :
   forall (A B : Type) (f : A -> B) (l : list A) (y : B),
     In y (map f l) <->
     exists x, f x = y /\ In x l.
 Proof.
   intros A B f l y. split.
-      (* first we show forward direction by induction on l *)
+      (*
+         first we show forward direction by induction on l
+         under the premise that
+                 y \in f <$> l
+         and by defintion of [in], and let [l = x :: l'], we know:
+             either [y = f x]
+             or     [y in l'] 
+      *)
     + intros H. induction l as [|x' l'].
           (* if l = [] then y not in l, so trivially our premise is false *)
         - simpl in H.  inversion H.
-          (* if l = x : l', *)
+          (*
+              let l = x : l' and our induction hypo is that:
+                  In y (f <$> l')  /implies exists x. f x = y /\ In x l'
+              and the premise is that:
+                  y /in (f <$> (x' :: l'))
+              so either [f x' = y] or [y /in f <$> l']
+              The goal is to show:
+                  exists x. f x = y /\ x \in (x' :: l')
+          *)
         - destruct H. exists x'. split.
             * apply H.
             * simpl. left. reflexivity.
-            * apply IHl' in H. destruct H.
-              exists x. split.
+            * apply IHl' in H. destruct H. exists x. split.
                 apply H.
                 simpl. right. apply H.
    + intros [x [H1 H2]]. induction l as [|x' l'].
        - simpl in H2. inversion H2.
-       - simpl. destruct H2. rewrite H in *.
+       - simpl. destruct H2 as [H2l | H2r]. rewrite H2l in *.
            * left. apply H1.
-           * right. apply IHl' in H. apply H.
+           * right. apply IHl' in H2r. apply H2r.
 Qed.             
 
   	
-
 
 (** **** Exercise: 2 stars (in_app_iff)  *)
 Lemma in_app_iff : forall A (l : list A) (l' : list A) (a:A),
@@ -958,17 +965,20 @@ Lemma All_In :
     All P l.
 Proof.
   intros T P l. split.
+Abort.
+
+(*
     + induction l as [|x' l'].
         - simpl. intros _. apply I. 
         - intros H. simpl. split.
-            * admit.
-            * apply IHl'. admit.
+            * 
+            * apply IHl'. 
     + induction l as [|x' l'].
         - simpl. intros H. intros x. intros contra. inversion contra.
         - simpl. intros [H1 H2].
             * intros x. 
 Abort.  (* must finish *)
-            
+  *)          
           
 (** **** Exercise: 3 stars (combine_odd_even)  *)
 (** Complete the definition of the [combine_odd_even] function below.
