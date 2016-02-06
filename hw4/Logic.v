@@ -890,23 +890,17 @@ Proof.
   intros A B f l y. split.
     + induction l as [|x' l'].
         - simpl. intros contra. inversion contra.
-        - simpl. intros [H1 | H2].
+        - intros [H1 | H2]. exists x'. split.
+            * apply H1.
+            * left. reflexivity.
             * exists x'. split.
-                apply H1.
-                left. reflexivity.
-            * exists x'. split.
-                apply IHl' in H2. admit.
-                left. reflexivity.
+               apply IHl' in H2. destruct H2 as [z [Hl  Hr]]. admit.
+               left. reflexivity.
    + induction l as [|x' l'].
        - intros [x [H1 H2]]. inversion H2.
        - intros [x [H1 H2]]. simpl.
-         right. apply IHl'. exists x'.
-
-
-(*    + intros [x Hx]. induction l as [|x' l'].
-       - simpl. inversion Hx.
-  *)              
-                
+         right. apply IHl'. exists x'. split.
+           
 Abort.          
   	
 
@@ -949,6 +943,7 @@ Fixpoint All {T} (P : T -> Prop) (l : list T) : Prop :=
   | x :: l'  => P x /\ All P l'
   end.                
 
+(* todo: finish this one!! *)
 Lemma All_In :
   forall (T : Type) (P : T -> Prop) (l : list T),
     (forall x, In x l -> P x) <->
@@ -959,8 +954,12 @@ Proof.
         - simpl. intros _. apply I. 
         - intros H. simpl. split.
             * admit.
-            * apply IHl'. 
-
+            * apply IHl'. admit.
+    + induction l as [|x' l'].
+        - simpl. intros H. intros x. intros contra. inversion contra.
+        - simpl. intros [H1 H2].
+            * intros x. 
+Abort.
             
           
 (** **** Exercise: 3 stars (combine_odd_even)  *)
