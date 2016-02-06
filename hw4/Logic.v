@@ -951,7 +951,6 @@ Qed.
     restate the left-hand side of [All_In].) *)
 
 
-(* todo: finish this one!! *)
 Fixpoint All {T} (P : T -> Prop) (l : list T) : Prop :=
   match l with
   | []       => True
@@ -965,20 +964,18 @@ Lemma All_In :
     All P l.
 Proof.
   intros T P l. split.
+    + intros H. induction l as [|x' l'].
+        - simpl. apply I.
+        - simpl. split.
+            * apply H. simpl. left. reflexivity.
+            * apply IHl'. intros x. intros Hx. apply H.
+              simpl. right. apply Hx.
+    + intros H. intros x. induction l as [|x' l'].
+        - intros contra. simpl in contra. inversion contra.
+        - simpl. right.
 Abort.
 
-(*
-    + induction l as [|x' l'].
-        - simpl. intros _. apply I. 
-        - intros H. simpl. split.
-            * 
-            * apply IHl'. 
-    + induction l as [|x' l'].
-        - simpl. intros H. intros x. intros contra. inversion contra.
-        - simpl. intros [H1 H2].
-            * intros x. 
-Abort.  (* must finish *)
-  *)          
+
           
 (** **** Exercise: 3 stars (combine_odd_even)  *)
 (** Complete the definition of the [combine_odd_even] function below.
@@ -1031,7 +1028,7 @@ Proof.
     + intros H.  unfold oddb. destruct (evenb (S n')).
         - simpl. intros contra. inversion contra.
         - simpl. intros G. 
-    
+Abort.    
   
 
 
