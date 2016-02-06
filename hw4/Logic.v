@@ -891,13 +891,21 @@ Proof.
                 apply H1.
                 left. reflexivity.
             * exists x'. split.
-                apply IHl' in H2. 
-                
+                apply IHl' in H2. admit.
+                left. reflexivity.
+   + induction l as [|x' l'].
+       - intros [x [H1 H2]]. inversion H2.
+       - intros [x [H1 H2]]. simpl.
+         right. apply IHl'. exists x'.
+
+
+(*    + intros [x Hx]. induction l as [|x' l'].
+       - simpl. inversion Hx.
+  *)              
                 
 Abort.          
   	
 
-(*or_assoc: forall P Q R : Prop, P \/ Q \/ R <-> (P \/ Q) \/ R*)
 
 (** **** Exercise: 2 stars (in_app_iff)  *)
 Lemma in_app_iff : forall A (l : list A) (l' : list A) (a:A),
@@ -944,7 +952,7 @@ Lemma All_In :
 Proof.
   intros T P l. split.
     + induction l as [|x' l'].
-        - simpl. intros H. admit.  (* what do you do when True appears in goal? *)
+        - simpl. intros H. apply I. 
         - intros H. split.
             * admit.
             * apply IHl'.
