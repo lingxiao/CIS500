@@ -887,7 +887,13 @@ Proof.
     + induction l as [|x' l'].
         - simpl. intros contra. inversion contra.
         - simpl. intros [H1 | H2].
-            * 
+            * exists x'. split.
+                apply H1.
+                left. reflexivity.
+            * exists x'. split.
+                apply IHl' in H2. 
+                
+                
 Abort.          
   	
 
