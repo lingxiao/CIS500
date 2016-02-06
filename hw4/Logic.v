@@ -877,7 +877,11 @@ Qed.
    forall ...
    y is in (map f l)   <==>   there exists x so that f x = y  and x is in l
 *)
-(* todo: finish this !! *)
+(*
+   todo: finish this !!
+   is there an easier way???
+
+*)
 Lemma In_map_iff :
   forall (A B : Type) (f : A -> B) (l : list A) (y : B),
     In y (map f l) <->
@@ -952,10 +956,10 @@ Lemma All_In :
 Proof.
   intros T P l. split.
     + induction l as [|x' l'].
-        - simpl. intros H. apply I. 
-        - intros H. split.
+        - simpl. intros _. apply I. 
+        - intros H. simpl. split.
             * admit.
-            * apply IHl'.
+            * apply IHl'. 
 
             
           
