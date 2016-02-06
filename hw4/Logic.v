@@ -763,6 +763,13 @@ Qed.
 (** Prove that "[P] holds for all [x]" implies "there is no [x] for
     which [P] does not hold." *)
 
+Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
+  (forall x, P x) -> ~ (exists x, ~ P x).
+Proof.
+  intros X P H1. unfold not. intros [x Hx].
+  apply Hx. apply H1.
+Qed.  
+
 
 (** **** Exercise: 2 stars (dist_exists_or)  *)
 (** Prove that existential quantification distributes over
@@ -865,6 +872,7 @@ Qed.
    forall ...
    y is in (map f l)   <==>   there exists x so that f x = y  and x is in l
 *)
+(* todo: finish this !! *)
 Lemma In_map_iff :
   forall (A B : Type) (f : A -> B) (l : list A) (y : B),
     In y (map f l) <->
@@ -875,9 +883,8 @@ Proof.
         - simpl. intros contra. inversion contra.
           (* either x is x' or x in l'
              so either y = f x' or y in f <$> l' *)
-        - intros H. simpl. simpl in H. 
-
-          
+        - intros H. simpl. simpl in H.
+Abort.          
   	
 
 
@@ -885,8 +892,9 @@ Proof.
 Lemma in_app_iff : forall A l l' (a:A),
   In a (l++l') <-> In a l \/ In a l'.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros A l l' a. split.
+    + intros H. left. 
+
 
 (** **** Exercise: 3 stars (All)  *)
 (** Recall that functions returning propositions can be seen as
