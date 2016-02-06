@@ -892,13 +892,19 @@ Proof.
 Abort.          
   	
 
+(*or_assoc: forall P Q R : Prop, P \/ Q \/ R <-> (P \/ Q) \/ R*)
 
 (** **** Exercise: 2 stars (in_app_iff)  *)
-Lemma in_app_iff : forall A l l' (a:A),
+Lemma in_app_iff : forall A (l : list A) (l' : list A) (a:A),
   In a (l++l') <-> In a l \/ In a l'.
 Proof.
   intros A l l' a. split.
-    + intros H.
+    + induction l as [|x ls].
+        - simpl. intros H. right. apply H.
+        - simpl. intros [H1 | H2].
+            * left. left. apply H1.
+            * rewrite <- or_assoc. right. apply IHls. apply H2.
+Qed.
 
 
 (** **** Exercise: 3 stars (All)  *)
