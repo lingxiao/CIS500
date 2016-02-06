@@ -939,8 +939,11 @@ Proof.
   intros T P l. split.
     + induction l as [|x' l'].
         - simpl. intros H. admit.  (* what do you do when True appears in goal? *)
-        - simpl. intros H. split.
-            * 
+        - intros H. split.
+            * admit.
+            * apply IHl'.
+
+            
           
 (** **** Exercise: 3 stars (combine_odd_even)  *)
 (** Complete the definition of the [combine_odd_even] function below.
