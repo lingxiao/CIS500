@@ -885,10 +885,13 @@ Proof.
   intros A B f l y. split.
     + induction l as [|x' l'].
         - simpl. intros contra. inversion contra.
-          (* either x is x' or x in l'
-             so either y = f x' or y in f <$> l' *)
         - simpl. intros [H1 | H2].
             * 
+         
+             
+
+              
+          
 Abort.          
   	
 
