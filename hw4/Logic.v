@@ -977,17 +977,12 @@ Proof.
   (* Now we consider the reverse direction
      All P l   ==> forall x. In x l -> P x
   *)
-  * intros H. induction l as [|x' l'].
-      + simpl. intros x contra. inversion contra. (* let l = [], then In x l = false *)
-        (* now we have to show forall x. In x (x' :: l') -> P x
-           so either x = x' or In x l'.
-           Note: All P (x' :: l') ==> P x' /\ All P l'
-        *)
-      +  intros x H2. destruct H2 as [H2l | H2r]. destruct H as [Hl Hr].
-          (* first we show P x given x = x' *)
-          - apply IHl'. apply Hr. rewrite H2l in *. 
- 
-
+  * intros H x H2. induction l as [|x' l'].
+      (* let l = [], then In x l = false *)
+      + simpl in H2. inversion H2.
+      + destruct H as [Hl Hr]. destruct H2 as [H2l | H2r].
+        rewrite H2l in *.  apply Hl. apply IHl'. apply Hr. apply H2r.
+Qed.      
 
 
           
