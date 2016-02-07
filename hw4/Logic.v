@@ -980,9 +980,11 @@ Proof.
   * intros H x H2. induction l as [|x' l'].
       (* let l = [], then In x l = false *)
       + simpl in H2. inversion H2.
+        (* now we have to show forall x. In x (x' :: l') -> P x *)
       + destruct H as [Hl Hr]. destruct H2 as [H2l | H2r].
         rewrite H2l in *.  apply Hl. apply IHl'. apply Hr. apply H2r.
 Qed.      
+    
 
 
           
@@ -999,8 +1001,6 @@ Definition combine_odd_even (Podd Peven : nat -> Prop) : nat -> Prop :=
   | _    =>  Peven n
   end.                
 
-
-
 (** To test your definition, prove the following facts: *)
 
 Theorem combine_odd_even_intro :
@@ -1016,7 +1016,6 @@ Proof.
         - apply H2. reflexivity.
 Qed.
 
-  
 
 Theorem combine_odd_even_elim_odd :
   forall (Podd Peven : nat -> Prop) (n : nat),
@@ -1024,6 +1023,19 @@ Theorem combine_odd_even_elim_odd :
     oddb n = true ->
     Podd n.
 Proof.
+  intros Podd Peven n. induction n as [|n'].
+    + intros H. replace (oddb 0) with false. intro contra. inversion contra.
+       { reflexivity.}
+    + destruct (oddb (S n')).
+        - 
+
+
+
+
+
+(*
+
+  
   intros Podd Peven n. destruct (oddb n).
     + intros H G. induction n as [| n'].
         - 
@@ -1038,7 +1050,7 @@ Proof.
         - simpl. intros contra. inversion contra.
         - simpl. intros G. 
 Abort.    
-  
+  *)
 
 
 Theorem combine_odd_even_elim_even :
