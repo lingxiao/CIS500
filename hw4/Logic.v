@@ -957,23 +957,37 @@ Fixpoint All {T} (P : T -> Prop) (l : list T) : Prop :=
   | x :: l'  => P x /\ All P l'
   end.                
 
-(* todo: finish this one!! *)
-Lemma All_In :
+
+(* recall In x (x' ::l') ==> x' \/ In x l' *)
+Lemma All_In:
   forall (T : Type) (P : T -> Prop) (l : list T),
-    (forall x, In x l -> P x) <->
-    All P l.
+  (forall x, In x l -> P x)  <->  All P l.
 Proof.
   intros T P l. split.
-    + intros H. induction l as [|x' l'].
-        - simpl. apply I.
-        - simpl. split.
-            * apply H. simpl. left. reflexivity.
-            * apply IHl'. intros x. intros Hx. apply H.
-              simpl. right. apply Hx.
-    + intros H. intros x. induction l as [|x' l'].
-        - intros contra. simpl in contra. inversion contra.
-        - simpl. right.
-Abort.
+  
+  (* first we consider the forward direction *)
+  * intros H. induction l as [|x' l'].
+      + simpl. apply I.  (* All P [] is true by def *)
+      + simpl. split.    (* now we show All P ( x' :: l') => P x' /\ All P l' *)
+         (* first we show P x' *)
+        - apply H. simpl. left. reflexivity.     
+         (* now we show All P l' *)
+        - apply IHl'. intros x H2. apply H. simpl. right. apply H2.
+          
+  (* Now we consider the reverse direction
+     All P l   ==> forall x. In x l -> P x
+  *)
+  * intros H. induction l as [|x' l'].
+      + simpl. intros x contra. inversion contra. (* let l = [], then In x l = false *)
+        (* now we have to show forall x. In x (x' :: l') -> P x
+           so either x = x' or In x l'.
+           Note: All P (x' :: l') ==> P x' /\ All P l'
+        *)
+      +  intros x H2. destruct H2 as [H2l | H2r]. destruct H as [Hl Hr].
+          (* first we show P x given x = x' *)
+          - apply IHl'. apply Hr. rewrite H2l in *. 
+ 
+
 
 
           
