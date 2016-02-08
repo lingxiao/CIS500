@@ -1523,7 +1523,8 @@ Proof.
           * simpl. intros _. reflexivity.
       - destruct y as [|y'].
           * simpl. intros _. reflexivity.
-          * simpl. intros H. apply IHx'. intros Hs. 
+          * simpl. intros H. apply IHx'. intros Hs.
+            
             
       
     
