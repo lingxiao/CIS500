@@ -1331,7 +1331,9 @@ Theorem evenb_double_conv : forall n,
                 else S (double k).
 Proof.
   intros n. induction n as [|n'].
+    + exists 0. simpl. reflexivity.
     + 
+           
 
  
 
