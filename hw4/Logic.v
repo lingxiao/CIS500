@@ -1418,8 +1418,7 @@ Example even_1000 : exists k, 1000 = double k.
 
 (** The most direct proof of this fact is to give the value of [k]
     explicitly. *)
-
- Proof. exists 500. reflexivity. Qed.
+Proof. exists 500. reflexivity. Qed.
 
 (** On the other hand, the proof of the corresponding boolean
     statement is even simpler: *)
@@ -1450,13 +1449,50 @@ Proof. apply even_bool_prop. reflexivity. Qed.
 Lemma andb_true_iff : forall b1 b2:bool,
   b1 && b2 = true <-> b1 = true /\ b2 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b1 b2. split.
+
+  (* forward direction *)
+  * destruct b1.
+     + destruct b2.
+        - intros _. split. reflexivity. reflexivity.
+        - simpl. intros H. inversion H.
+     + destruct b2.
+        - simpl. intros H. inversion H.
+        - simpl. intros H. inversion H.
+
+  (* reverse direction *)
+  * destruct b1.
+      + destruct b2.
+          - intros _. reflexivity.
+          - simpl. intros H. destruct H. inversion H0.
+      + destruct b2.
+          - simpl. intros H. destruct H. inversion H.
+          - simpl. intros H. destruct H. inversion H.
+Qed.
+
+  
 
 Lemma orb_true_iff : forall b1 b2,
   b1 || b2 = true <-> b1 = true \/ b2 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros b1 b2. split.
+  * destruct b1.
+      + destruct b2.
+          - simpl. intros _. left. reflexivity.
+          - simpl. intros _. left. reflexivity.
+      + destruct b2.
+          - simpl. intros _. right. reflexivity.
+          - simpl. intros. inversion H.
+
+  * destruct b1.
+      + destruct b2.
+          - simpl. intros. reflexivity.
+          - simpl. intros [H1|  H2]. reflexivity. inversion H2.
+      + destruct b2.
+          - simpl. intros [H1 | H2]. reflexivity. reflexivity.
+          - intros [H1 | H2]. inversion H1. inversion H2.
+Qed.             
+            
 
 (** **** Exercise: 1 star (beq_nat_false_iff)  *)
 (** The following theorem is an alternate "negative" formulation of
