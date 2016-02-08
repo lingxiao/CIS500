@@ -1267,14 +1267,14 @@ Definition tr_rev {X} (l : list X) : list X :=
     call); a decent compiler will generate very efficient code in this
     case.  Prove that both definitions are indeed equivalent. *)
 
-(* todo: finish this!! *)
+(*  
 Lemma trythis: forall (X : Type) (l : list X) (x :X),
   rev_append l [x] = rev_append l [] ++ [x].
 Proof.
   intros X l. induction l as [|x' l'].
     + simpl. reflexivity.  
     + simpl. unfold rev_append. admit. (* not optional! *)
-Abort.  (* do thie one below this, not optional !! *)
+*)
       
 (*
 you need a lemma about rev_append that generalizes its behavior with a forall quantified `l2`
@@ -1288,7 +1288,7 @@ Proof.
     + unfold tr_rev. simpl. reflexivity.
     + simpl. rewrite <- IHl'. unfold tr_rev. simpl.
       (*apply trythis.*)
-Abort.
+Abort. (*todo: finish this!*)
   
 
 (** ** Propositions and Booleans *)
