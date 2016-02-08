@@ -1513,9 +1513,12 @@ Proof.
           * simpl. intros _. unfold not. intros H. inversion H.
       - destruct y as [|y'].
           * simpl. intros _. unfold not. intros H. inversion H.
-          * simpl. intros H. apply IHx' in H. admit.
+          * simpl. intros H. apply IHx' in H. intro Hs.
+            injection Hs. apply H.
 
-  + 
+  +            
+            
+  
    
 
 
