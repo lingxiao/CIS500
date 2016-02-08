@@ -1505,16 +1505,17 @@ Qed.
 Theorem beq_nat_false_iff : forall x y : nat,
   beq_nat x y = false <-> x <> y.
 Proof.
-  intros x y. split.
+  intros x. split.
 
-  + induction x as [|x'].
-      - destruct y.
-          * simpl. intros contra. inversion contra.
+  + generalize dependent y. induction x as [|x'].
+      - destruct y as [|y'].
+          * simpl. intros H. inversion H.
           * simpl. intros _. unfold not. intros H. inversion H.
       - destruct y as [|y'].
           * simpl. intros _. unfold not. intros H. inversion H.
-          * simpl. intros H.  unfold not. intros H2. 
-            
+          * simpl. intros H. apply IHx' in H. admit.
+
+  + 
    
 
 
