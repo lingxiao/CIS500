@@ -1534,34 +1534,52 @@ Fixpoint beq_list {A} (beq : A -> A -> bool)
   | _       , _        => false                    
   end.                          
 
+                              
+(*  intros A. split.
+  induction l1 as [|a1 l1'].
+    + destruct l2.
+        - simpl. reflexivity.
+        - simpl. intros CH. inversion CH.
+    + destruct l2 as [|a2 l2'].
+        - simpl. intros CH. inversion CH.
+        - simpl. destruct (beq a1 a2) eqn: Ha1a2.
+            * intros Hl1l2. replace a1 with a2. replace l1' with l2'. reflexivity.
+                {apply 
 
+*)                
 Lemma beq_list_true_iff :
   forall A (beq : A -> A -> bool),
     (forall a1 a2, beq a1 a2 = true <-> a1 = a2) ->
     forall l1 l2, beq_list beq l1 l2 = true <-> l1 = l2.
-Proof.
-  intros A. split.
-    + induction l1 as [|a1 l1'].
-        - destruct l2.
-            * simpl. reflexivity.
-            * simpl. intros CH. inversion CH.
-        - destruct l2 as [|a2 l2'].
-            * 
+Proof.  
+  intros A beq Heq l1 l2. split.
+  (* forward direction *)
+  * induction l1 as [|a1 l1'].
+      + destruct l2.
+         - simpl. reflexivity.
+         - simpl. intros CH. inversion CH.
+      + destruct l2 as [|a2 l2'].
+         - simpl. intros CH. inversion CH.
+         - simpl. destruct (beq a1 a2) eqn: Has.
+            apply Heq in Has. rewrite Has. admit.  (*todo: finish this proof *) 
+            intros CH. inversion CH.
+    
+   (* reverse direction*)
+   * intros H. induction l1 as [|a1 l1'].
+       + simpl. destruct l2 as [|a2 l2'].
+           - reflexivity.
+           - inversion H.
+       + simpl. destruct l2 as [|a2 l2'].
+           - inversion H.
+           - destruct (beq a1 a2) eqn: Has.
+               apply Heq in Has. rewrite Has in H.  admit.
+Abort.  (* todo: finish this proof !! *)
 
   
 
 
   
-  intros A beq H l1 l2. split.
-    + induction l1 as [|a1 l1'].
-        - destruct l2.
-            * simpl. reflexivity.
-            * simpl. intros CH. inversion CH.
-        - destruct l2 as [|a2 l2'].
-            * simpl. intros CH. inversion CH.
-            * unfold beq_list. destruct (beq a1 a2).
-                
-                
+
                   
 
   
