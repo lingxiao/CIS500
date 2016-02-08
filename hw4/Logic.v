@@ -1114,6 +1114,7 @@ Qed.
     arguments we want to instantiate it with, in much the same way as
     we apply a polymorphic function to a type argument. *)
 
+(* plus_comm : forall n m : nat, n + m = m + n *)
 Lemma plus_comm3_take2 :
   forall n m p, n + (m + p) = (p + m) + n.
 Proof.
@@ -1131,6 +1132,8 @@ Qed.
     hypotheses to a theorem as implicit by default.  These features
     are illustrated in the proof below. *)
 
+
+(* Lemma proj1 : forall P Q : Prop, P /\ Q -> P. *)
 Example lemma_application_ex :
   forall {n : nat} {ns : list nat},
     In n (map (fun m => m * 0) ns) ->
