@@ -1325,16 +1325,19 @@ Qed.
   evenb_S : forall n : nat, evenb (S n) = negb (evenb n).
 
 *)
-(* todo: finish this one, what do you do with the existential? *)
+(* todo: finish this one, there's a contradiction ?? *)
 Theorem evenb_double_conv : forall n,
   exists k, n = if evenb n then double k
                 else S (double k).
 Proof.
   intros n. induction n as [|n'].
     + exists 0. simpl. reflexivity.
-    + destruct IHn'. rewrite evenb_S. destruct (evenb n'). simpl.
-        - exists x. rewrite H. reflexivity.
-        - exists x. simpl. 
+      (* IHn' : exists k.  n' = if evenb n' then double k else S (double k) *)         
+    + rewrite evenb_S. destruct (evenb n'). simpl.
+          (* IHn': exists k. n' = double k *)
+        - destruct IHn'. exists x. rewrite H. reflexivity.
+          (* IHn': exists k. n' = S (double k) *)
+        - destruct IHn'. simpl. exists x. rewrite H.
      
            
 
