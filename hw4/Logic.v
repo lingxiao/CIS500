@@ -1554,7 +1554,16 @@ Fixpoint beq_list {A} (beq : A -> A -> bool)
 
 Lemma list_eq : forall (X : Type) (l1 l2 : list X) (a : X),
  a :: l1 = a :: l2 -> l1 = l2.
-Proof. admit.  Qed.
+Proof.
+  intros X l1. induction l1 as [|x l1'].
+    - destruct l2 as [|y l2'].
+        + intros a. intros H. reflexivity.
+        + intros a. intros Hc. inversion Hc.
+    - destruct l2 as [|y l2'].
+        + intros a. intros Hc. inversion Hc.
+        + intros a. intros H. admit.
+Qed.
+  
                              
                               
 Lemma beq_list_true_iff :
@@ -1586,7 +1595,8 @@ Proof.
                 intros Hl. apply H in Ha. rewrite Ha in Hl.
                 apply IHl1'. apply list_eq in Hl. apply Hl.
 
-                intros Hl. 
+                intros Hl. exfalso.
+Abort. (* todo: finish these last two cases * )                
                 
                 
 
