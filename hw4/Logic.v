@@ -1756,7 +1756,7 @@ Theorem excluded_middle_irrefutable:  forall (P:Prop),
 Proof.
   intros P. unfold not.
   (* we want to show:  (P \/ (P -> False) -> False) -> False  *)
-  intros H. 
+  intros H. apply H. 
   
   
   
