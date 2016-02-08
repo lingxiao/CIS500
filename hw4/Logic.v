@@ -1325,19 +1325,14 @@ Qed.
   evenb_S : forall n : nat, evenb (S n) = negb (evenb n).
 
 *)
+(* todo: finish this one, what do you do with the existential? *)
 Theorem evenb_double_conv : forall n,
   exists k, n = if evenb n then double k
                 else S (double k).
 Proof.
-  intros n. destruct (evenb n).
-    + induction n as [|n'].
-
-
-  
+  intros n. induction n as [|n'].
+Abort. (* do this one, not optional!! *)
  
-
-
-      
 
 
 Theorem even_bool_prop : forall n,
