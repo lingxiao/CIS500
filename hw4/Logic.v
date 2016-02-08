@@ -1274,7 +1274,7 @@ Proof.
   intros X l. induction l as [|x' l'].
     + simpl. reflexivity.  
     + simpl. unfold rev_append. admit. (* not optional! *)
-Qed. 
+Abort.  (* do thie one below this, not optional !! *)
       
 
 Lemma tr_rev_correct : forall X, @tr_rev X = @rev X.
@@ -1284,8 +1284,8 @@ Proof.
   intros l. induction l as [|x l'].
     + unfold tr_rev. simpl. reflexivity.
     + simpl. rewrite <- IHl'. unfold tr_rev. simpl.
-      apply trythis.
-Qed.
+      (*apply trythis.*)
+Abort.
   
 
 (** ** Propositions and Booleans *)
