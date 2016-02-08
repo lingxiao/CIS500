@@ -331,11 +331,11 @@ Proof.
 Qed.
 
 
-(* to ask: why doesn't this work? *)
+(* to ask: why doesn't this work? 
 Lemma blah: forall n m, n = 0 \/ m = 0.
 Proof.
   (*apply or_intro.*)
-Abort.  
+*)
 
 
 (*Lemma or_example :
