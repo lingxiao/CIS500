@@ -1332,12 +1332,12 @@ Theorem evenb_double_conv : forall n,
 Proof.
   intros n. induction n as [|n'].
     + exists 0. simpl. reflexivity.
-      (* IHn' : exists k.  n' = if evenb n' then double k else S (double k) *)         
-    + rewrite evenb_S. destruct (evenb n'). simpl.
-          (* IHn': exists k. n' = double k *)
-        - destruct IHn'. exists x. rewrite H. reflexivity.
-          (* IHn': exists k. n' = S (double k) *)
-        - destruct IHn'. simpl. exists x. rewrite H.
+    (* IHn' : exists k.  n' = if evenb n' then double k else S (double k) *)
+    + rewrite evenb_S. destruct  (evenb n').
+        (* case even n. IHn': exist k. n' = 2k, goal: S n' = 2k + 1  *)
+        - destruct IHn'. simpl. exists x. rewrite H. reflexivity.
+        (* case odd n. IHn': exist k. n' = 2k + 1, goal: S n' = 2k *)
+        - destruct IHn'. simpl. exists x.
 Abort. (* what are you going to do with the contradiction? *)
            
 
