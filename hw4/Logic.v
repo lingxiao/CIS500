@@ -1332,8 +1332,9 @@ Theorem evenb_double_conv : forall n,
 Proof.
   intros n. induction n as [|n'].
     + exists 0. simpl. reflexivity.
-    + destruct IHn'. destruct (evenb (S n')).
-        - exists n'. rewrite H. 
+    + destruct IHn'. rewrite evenb_S. destruct (evenb n'). simpl.
+        - exists x. rewrite H. reflexivity.
+        - exists x. simpl. 
      
            
 
