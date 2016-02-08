@@ -1276,7 +1276,10 @@ Proof.
     + simpl. unfold rev_append. admit. (* not optional! *)
 Abort.  (* do thie one below this, not optional !! *)
       
-
+(*
+you need a lemma about rev_append that generalizes its behavior with a forall quantified `l2`
+for example, what is (rev_append [1, 2, 3] [4, 5, 6]) in relation to rev and ++?
+*)
 Lemma tr_rev_correct : forall X, @tr_rev X = @rev X.
 Proof.
   intros X. 
@@ -1502,8 +1505,16 @@ Qed.
 Theorem beq_nat_false_iff : forall x y : nat,
   beq_nat x y = false <-> x <> y.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros x y. split.
+
+  + intros H. induction x.
+      - destruct y.
+          * simpl in H. inversion H.
+          * simpl in H.
+Abort.  (* todo: what do you do with 0 <> S y ?? *)           
+             
+   
+
 
 (** **** Exercise: 3 stars (beq_list)  *)
 (** Given a boolean operator [beq] for testing equality of elements of
@@ -1512,17 +1523,52 @@ Proof.
     of the [beq_list] function below.  To make sure that your
     definition is correct, prove the lemma [beq_list_true_iff]. *)
 
+Check (forall (X : Type) (x y : X), x = y).
+
+
 Fixpoint beq_list {A} (beq : A -> A -> bool)
                   (l1 l2 : list A) : bool :=
-  (* FILL IN HERE *) admit.
+  match l1,l2 with
+  | []      , []       => true
+  | x :: l1', y :: l2' => if beq x y then beq_list beq l1' l2' else false
+  | _       , _        => false                    
+  end.                          
+
 
 Lemma beq_list_true_iff :
   forall A (beq : A -> A -> bool),
     (forall a1 a2, beq a1 a2 = true <-> a1 = a2) ->
     forall l1 l2, beq_list beq l1 l2 = true <-> l1 = l2.
 Proof.
-(* FILL IN HERE *) Admitted.
-(** [] *)
+  intros A. split.
+    + induction l1 as [|a1 l1'].
+        - destruct l2.
+            * simpl. reflexivity.
+            * simpl. intros CH. inversion CH.
+        - destruct l2 as [|a2 l2'].
+            * 
+
+  
+
+
+  
+  intros A beq H l1 l2. split.
+    + induction l1 as [|a1 l1'].
+        - destruct l2.
+            * simpl. reflexivity.
+            * simpl. intros CH. inversion CH.
+        - destruct l2 as [|a2 l2'].
+            * simpl. intros CH. inversion CH.
+            * unfold beq_list. destruct (beq a1 a2).
+                
+                
+                  
+
+  
+
+
+  
+
 
 (** **** Exercise: 2 stars, recommended (All_forallb)  *)
 (** Recall the function [forallb], from the exercise
