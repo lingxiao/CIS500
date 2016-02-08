@@ -1575,41 +1575,56 @@ Proof.
                apply Heq in Has. rewrite Has in H.  admit.
 Abort.  (* todo: finish this proof !! *)
 
-  
-
-
-  
-
-                  
-
-  
-
-
-  
-
 
 (** **** Exercise: 2 stars, recommended (All_forallb)  *)
 (** Recall the function [forallb], from the exercise
     [forall_exists_challenge] in chapter [Tactics]: *)
 
+Compute ((true && true) = true).
+
 Fixpoint forallb {X : Type} (test : X -> bool) (l : list X) : bool :=
   match l with
-  | [] => true
-  | x :: l' => andb (test x) (forallb test l')
+  | []      => true
+  | x :: l' => test x && forallb test l'
   end.
 
 (** Prove the theorem below, which relates [forallb] to the [All]
     property of the above exercise. *)
 
+Theorem andb_split : forall (b1 b2 : bool),
+  b1 && b2 = true <-> b1 = true /\ b2 = true.
+Proof.
+  intros b1 b2. split.
+    * destruct b1.
+      + destruct b2.
+         - intros _. split. reflexivity. reflexivity.
+         - intros H. inversion H.
+      + destruct b2.
+         - intros H. inversion H.
+         - intros H. inversion H. 
+    * intros [H1 H2]. rewrite H1. rewrite H2. reflexivity.
+Qed.          
+
 Theorem forallb_true_iff : forall X test (l : list X),
    forallb test l = true <-> All (fun x => test x = true) l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X test l. split.
+    + induction l as [|x l'].
+        - simpl. intros _. apply I.
+        - simpl. intros H1. apply andb_split in H1. destruct H1. split.
+          apply H. apply IHl' in H0. apply H0.
 
+    + induction l as [|x l'].
+        - simpl. intros _. reflexivity.
+        - simpl. intros [H1 H2]. apply IHl' in H2.
+          rewrite andb_split. split. apply H1. apply H2.
+Qed.          
+
+      
 (** Are there any important properties of the function [forallb] which
     are not captured by your specification? *)
 
-(* FILL IN HERE *)
+(* todo: finish this one!! *)
 (** [] *)
 
 (** ** Classical vs. Constructive Logic *)
