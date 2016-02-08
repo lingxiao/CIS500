@@ -1325,7 +1325,6 @@ Qed.
   evenb_S : forall n : nat, evenb (S n) = negb (evenb n).
 
 *)
-(* todo: finish this one, there's a contradiction ?? *)
 Theorem evenb_double_conv : forall n,
   exists k, n = if evenb n then double k
                 else S (double k).
@@ -1337,12 +1336,9 @@ Proof.
         (* case even n. IHn': exist k. n' = 2k, goal: S n' = 2k + 1  *)
         - destruct IHn'. simpl. exists x. rewrite H. reflexivity.
         (* case odd n. IHn': exist k. n' = 2k + 1, goal: S n' = 2k *)
-        - destruct IHn'. simpl. exists x.
-Abort. (* what are you going to do with the contradiction? *)
-           
-
+        - destruct IHn'. simpl. exists (S x). rewrite H. simpl. reflexivity.
+Qed.          
  
-
 
 Theorem even_bool_prop : forall n,
   evenb n = true <-> exists k, n = double k.
