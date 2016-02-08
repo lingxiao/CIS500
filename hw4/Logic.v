@@ -1133,7 +1133,12 @@ Qed.
     are illustrated in the proof below. *)
 
 
-(* Lemma proj1 : forall P Q : Prop, P /\ Q -> P. *)
+(*
+ proj1      :  forall P Q : Prop, P /\ Q -> P. 
+ In_map_iff :  forall (A B : Type) (f : A -> B) (l : list A) (y : B),
+    In y (map f l) <->
+    exists x, f x = y /\ In x l.
+*)
 Example lemma_application_ex :
   forall {n : nat} {ns : list nat},
     In n (map (fun m => m * 0) ns) ->
@@ -1249,7 +1254,7 @@ Print Assumptions plus_comm_ext.
 
 Fixpoint rev_append {X} (l1 l2 : list X) : list X :=
   match l1 with
-  | [] => l2
+  | []       => l2
   | x :: l1' => rev_append l1' (x :: l2)
   end.
 
@@ -1262,11 +1267,26 @@ Definition tr_rev {X} (l : list X) : list X :=
     call); a decent compiler will generate very efficient code in this
     case.  Prove that both definitions are indeed equivalent. *)
 
-(* FILL IN HERE *)
+(* todo: finish this!! *)
+Lemma trythis: forall (X : Type) (l : list X) (x :X),
+  rev_append l [x] = rev_append l [] ++ [x].
+Proof.
+  intros X l. induction l as [|x' l'].
+    + simpl. reflexivity.  
+    + simpl. unfold rev_append. admit. (* not optional! *)
+Qed. 
+      
 
 Lemma tr_rev_correct : forall X, @tr_rev X = @rev X.
-(* FILL IN HERE *) Admitted.
-(** [] *)
+Proof.
+  intros X. 
+  apply functional_extensionality. intros l.
+  induction l as [|x l'].
+    + unfold tr_rev. simpl. reflexivity.
+    + simpl. rewrite <- IHl'. unfold tr_rev. simpl.
+      apply trythis.
+Qed.
+  
 
 (** ** Propositions and Booleans *)
 
