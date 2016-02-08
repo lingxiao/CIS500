@@ -1502,6 +1502,7 @@ Qed.
     [beq_nat_true_iff] that is more convenient in certain
     situations (we'll see examples in later chapters). *)
 
+
 Theorem beq_nat_false_iff : forall x y : nat,
   beq_nat x y = false <-> x <> y.
 Proof.
@@ -1516,7 +1517,16 @@ Proof.
           * simpl. intros H. apply IHx' in H. intro Hs.
             injection Hs. apply H.
 
-  +            
+  + generalize dependent y. induction x as [|x'].
+      - destruct y as [|y'].
+          * unfold not. simpl. intros H. exfalso. apply H. reflexivity.
+          * simpl. intros _. reflexivity.
+      - destruct y as [|y'].
+          * simpl. intros _. reflexivity.
+          * simpl. intros H. apply IHx'. intros Hs. 
+            
+      
+    
             
   
    
