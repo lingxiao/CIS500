@@ -1502,6 +1502,10 @@ Qed.
     [beq_nat_true_iff] that is more convenient in certain
     situations (we'll see examples in later chapters). *)
 
+Theorem f_equal : forall (A B : Type) (f: A -> B) (x y: A),
+  x = y -> f x = f y.
+Proof. intros A B f x y eq. rewrite eq.  reflexivity.  Qed.
+
 
 Theorem beq_nat_false_iff : forall x y : nat,
   beq_nat x y = false <-> x <> y.
@@ -1524,13 +1528,9 @@ Proof.
       - destruct y as [|y'].
           * simpl. intros _. reflexivity.
           * simpl. intros H. apply IHx'. intros Hs.
-            
-            
-      
-    
-            
-  
-   
+            unfold not in H. apply H. apply f_equal.
+            apply Hs.
+Qed.    
 
 
 (** **** Exercise: 3 stars (beq_list)  *)
