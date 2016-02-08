@@ -1317,8 +1317,8 @@ Qed.
 
 (*
   for every n, there is some k so that either
-      - if n is even then k = 2 * n
-      - or n is odd and   k = 2 * n + 1
+      - if n is even then n = 2 * k
+      - or n is odd and   n = 2 * k + 1
 
   Hint: Use the [evenb_S] lemma from [Induction.v].
 
@@ -1331,7 +1331,8 @@ Theorem evenb_double_conv : forall n,
                 else S (double k).
 Proof.
   intros n. induction n as [|n'].
-Abort. (* do this one, not optional!! *)
+    + 
+
  
 
 
