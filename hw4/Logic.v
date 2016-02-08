@@ -1023,34 +1023,10 @@ Theorem combine_odd_even_elim_odd :
     oddb n = true ->
     Podd n.
 Proof.
-  intros Podd Peven n. induction n as [|n'].
-    + intros H. replace (oddb 0) with false. intro contra. inversion contra.
-       { reflexivity.}
-    + destruct (oddb (S n')).
-        - 
-
-
-
-
-
-(*
-
-  
-  intros Podd Peven n. destruct (oddb n).
-    + intros H G. induction n as [| n'].
-        - 
-          
+  intros Podd Peven n. unfold combine_odd_even. destruct (oddb n).
+    + intros H _. apply H.
     + intros _ contra. inversion contra.
-
-
-
-  induction n as [|n'].
-    + unfold oddb. simpl. intros _ contra. inversion contra.
-    + intros H.  unfold oddb. destruct (evenb (S n')).
-        - simpl. intros contra. inversion contra.
-        - simpl. intros G. 
-Abort.    
-  *)
+Qed.
 
 
 Theorem combine_odd_even_elim_even :
@@ -1059,9 +1035,11 @@ Theorem combine_odd_even_elim_even :
     oddb n = false ->
     Peven n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Podd Peven n. unfold combine_odd_even. destruct (oddb n).
+    + intros _ contra. inversion contra.
+    + intros H _. apply H.
+Qed.      
 
-(** [] *)
 
 (* #################################################################### *)
 (** * Applying Theorems to Arguments *)
