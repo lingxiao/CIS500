@@ -1667,7 +1667,7 @@ Definition excluded_middle := forall P : Prop,
     or not is trivial: we just have to check the value of [b].  This
     leads to the following theorem: *)
 
-Theorem restricted_excluded_middle : forall P b,
+Theorem restricted_excluded_middle : forall P (b : bool),
   (P <-> b = true) -> P \/ ~ P.
 Proof.
   intros P [] H.
@@ -1754,8 +1754,14 @@ Qed.
 Theorem excluded_middle_irrefutable:  forall (P:Prop),
   ~ ~ (P \/ ~ P).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros P. unfold not.
+  (* we want to show:  (P \/ (P -> False) -> False) -> False  *)
+  intros H. 
+  
+  
+  
+
+
 
 (** **** Exercise: 3 stars, optional (not_exists_dist)  *)
 (** It is a theorem of classical logic that the following two
