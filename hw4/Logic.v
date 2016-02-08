@@ -1280,8 +1280,8 @@ Qed.
 Lemma tr_rev_correct : forall X, @tr_rev X = @rev X.
 Proof.
   intros X. 
-  apply functional_extensionality. intros l.
-  induction l as [|x l'].
+  apply functional_extensionality. 
+  intros l. induction l as [|x l'].
     + unfold tr_rev. simpl. reflexivity.
     + simpl. rewrite <- IHl'. unfold tr_rev. simpl.
       apply trythis.
@@ -1314,13 +1314,31 @@ Proof.
 Qed.
 
 (** **** Exercise: 3 stars (evenb_double_conv)  *)
+
+(*
+  for every n, there is some k so that either
+      - if n is even then k = 2 * n
+      - or n is odd and   k = 2 * n + 1
+
+  Hint: Use the [evenb_S] lemma from [Induction.v].
+
+  evenb_S : forall n : nat, evenb (S n) = negb (evenb n).
+
+*)
 Theorem evenb_double_conv : forall n,
   exists k, n = if evenb n then double k
                 else S (double k).
 Proof.
-  (* Hint: Use the [evenb_S] lemma from [Induction.v]. *)
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n. destruct (evenb n).
+    + induction n as [|n'].
+
+
+  
+ 
+
+
+      
+
 
 Theorem even_bool_prop : forall n,
   evenb n = true <-> exists k, n = double k.
