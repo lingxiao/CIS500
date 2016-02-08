@@ -1317,8 +1317,8 @@ Qed.
 
 (*
   for every n, there is some k so that either
-      - if n is even then n = 2 * k
-      - or n is odd and   n = 2 * k + 1
+      - if n is even then n = 2k
+      - or n is odd and   n = 1 + 2k
 
   Hint: Use the [evenb_S] lemma from [Induction.v].
 
@@ -1338,7 +1338,7 @@ Proof.
         - destruct IHn'. exists x. rewrite H. reflexivity.
           (* IHn': exists k. n' = S (double k) *)
         - destruct IHn'. simpl. exists x. rewrite H.
-     
+Abort. (* what are you going to do with the contradiction? *)
            
 
  
