@@ -1507,12 +1507,14 @@ Theorem beq_nat_false_iff : forall x y : nat,
 Proof.
   intros x y. split.
 
-  + intros H. induction x.
+  + induction x as [|x'].
       - destruct y.
-          * simpl in H. inversion H.
-          * simpl in H.
-Abort.  (* todo: what do you do with 0 <> S y ?? *)           
-             
+          * simpl. intros contra. inversion contra.
+          * simpl. intros _. unfold not. intros H. inversion H.
+      - destruct y as [|y'].
+          * simpl. intros _. unfold not. intros H. inversion H.
+          * simpl. intros H.  unfold not. intros H2. 
+            
    
 
 
@@ -1580,7 +1582,6 @@ Abort.  (* todo: finish this proof !! *)
 (** Recall the function [forallb], from the exercise
     [forall_exists_challenge] in chapter [Tactics]: *)
 
-Compute ((true && true) = true).
 
 Fixpoint forallb {X : Type} (test : X -> bool) (l : list X) : bool :=
   match l with
