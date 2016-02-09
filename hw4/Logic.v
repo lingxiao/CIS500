@@ -755,7 +755,7 @@ Theorem exists_example_2 : forall n,
   (exists o, n = 2 + o). 
 Proof.
   intros n [m Hm]. 
-  exists (2 + m).
+  exists (2 + m). 
   apply Hm.
 Qed.
 
@@ -820,7 +820,8 @@ Fixpoint In {A : Type} (x : A) (l : list A) : Prop :=
 
 Example In_example_1 : In 4 [3; 4; 5].
 Proof.
-  simpl. right. left. reflexivity.
+  simpl. (*  3 = 4 \/ 4 = 4 \/ 5 = 4 \/ False *)
+  right. left. reflexivity.
 Qed.
 
 Example In_example_2 :
@@ -1206,6 +1207,10 @@ Proof. reflexivity. Qed.
     But we can add it to Coq's core logic using the [Axiom]
     command. *)
 
+(*
+   note f and g might have different complexities thus
+   their computational behavior might differ
+*)
 Axiom functional_extensionality : forall {X Y: Type}
                                     {f g : X -> Y},
   (forall (x:X), f x = g x) -> f = g.
@@ -1552,6 +1557,32 @@ Fixpoint beq_list {A} (beq : A -> A -> bool)
   end.                          
 
 
+
+Lemma beq_list_true_iff_1 :
+  forall A (beq : A -> A -> bool),
+    (forall a1 a2, beq a1 a2 = true <-> a1 = a2) ->
+    forall l1 l2, beq_list beq l1 l2 = true <-> l1 = l2.
+Proof.
+  intros A. split.
+
+  + generalize dependent l2. induction l1 as [|a1 l1'].
+      - destruct l2.
+          * reflexivity.
+          * simpl. intros Hc. inversion Hc.
+      - destruct l2 as [|a2 l2'].
+          * simpl. intros Hc. inversion Hc.
+          * simpl. destruct (beq a1 a2) eqn: Ha.
+              intros Hl. apply IHl1' in Hl. rewrite Hl. 
+              apply H in Ha. rewrite Ha. reflexivity.
+
+              intros Hc. inversion Hc.
+
+  + generalize dependent l2.
+Abort.    
+
+
+    
+
 Lemma list_eq : forall (X : Type) (l1 l2 : list X) (a : X),
  a :: l1 = a :: l2 -> l1 = l2.
 Proof.
@@ -1595,22 +1626,14 @@ Proof.
                 intros Hl. apply H in Ha. rewrite Ha in Hl.
                 apply IHl1'. apply list_eq in Hl. apply Hl.
 
-                intros Hl. exfalso.
-Abort. (* todo: finish these last two cases * )                
+                intros Hl. admit.
+Qed. (* todo: finish these last two cases *)
                 
-                
-
-
-
-
-
-
               
 
 (** **** Exercise: 2 stars, recommended (All_forallb)  *)
 (** Recall the function [forallb], from the exercise
     [forall_exists_challenge] in chapter [Tactics]: *)
-
 
 Fixpoint forallb {X : Type} (test : X -> bool) (l : list X) : bool :=
   match l with
@@ -1772,7 +1795,7 @@ Proof.
   (* we want to show:  (P \/ (P -> False) -> False) -> False  *)
   intros H. apply H.
   right. intros p. apply H. left. apply p.
-Qed.  
+Qed.
   
   
 
