@@ -1302,6 +1302,15 @@ Abort. (*todo: finish this!*)
    the next chapter here. We can remove/adapt some of the material in
    IndProp.v soon. 
  *)
+(*
+    key: cannot write a boolean value function that does not terminate
+         since function would not be total (ie does TM terminate)
+
+         but can write Proposition that does not terminate. though
+         it does not have proof.
+*)
+
+
 (** We've seen that Coq has two different ways of encoding logical
     facts: with _booleans_ (of type [bool]), and with
     _propositions_ (of type [Prop]). For instance, to claim that a
