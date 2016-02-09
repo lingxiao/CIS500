@@ -1370,6 +1370,11 @@ Qed.
     say either (1) that [beq_nat n m] returns [true] or (2) that [n =
     m].  These two notions are equivalent. *)
 
+
+(*
+   bool express computable property, and can use [simpl]
+   to compute.
+*)
 Theorem beq_nat_true_iff : forall n1 n2 : nat,
   beq_nat n1 n2 = true <-> n1 = n2.
 Proof.
@@ -1561,55 +1566,45 @@ Fixpoint beq_list {A} (beq : A -> A -> bool)
                   (l1 l2 : list A) : bool :=
   match l1,l2 with
   | []      , []       => true
-  | x :: l1', y :: l2' => if beq x y then beq_list beq l1' l2' else false
+  | x :: l1', y :: l2' => beq x y && beq_list beq l1' l2' 
   | _       , _        => false                    
   end.                          
 
 
-
-Lemma beq_list_true_iff_1 :
-  forall A (beq : A -> A -> bool),
-    (forall a1 a2, beq a1 a2 = true <-> a1 = a2) ->
-    forall l1 l2, beq_list beq l1 l2 = true <-> l1 = l2.
-Proof.
-  intros A. split.
-
-  + generalize dependent l2. induction l1 as [|a1 l1'].
-      - destruct l2.
-          * reflexivity.
-          * simpl. intros Hc. inversion Hc.
-      - destruct l2 as [|a2 l2'].
-          * simpl. intros Hc. inversion Hc.
-          * simpl. destruct (beq a1 a2) eqn: Ha.
-              intros Hl. apply IHl1' in Hl. rewrite Hl. 
-              apply H in Ha. rewrite Ha. reflexivity.
-
-              intros Hc. inversion Hc.
-
-  + generalize dependent l2.
-Abort.    
-
-
-    
-
-Lemma list_eq : forall (X : Type) (l1 l2 : list X) (a : X),
- a :: l1 = a :: l2 -> l1 = l2.
-Proof.
-  intros X l1. induction l1 as [|x l1'].
-    - destruct l2 as [|y l2'].
-        + intros a. intros H. reflexivity.
-        + intros a. intros Hc. inversion Hc.
-    - destruct l2 as [|y l2'].
-        + intros a. intros Hc. inversion Hc.
-        + intros a. intros H. admit.
-Qed.
-  
-                             
-                              
+(*
+forall b1 b2.  b1 && b2 = true <-> b1 = true /\ b2 = true.
+*)
 Lemma beq_list_true_iff :
   forall A (beq : A -> A -> bool),
     (forall a1 a2, beq a1 a2 = true <-> a1 = a2) ->
     forall l1 l2, beq_list beq l1 l2 = true <-> l1 = l2.
+Proof.
+  intros A beq H1. intros l1. induction l1 as [|a1 l1'].
+  + intros l2. destruct l2.
+      - split.
+          * simpl. intros _. reflexivity.
+          * intros _. reflexivity.
+      - split.
+          * intros Hc. inversion Hc.
+          * intros Hc. inversion Hc.
+  + intros l2. destruct l2 as [|a2 l2'].
+      - split.
+          * intros Hc. inversion Hc.
+          * intros Hc. inversion Hc.
+      - split.
+          * simpl. intros H2. apply andb_true_iff in H2.
+            destruct H2 as [H2l H2r].
+            apply IHl1' in H2r. apply H1 in H2l.
+            rewrite H2l. rewrite H2r. reflexivity.
+          * simpl. intros H2. apply andb_true_iff. split.
+              { inversion H2. apply H1. reflexivity. }
+              { apply IHl1'. inversion H2. reflexivity. }
+Qed.              
+
+(*
+
+todo: finish this alternate proof.
+
 Proof.
   intros A. split.
 
@@ -1632,12 +1627,8 @@ Proof.
         - destruct l2 as [|a2 l2'].
             * simpl. intros Hc. inversion Hc.
             * simpl. destruct (beq a1 a2) eqn : Ha.
-                intros Hl. apply H in Ha. rewrite Ha in Hl.
-                apply IHl1'. apply list_eq in Hl. apply Hl.
-
-                intros Hl. admit.
-Qed. (* todo: finish these last two cases *)
-                
+Qed. 
+*)                
               
 
 (** **** Exercise: 2 stars, recommended (All_forallb)  *)
@@ -1713,6 +1704,9 @@ Definition excluded_middle := forall P : Prop,
     or not is trivial: we just have to check the value of [b].  This
     leads to the following theorem: *)
 
+(*
+   any decidable proposition can have excluded middle
+*)
 Theorem restricted_excluded_middle : forall P (b : bool),
   (P <-> b = true) -> P \/ ~ P.
 Proof.
