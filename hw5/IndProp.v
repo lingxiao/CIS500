@@ -182,7 +182,7 @@ Qed.
 Theorem evenb_minus2: forall n,
   evenb n = true -> evenb (pred (pred n)) = true.
 Proof.
-  intros [ | [ | n' ] ].
+  intros [ | [ | n' ] ].  (* <- what does this destruction pattern do? *)
   - (* n = 0 *) reflexivity.
   - (* n = 1; contradiction *) intros H. inversion H.
   - (* n = n' + 2 *) simpl. intros H. apply H.
@@ -199,7 +199,7 @@ Theorem ev_minus2: forall n,
 Proof.
   intros [ | [ | n' ] ].
   - (* n = 0 *) simpl. intros _. apply ev_0.
-  - (* n = 1; we're stuck! *) simpl.
+  - (* n = 1; we're stuck! *) simpl. 
 Abort.
 
 (** The solution is to perform case analysis on the evidence that [ev
