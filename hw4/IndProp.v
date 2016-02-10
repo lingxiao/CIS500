@@ -68,8 +68,17 @@ Require Export Logic.
     rule: *)
 
 Inductive ev : nat -> Prop :=
-| ev_0 : ev 0
+| ev_0  : ev 0
 | ev_SS : forall n : nat, ev n -> ev (S (S n)).
+
+
+(*
+
+ compare: 
+  Inductive lists (X : Type) : Type :=
+    | Nil  : lists X
+    | cons : X -> lists X -> lists X.
+*)
 
 (** This definition is different in one crucial respect from
     previous uses of [Inductive]: its result is not a [Type], but
