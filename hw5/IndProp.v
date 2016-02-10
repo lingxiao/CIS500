@@ -468,29 +468,10 @@ Theorem ev_sum : forall n m, ev n -> ev m -> ev (n + m).
 Proof.
   intros n m Hn. generalize dependent m. inversion Hn as [|n' Hn']. 
     + intros m. simpl. intros H1. apply H1.
-    + intros m Hm. simpl. apply ev_SS. 
+    + intros m Hm. simpl. apply ev_SS. inversion Hm as [|m' Hm'].
+        - rewrite plus_comm. apply Hn'.
+        - rewrite plus_comm. simpl. apply ev_SS. 
 p     
-  
-
-
-  
-  intros n m H1 H2. inversion H1 as [|n' H1'].
-    + simpl. apply H2.
-    + simpl. apply ev_SS. inversion H2 as [|m' H2'].
-        - rewrite plus_comm. apply H1'.
-        - rewrite plus_comm. simpl. apply ev_SS. inversion H1'.
-            * rewrite plus_comm. apply H2'.
-            * rewrite plus_comm. simpl. apply ev_SS.
- 
-          
-
-
-      
-
-      inversion H2 as [|m' H2'].
-        - rewrite plus_comm. simpl. apply ev_SS. apply H1'.
-        - simpl. apply ev_SS. rewrite H0. 
-
   
 
 
