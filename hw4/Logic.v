@@ -884,38 +884,22 @@ Lemma In_map_iff :
     exists x, f x = y /\ In x l.
 Proof.
   intros A B f l y. split.
-      (*
-         first we show forward direction by induction on l
-         under the premise that
-                 y \in f <$> l
-         and by defintion of [in], and let [l = x :: l'], we know:
-             either [y = f x]
-             or     [y in l'] 
-      *)
-    + intros H. induction l as [|x' l'].
-          (* if l = [] then y not in l, so trivially our premise is false *)
-        - simpl in H.  inversion H.
-          (*
-              let l = x : l' and our induction hypo is that:
-                  In y (f <$> l')  /implies exists x. f x = y /\ In x l'
-              and the premise is that:
-                  y /in (f <$> (x' :: l'))
-              so either [f x' = y] or [y /in f <$> l']
-              The goal is to show:
-                  exists x. f x = y /\ x \in (x' :: l')
-          *)
-        - destruct H. exists x'. split.
-            * apply H.
-            * simpl. left. reflexivity.
-            * apply IHl' in H. destruct H. exists x. destruct H as [H1 H2]. split.
-                apply H1.
-                simpl. right. apply H.
+
+  + intros H. induction l as [|x' l'].
+      - simpl in H. inversion H.
+      - destruct H. exists x'. split.
+          * apply H.
+          * simpl. left. reflexivity.
+          * apply IHl' in H. destruct H. exists x. split.
+              { apply H. }
+              { simpl. right. destruct H. apply H0.}
+
    + intros [x [H1 H2]]. induction l as [|x' l'].
        - simpl in H2. inversion H2.
-       - simpl. destruct H2 as [H2l | H2r]. rewrite H2l in *.
-           * left. apply H1.
-           * right. apply IHl' in H2r. apply H2r.
-Qed.             
+       - simpl. destruct H2 as [H2l | H2r].
+           * rewrite H2l in *. left. apply H1.
+           * right. apply IHl'. apply H2r.
+Qed.
 
   	
 
