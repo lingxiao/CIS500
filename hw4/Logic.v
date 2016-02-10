@@ -1576,6 +1576,9 @@ Qed.
 Check (forall (X : Type) (x y : X), x = y).
 
 
+(* note: using a && b is much easier to prove than
+         if then statement
+*)
 Fixpoint beq_list {A} (beq : A -> A -> bool)
                   (l1 l2 : list A) : bool :=
   match l1,l2 with
@@ -1586,7 +1589,7 @@ Fixpoint beq_list {A} (beq : A -> A -> bool)
 
 
 (*
-forall b1 b2.  b1 && b2 = true <-> b1 = true /\ b2 = true.
+   andb_true_iff forall b1 b2.  b1 && b2 = true <-> b1 = true /\ b2 = true.
 *)
 Lemma beq_list_true_iff :
   forall A (beq : A -> A -> bool),
@@ -1612,7 +1615,7 @@ Proof.
         - destruct l2 as [|a2 l2'].
             * simpl. intros Hc. inversion Hc.
             * simpl. intros Hl. apply andb_true_iff. split.
-                { inversion Hl. apply H. reflexivity. }
+                { inversion Hl. apply H. reflexivity.     }
                 { apply IHl1'. inversion Hl. reflexivity. }
 Qed. 
 
@@ -1690,7 +1693,9 @@ Qed.
 
       
 (** Are there any important properties of the function [forallb] which
-    are not captured by your specification? *)
+    are not captured by your specification?
+
+ *)
 
 (* todo: finish this one!! *)
 (** [] *)
