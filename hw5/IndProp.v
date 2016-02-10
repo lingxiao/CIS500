@@ -486,11 +486,6 @@ Inductive ev' : nat -> Prop :=
 
 (** Prove that this definition is logically equivalent to
     the old one. *)
-Fact add2 : forall (n m : nat),  2 + (n + m) = S (S (n + m)).
-Proof.
-  intros n m. reflexivity.
-
-
 Theorem ev'_ev : forall n, ev' n <-> ev n.
 Proof.
   intros n. split.
