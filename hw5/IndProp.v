@@ -487,6 +487,7 @@ Inductive ev' : nat -> Prop :=
 (** Prove that this definition is logically equivalent to
     the old one. *)
 
+(* todo: understand IHev *)
 Theorem ev'_ev : forall n, ev' n <-> ev n.
 Proof.
   intros n. split.
@@ -500,15 +501,9 @@ Proof.
       + apply ev'_0.
       + destruct IHev.  (* ev' n implies what? why does this make sense??? *)
           * apply ev'_2.
-          * 
-Abort.
-            
-
-
-
-        
-
-        
+          * apply ev'_sum with (n:=2) (m:=2). apply ev'_2. apply ev'_2.
+          *
+  
 
 (** **** Exercise: 3 stars, advanced, recommended (ev_ev__ev)  *)
 (** Finding the appropriate thing to do induction on is a
@@ -517,8 +512,11 @@ Abort.
 Theorem ev_ev__ev : forall n m,
   ev (n+m) -> ev n -> ev m.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m Hnm Hn. induction Hn.
+    + simpl in Hnm. apply Hnm.
+    + simpl in Hnm. apply evSS_ev in Hnm.
+      apply IHHn. apply Hnm.
+Qed.
 
 (** **** Exercise: 3 stars, optional (ev_plus_plus)  *)
 (** This exercise just requires applying existing lemmas.  No
