@@ -141,7 +141,9 @@ Qed.
 Theorem ev_double : forall n,
   ev (double n).
 Proof.
-  intros n.
+  intros n. induction n.
+    + simpl. apply ev_0.
+    + 
 
 
 (* ####################################################### *)
