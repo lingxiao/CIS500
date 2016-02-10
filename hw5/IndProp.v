@@ -141,8 +141,8 @@ Qed.
 Theorem ev_double : forall n,
   ev (double n).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n.
+
 
 (* ####################################################### *)
 (** * Using Evidence in Proofs *)

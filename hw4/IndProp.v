@@ -80,6 +80,7 @@ Inductive ev : nat -> Prop :=
     | cons : X -> lists X -> lists X.
 *)
 
+
 (** This definition is different in one crucial respect from
     previous uses of [Inductive]: its result is not a [Type], but
     rather a function from [nat] to [Prop] -- that is, a property of
@@ -90,11 +91,14 @@ Inductive ev : nat -> Prop :=
     different values in the types of different constructors: [0] in
     the type of [ev_0] and [S (S n)] in the type of [ev_SS].
 
+         -> depdendent type?
+
     In contrast, the definition of [list] puts the [X] parameter
     _globally_, to the _left_ of the colon, forcing the result of
     [nil] and [cons] to be the same ([list X]).  Had we tried to bring
     [nat] to the left in defining [ev], we would have seen an
-    error: *)
+    error:
+*)
 
 Fail Inductive wrong_ev (n : nat) : Prop :=
 | wrong_ev_0 : wrong_ev 0
