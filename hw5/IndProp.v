@@ -302,9 +302,9 @@ Theorem evSS_ev : forall n,
   ev (S (S n)) -> ev n.
 Proof.
   intros n E.
-  inversion E as [| n' E'].
+  inversion E as [| n' E'].  (* ev (S S n) implies n is even and n' = n *) 
   (* We are in the [E = ev_SS n' E'] case now. *)
-  apply E'.
+    + apply E'.
 Qed.
 
 (** By using [inversion], we can also apply the principle of explosion
@@ -321,13 +321,18 @@ Proof.
 Theorem SSSSev__even : forall n,
   ev (S (S (S (S n)))) -> ev n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  (* ev (n + 4) ==> ev (n' + 2) where n' = n + 2*)
+  intros n E. inversion E as [| n' E'].
+      (* but ev (n' + 2) ==> ev n' *)
+    + inversion E'. apply H1.
+Qed.      
+
 
 Theorem even5_nonsense :
   ev 5 -> 2 + 2 = 9.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros H. inversion H. inversion H1. inversion H3.
+Qed.
 
 (** ** The Inversion Tactic Revisited *)
 
