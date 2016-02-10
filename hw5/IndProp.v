@@ -500,6 +500,10 @@ Proof.
       + apply ev'_0.
       + 
 
+
+
+        
+
         
 
 (** **** Exercise: 3 stars, advanced, recommended (ev_ev__ev)  *)
