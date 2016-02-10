@@ -457,6 +457,7 @@ Proof.
   - (* <- *) intros [k Hk]. rewrite Hk. apply ev_double.
 Qed.
 
+
 (** As we will see in later chapters, induction on evidence is a
     recurring technique when studying the semantics of programming
     languages, where many properties of interest are defined
@@ -466,12 +467,11 @@ Qed.
 (** **** Exercise: 2 stars (ev_sum)  *)
 Theorem ev_sum : forall n m, ev n -> ev m -> ev (n + m).
 Proof.
-  intros n m Hn. generalize dependent m. inversion Hn as [|n' Hn']. 
-    + intros m. simpl. intros H1. apply H1.
-    + intros m Hm. simpl. apply ev_SS. inversion Hm as [|m' Hm'].
-        - rewrite plus_comm. apply Hn'.
-        - rewrite plus_comm. simpl. apply ev_SS. 
-p     
+  intros n m H1 H2. induction H1 as [n' | H1'].
+    + apply H2.
+    + simpl. apply ev_SS. apply IHev.
+Qed.      
+
   
 
 
