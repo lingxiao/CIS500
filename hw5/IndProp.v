@@ -487,6 +487,22 @@ Inductive ev' : nat -> Prop :=
 (** Prove that this definition is logically equivalent to
     the old one. *)
 
+Lemma ev_n_SSn : forall (n : nat),  ev' n -> ev' (S (S n)).
+Proof.
+  intros n H. inversion H.
+    + apply ev'_2.
+    + admit.
+    + 
+
+  
+
+
+  induction H.
+    + apply ev'_2.
+    + 
+Abort.
+ 
+
 Theorem ev'_ev : forall n, ev' n <-> ev n.
 Proof.
   intros n. split.
@@ -500,8 +516,10 @@ Proof.
       + apply ev'_0.
       + inversion IHev.
           * apply ev'_2.
-          * admit.
           * 
+          * rewrite H2. apply ev_n_SSn. apply IHev.
+Qed.
+            
 
 
 
