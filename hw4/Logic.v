@@ -1272,28 +1272,42 @@ Definition tr_rev {X} (l : list X) : list X :=
     call); a decent compiler will generate very efficient code in this
     case.  Prove that both definitions are indeed equivalent. *)
 
-(*  
-Lemma trythis: forall (X : Type) (l : list X) (x :X),
-  rev_append l [x] = rev_append l [] ++ [x].
+Lemma rev_append_empty_r : forall (X : Type) (l1 l2 : list X),
+  rev_append l1 l2 = rev_append l1 [] ++ l2.
 Proof.
-  intros X l. induction l as [|x' l'].
-    + simpl. reflexivity.  
-    + simpl. unfold rev_append. admit. (* not optional! *)
-*)
-      
-(*
-you need a lemma about rev_append that generalizes its behavior with a forall quantified `l2`
-for example, what is (rev_append [1, 2, 3] [4, 5, 6]) in relation to rev and ++?
-*)
+  intros X l1. induction l1.
+  - intros l2. destruct l2.
+    + simpl. reflexivity.
+    + simpl. reflexivity.
+  - intros l2. induction l2.
+    + simpl. rewrite -> app_nil_r. reflexivity.
+    + simpl. rewrite -> IHl1.
+      replace (rev_append l1 [x]) with (rev_append l1 [] ++ [x]).
+      rewrite <- app_assoc. simpl. reflexivity.
+      rewrite <- IHl1. reflexivity.
+Qed.
+
+
+Lemma rev_append_empty : forall (X : Type) (l1 l2 : list X),
+  rev_append l1 l2 = rev_append l1 [] ++ l2.
+Proof.
+  intros X l1. induction l1 as [|x l1'].
+    + intros l2. simpl. reflexivity.
+    + intros l2. simpl. destruct l2 as [|y l2'].
+        - rewrite app_nil_r. reflexivity.
+        - replace (rev_append l1' [x]) with (rev_append l1' [] ++ [x]).
+          rewrite <- app_assoc. simpl. apply IHl1'.
+            * symmetry. apply IHl1'.
+Qed.              
+
 Lemma tr_rev_correct : forall X, @tr_rev X = @rev X.
 Proof.
-  intros X. 
-  apply functional_extensionality. 
+  intros X. apply functional_extensionality. 
   intros l. induction l as [|x l'].
     + unfold tr_rev. simpl. reflexivity.
     + simpl. rewrite <- IHl'. unfold tr_rev. simpl.
-      (*apply trythis.*)
-Abort. (*todo: finish this!*)
+      apply rev_append_empty.
+Qed.      
   
 
 (** ** Propositions and Booleans *)
@@ -1570,6 +1584,32 @@ Fixpoint beq_list {A} (beq : A -> A -> bool)
   | _       , _        => false                    
   end.                          
 
+Proof.
+  intros A. split.
+
+    + generalize dependent l2. induction l1 as [|a1 l1'].
+        - destruct l2.
+            * reflexivity.
+            * simpl. intros Hc. inversion Hc.
+        - destruct l2 as [|a2 l2'].
+            * simpl. intros Hc. inversion Hc.
+            * simpl. destruct (beq a1 a2) eqn: Ha.
+                intros Hl. apply IHl1' in Hl. rewrite Hl. 
+                apply H in Ha. rewrite Ha. reflexivity.
+
+                intros Hc. inversion Hc.
+
+   + generalize dependent l2. induction l1 as [|a1 l1'].
+        - destruct l2.
+            * reflexivity.
+            * simpl. intros Hc. inversion Hc.
+        - destruct l2 as [|a2 l2'].
+            * simpl. intros Hc. inversion Hc.
+            * simpl. destruct (beq a1 a2) eqn : Ha.
+Qed. 
+
+
+
 
 (*
 forall b1 b2.  b1 && b2 = true <-> b1 = true /\ b2 = true.
@@ -1601,35 +1641,7 @@ Proof.
               { apply IHl1'. inversion H2. reflexivity. }
 Qed.              
 
-(*
 
-todo: finish this alternate proof.
-
-Proof.
-  intros A. split.
-
-    + generalize dependent l2. induction l1 as [|a1 l1'].
-        - destruct l2.
-            * reflexivity.
-            * simpl. intros Hc. inversion Hc.
-        - destruct l2 as [|a2 l2'].
-            * simpl. intros Hc. inversion Hc.
-            * simpl. destruct (beq a1 a2) eqn: Ha.
-                intros Hl. apply IHl1' in Hl. rewrite Hl. 
-                apply H in Ha. rewrite Ha. reflexivity.
-
-                intros Hc. inversion Hc.
-
-   + generalize dependent l2. induction l1 as [|a1 l1'].
-        - destruct l2.
-            * reflexivity.
-            * simpl. intros Hc. inversion Hc.
-        - destruct l2 as [|a2 l2'].
-            * simpl. intros Hc. inversion Hc.
-            * simpl. destruct (beq a1 a2) eqn : Ha.
-Qed. 
-*)                
-              
 
 (** **** Exercise: 2 stars, recommended (All_forallb)  *)
 (** Recall the function [forallb], from the exercise
