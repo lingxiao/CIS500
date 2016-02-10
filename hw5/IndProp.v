@@ -143,7 +143,8 @@ Theorem ev_double : forall n,
 Proof.
   intros n. induction n.
     + simpl. apply ev_0.
-    + 
+    + simpl. apply ev_SS. apply IHn.
+Qed.     
 
 
 (* ####################################################### *)
