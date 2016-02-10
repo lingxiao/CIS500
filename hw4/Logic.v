@@ -1584,6 +1584,14 @@ Fixpoint beq_list {A} (beq : A -> A -> bool)
   | _       , _        => false                    
   end.                          
 
+
+(*
+forall b1 b2.  b1 && b2 = true <-> b1 = true /\ b2 = true.
+*)
+Lemma beq_list_true_iff :
+  forall A (beq : A -> A -> bool),
+    (forall a1 a2, beq a1 a2 = true <-> a1 = a2) ->
+    forall l1 l2, beq_list beq l1 l2 = true <-> l1 = l2.
 Proof.
   intros A. split.
 
@@ -1593,11 +1601,9 @@ Proof.
             * simpl. intros Hc. inversion Hc.
         - destruct l2 as [|a2 l2'].
             * simpl. intros Hc. inversion Hc.
-            * simpl. destruct (beq a1 a2) eqn: Ha.
-                intros Hl. apply IHl1' in Hl. rewrite Hl. 
-                apply H in Ha. rewrite Ha. reflexivity.
-
-                intros Hc. inversion Hc.
+            * simpl. intros Hl. apply andb_true_iff  in Hl.
+              inversion Hl. apply H in H0. rewrite H0.
+              apply IHl1' in H1. rewrite H1. reflexivity.
 
    + generalize dependent l2. induction l1 as [|a1 l1'].
         - destruct l2.
@@ -1605,19 +1611,16 @@ Proof.
             * simpl. intros Hc. inversion Hc.
         - destruct l2 as [|a2 l2'].
             * simpl. intros Hc. inversion Hc.
-            * simpl. destruct (beq a1 a2) eqn : Ha.
+            * simpl. intros Hl. apply andb_true_iff. split.
+                { inversion Hl. apply H. reflexivity. }
+                { apply IHl1'. inversion Hl. reflexivity. }
 Qed. 
 
 
-
-
 (*
-forall b1 b2.  b1 && b2 = true <-> b1 = true /\ b2 = true.
-*)
-Lemma beq_list_true_iff :
-  forall A (beq : A -> A -> bool),
-    (forall a1 a2, beq a1 a2 = true <-> a1 = a2) ->
-    forall l1 l2, beq_list beq l1 l2 = true <-> l1 = l2.
+
+Alternate proof that destructs l2 before split the iff.
+
 Proof.
   intros A beq H1. intros l1. induction l1 as [|a1 l1'].
   + intros l2. destruct l2.
@@ -1640,7 +1643,7 @@ Proof.
               { inversion H2. apply H1. reflexivity. }
               { apply IHl1'. inversion H2. reflexivity. }
 Qed.              
-
+*)
 
 
 (** **** Exercise: 2 stars, recommended (All_forallb)  *)
