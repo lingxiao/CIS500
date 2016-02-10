@@ -907,8 +907,8 @@ Proof.
         - destruct H. exists x'. split.
             * apply H.
             * simpl. left. reflexivity.
-            * apply IHl' in H. destruct H. exists x. split.
-                apply H.
+            * apply IHl' in H. destruct H. exists x. destruct H as [H1 H2]. split.
+                apply H1.
                 simpl. right. apply H.
    + intros [x [H1 H2]]. induction l as [|x' l'].
        - simpl in H2. inversion H2.
