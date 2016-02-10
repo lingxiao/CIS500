@@ -486,8 +486,11 @@ Inductive ev' : nat -> Prop :=
 
 (** Prove that this definition is logically equivalent to
     the old one. *)
+Fact add2 : forall (n m : nat),  2 + (n + m) = S (S (n + m)).
+Proof.
+  intros n m. reflexivity.
 
-(* todo: understand IHev *)
+
 Theorem ev'_ev : forall n, ev' n <-> ev n.
 Proof.
   intros n. split.
@@ -499,10 +502,15 @@ Proof.
   (* <- *)
   - intros H. induction H.
       + apply ev'_0.
-      + destruct IHev.  (* ev' n implies what? why does this make sense??? *)
+      + destruct IHev.  (*todo: ev' n implies what? why does this make sense??? *)
           * apply ev'_2.
-          * apply ev'_sum with (n:=2) (m:=2). apply ev'_2. apply ev'_2.
-          *
+          * apply (ev'_sum 2). apply ev'_2. apply ev'_2.
+          * replace (S (S (n + m))) with (2 + (n + m)).
+            apply (ev'_sum 2 (n+m)). apply ev'_2. apply (ev'_sum n m).
+            apply IHev1. apply IHev2.
+            reflexivity.
+Qed.            
+            
   
 
 (** **** Exercise: 3 stars, advanced, recommended (ev_ev__ev)  *)
