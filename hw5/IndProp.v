@@ -466,16 +466,19 @@ Qed.
 (** **** Exercise: 2 stars (ev_sum)  *)
 Theorem ev_sum : forall n m, ev n -> ev m -> ev (n + m).
 Proof.
+  intros n m H1. generalize dependent m. inversion H1 as [|n' H1'].
+  
+
+
+  
   intros n m H1 H2. inversion H1 as [|n' H1'].
     + simpl. apply H2.
-    + inversion H1'.
-
-     
-    
     + simpl. apply ev_SS. inversion H2 as [|m' H2'].
         - rewrite plus_comm. apply H1'.
         - rewrite plus_comm. simpl. apply ev_SS. inversion H1'.
-
+            * rewrite plus_comm. apply H2'.
+            * rewrite plus_comm. simpl. apply ev_SS.
+ 
           
 
 
