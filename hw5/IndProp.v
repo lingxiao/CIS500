@@ -500,10 +500,8 @@ Proof.
       + destruct IHev.  (*todo: ev' n implies what? why does this make sense??? *)
           * apply ev'_2.
           * apply (ev'_sum 2). apply ev'_2. apply ev'_2.
-          * replace (S (S (n + m))) with (2 + (n + m)).
-            apply (ev'_sum 2 (n+m)). apply ev'_2. apply (ev'_sum n m).
+          * apply (ev'_sum 2 (n+m)). apply ev'_2. apply (ev'_sum n m).
             apply IHev1. apply IHev2.
-            reflexivity.
 Qed.            
             
   
