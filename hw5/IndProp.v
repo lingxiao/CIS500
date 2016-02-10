@@ -409,7 +409,7 @@ Proof.
 
     assert (I : (exists k', n' = double k') ->
                 (exists k, S (S n') = double k)).
-    { intros [k' Hk']. rewrite Hk'. exists (S k').
+    { intros [k' Hk']. rewrite Hk'. exists (S k'). simpl.
       reflexivity. }
     apply I. (* reduce the original goal to the new one *)
 
@@ -466,8 +466,27 @@ Qed.
 (** **** Exercise: 2 stars (ev_sum)  *)
 Theorem ev_sum : forall n m, ev n -> ev m -> ev (n + m).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m H1 H2. inversion H1 as [|n' H1'].
+    + simpl. apply H2.
+    + inversion H1'.
+
+     
+    
+    + simpl. apply ev_SS. inversion H2 as [|m' H2'].
+        - rewrite plus_comm. apply H1'.
+        - rewrite plus_comm. simpl. apply ev_SS. inversion H1'.
+
+          
+
+
+      
+
+      inversion H2 as [|m' H2'].
+        - rewrite plus_comm. simpl. apply ev_SS. apply H1'.
+        - simpl. apply ev_SS. rewrite H0. 
+
+  
+
 
 (** **** Exercise: 4 stars, advanced (ev_alternate)  *)
 (** In general, there may be multiple ways of defining a
