@@ -471,7 +471,6 @@ Proof.
     + apply H2.
     + simpl. apply ev_SS. apply IHev.
 Qed.      
-
   
 
 
@@ -490,8 +489,18 @@ Inductive ev' : nat -> Prop :=
 
 Theorem ev'_ev : forall n, ev' n <-> ev n.
 Proof.
- (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n. split.
+  (* -> *)
+  - intros H. induction H.
+      + apply ev_0.
+      + apply ev_SS. apply ev_0.
+      + apply ev_sum. apply IHev'1. apply IHev'2.
+  (* <- *)
+  - intros H. induction H.
+      + apply ev'_0.
+      + 
+
+        
 
 (** **** Exercise: 3 stars, advanced, recommended (ev_ev__ev)  *)
 (** Finding the appropriate thing to do induction on is a
