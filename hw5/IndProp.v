@@ -487,11 +487,6 @@ Inductive ev' : nat -> Prop :=
 (** Prove that this definition is logically equivalent to
     the old one. *)
 
-Lemma ev'4 : ev' 2 -> ev' 4.
-Proof.
-  intros H.
-  
- 
 Theorem ev'_ev : forall n, ev' n <-> ev n.
 Proof.
   intros n. split.
@@ -503,11 +498,10 @@ Proof.
   (* <- *)
   - intros H. induction H.
       + apply ev'_0.
-      + inversion IHev.
+      + destruct IHev.  (* ev' n implies what? why does this make sense??? *)
           * apply ev'_2.
-          * symmetry in H0. rewrite H0 in *.  apply ev'4. apply IHev.
-          * rewrite H2. apply ev_n_SSn. apply IHev.
-Qed.
+          * 
+Abort.
             
 
 
