@@ -311,6 +311,7 @@ Qed.
     to "obviously contradictory" hypotheses involving inductive
     properties. For example: *)
 
+
 Theorem one_not_even : ~ ev 1.
 Proof.
   intros H. inversion H. Qed.
@@ -764,16 +765,21 @@ Qed.
     strings [s1, ..., sn], then [fold app ss []] is the result of
     concatenating them all together. *)
 
+(*
+   eg: fold (++) ["hello","world"] []   =~ star re
+       where re matches the strings
+*)
 Lemma MStar' : forall T (ss : list (list T)) (re : reg_exp T),
   (forall s, In s ss -> s =~ re) ->
   fold app ss [] =~ Star re.
 Proof.
-  intros T ss re H. induction ss.
+  intros T ss re H. induction ss as [|s' ss'].
     + simpl. apply MStar0.
-    + simpl.
+    + simpl. apply MStarApp.
+        - apply H. simpl. left. reflexivity.
+        - apply IHss'. intros s H1. apply H. simpl. right. apply H1.
+Qed.          
   
-  
-
 
 (** **** Exercise: 4 stars (reg_exp_of_list)  *)
 (** Prove that [reg_exp_of_list] satisfies the following
