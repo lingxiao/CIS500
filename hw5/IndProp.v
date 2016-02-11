@@ -598,8 +598,8 @@ Arguments Star {T}  _.
 
 Inductive exp_match {T} : list T -> reg_exp T -> Prop :=
 | MEmpty : exp_match [] EmptyStr
-| MChar : forall x, exp_match [x] (Char x)
-| MApp : forall s1 re1 s2 re2,
+| MChar  : forall x, exp_match [x] (Char x)
+| MApp   : forall s1 re1 s2 re2,
            exp_match s1 re1 ->
            exp_match s2 re2 ->
            exp_match (s1 ++ s2) (App re1 re2)
@@ -609,7 +609,7 @@ Inductive exp_match {T} : list T -> reg_exp T -> Prop :=
 | MUnionR : forall re1 s2 re2,
               exp_match s2 re2 ->
               exp_match s2 (Union re1 re2)
-| MStar0 : forall re, exp_match [] (Star re)
+| MStar0  : forall re, exp_match [] (Star re)
 | MStarApp : forall s1 s2 re,
                exp_match s1 re ->
                exp_match s2 (Star re) ->
@@ -704,7 +704,7 @@ Qed.
 
 Fixpoint reg_exp_of_list {T} (l : list T) :=
   match l with
-  | [] => EmptyStr
+  | []      => EmptyStr
   | x :: l' => App (Char x) (reg_exp_of_list l')
   end.
 
