@@ -807,12 +807,11 @@ Qed.
 Lemma reg_exp_of_list_spec : forall T (s1 s2 : list T),
   s1 =~ reg_exp_of_list s2 <-> s1 = s2.
 Proof.
-  intros T s1. split.
+  intros. split.
   (* -> *)
-  + intros H. induction s2 as [|s s2'].
-      - inversion H. reflexivity.
-      - admit. (* it seemse like H and IHs2' are in conflict?? *)
-
+  + intros H. generalize dependent s1. induction s2 as [|s s2'].
+      - intros s1 H. inversion H. reflexivity.
+      - intros s1 H. admit.
   (* <- *)
   + intros H. induction s2 as [|s s2'].
       - simpl. rewrite H. apply MEmpty.
