@@ -550,17 +550,17 @@ Proof.
 Inductive reg_exp (T : Type) : Type :=
 | EmptySet : reg_exp T
 | EmptyStr : reg_exp T
-| Char : T -> reg_exp T
-| App : reg_exp T -> reg_exp T -> reg_exp T
-| Union : reg_exp T -> reg_exp T -> reg_exp T
-| Star : reg_exp T -> reg_exp T.
+| Char     : T -> reg_exp T
+| App      : reg_exp T -> reg_exp T -> reg_exp T
+| Union    : reg_exp T -> reg_exp T -> reg_exp T
+| Star     : reg_exp T -> reg_exp T.
 
 Arguments EmptySet {T}.
 Arguments EmptyStr {T}.
-Arguments Char {T} _.
-Arguments App {T} _ _.
+Arguments Char {T}  _.
+Arguments App {T}   _ _.
 Arguments Union {T} _ _.
-Arguments Star {T} _.
+Arguments Star {T}  _.
 
 (** Note that this definition is _polymorphic_: Regular expressions in
     [reg_exp T] describe strings with characters drawn from [T] --
