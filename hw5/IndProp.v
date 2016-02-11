@@ -67,10 +67,17 @@ Require Export Logic.
     declaration, where each constructor corresponds to an inference
     rule: *)
 
+(* enumerate of all direct proofs *)
 Inductive ev : nat -> Prop :=
 | ev_0  : ev 0
 | ev_SS : forall n : nat, ev n -> ev (S (S n)).
 
+
+
+
+Check (ev_0).
+Check (ev_SS 12).
+Check (ev_SS 1).  (* note this proposition does not reduce to ev 0 !*)
 
 (*
 
@@ -100,6 +107,7 @@ Inductive ev : nat -> Prop :=
     error:
 *)
 
+
 Fail Inductive wrong_ev (n : nat) : Prop :=
 | wrong_ev_0 : wrong_ev 0
 | wrong_ev_SS : forall n, wrong_ev n -> wrong_ev (S (S n)).
@@ -118,8 +126,12 @@ Fail Inductive wrong_ev (n : nat) : Prop :=
     we can use Coq's [apply] tactic with the rule names to prove [ev]
     for particular numbers... *)
 
+Theorem ev_2 : ev 2.
+Proof. apply ev_SS. apply ev_0. Qed.
+
 Theorem ev_4 : ev 4.
-Proof. apply ev_SS. apply ev_SS. apply ev_0. Qed.
+Proof. apply ev_SS. (* backward proof: ev 4 is true if ev 2 is true *)
+       apply ev_SS. apply ev_0. Qed.
 
 (** ... or we can use function application syntax: *)
 
@@ -802,7 +814,7 @@ Proof.
   (* <- *)
   + intros H. induction s2 as [|s s2'].
       - simpl. rewrite H. apply MEmpty.
-      - simpl. rewrite H. admit.
+      - simpl. rewrite H. 
 Abort. (* todo: finish this one!! *)
         
         
