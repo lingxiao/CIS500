@@ -805,7 +805,7 @@ Proof.
   (* <- *)
   + intros H. induction s2 as [|s s2'].
       - simpl. rewrite H. apply MEmpty.
-      - rewrite  H. replace (s::s2') with ([s] ++ s2'). simpl. 
+      - rewrite H. simpl. 
        
         
         
