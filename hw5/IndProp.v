@@ -790,6 +790,7 @@ Qed.
    suppose s1,s2 are lists, then
    s1 matches regex(s2)   if and only if   s1 = s2
 *)
+(* todo: finish this one!! *)
 Lemma reg_exp_of_list_spec : forall T (s1 s2 : list T),
   s1 =~ reg_exp_of_list s2 <-> s1 = s2.
 Proof.
@@ -797,21 +798,15 @@ Proof.
   (* -> *)
   + intros H. induction s2 as [|s s2'].
       - inversion H. reflexivity.
-      - destruct s1 as [|t s1']. (* it seemse like H and IHs2' are in conflict?? *)
-          * exfalso. admit.
-          * admit.
+      - admit. (* it seemse like H and IHs2' are in conflict?? *)
 
   (* <- *)
   + intros H. induction s2 as [|s s2'].
       - simpl. rewrite H. apply MEmpty.
-      - rewrite H. simpl. 
-       
+      - simpl. rewrite H. admit.
+Abort.
         
         
-        
-      
-      
-   
 
 
 (** ** Rule Induction *)
