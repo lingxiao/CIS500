@@ -1679,15 +1679,13 @@ Qed.
 (** Are there any important properties of the function [forallb] which
     are not captured by your specification?
 
-    Lemma: forallb test l = true <-> forallb test (reverse l).
-    Proof: by commutative property of (&&).
-           In fact we can generalize reverse to arbitrary permuatations
-           of list [l]. This proof involves the commutatitve and
-           associsative property of (&&).
+   No. [forallb] is total and [forallb_true_iff] specify its correctness.
+   Since we are not concerned with time/space complexities of a function,
+   there are no other properties we are interested in.
+     
+
  *)
 
-(* todo: finish this one!! *)
-(** [] *)
 
 (** ** Classical vs. Constructive Logic *)
 
