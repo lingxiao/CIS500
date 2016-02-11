@@ -809,9 +809,12 @@ Lemma reg_exp_of_list_spec : forall T (s1 s2 : list T),
 Proof.
   intros. split.
   (* -> *)
-  + intros H. generalize dependent s1. induction s2 as [|s s2'].
+  + intros H. induction H.  (* this is a good move!! *)
+      - 
+
+    generalize dependent s1. induction s2 as [|s s2'].
       - intros s1 H. inversion H. reflexivity.
-      - intros s1 H. admit.
+      - intros s1 H. 
   (* <- *)
   + intros H. induction s2 as [|s s2'].
       - simpl. rewrite H. apply MEmpty.
