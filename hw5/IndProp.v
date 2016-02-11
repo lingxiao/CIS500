@@ -240,9 +240,10 @@ Theorem ev_minus2 : forall n,
   ev n -> ev (pred (pred n)).
 Proof.
   intros n E.
-  inversion E as [| n' E'].
+  inversion E as [| n' E'].  (* do case analysis on possible proofs *)
   - (* E = ev_0 *) simpl. apply ev_0.
-  - (* E = ev_SS n' E' *) simpl. apply E'.  Qed.
+  - (* E = ev_SS n' E' *) simpl. apply E'.
+Qed.
 
 (**  AAA: I'm finding it a bit awkward to discuss [inversion] here
     instead of [destruct], especially given that we are using
@@ -271,7 +272,8 @@ Proof.
   intros n E.
   destruct E as [| n' E'].
   - (* E = ev_0 *) simpl. apply ev_0.
-  - (* E = ev_SS n' E' *) simpl. apply E'.  Qed.
+  - (* E = ev_SS n' E' *) simpl. apply E'.
+Qed.
 
 (** The difference between the two forms is that [inversion] is more
     convenient when used on a hypothesis that consists of an inductive
@@ -322,11 +324,11 @@ Qed.
 (** By using [inversion], we can also apply the principle of explosion
     to "obviously contradictory" hypotheses involving inductive
     properties. For example: *)
-
-
 Theorem one_not_even : ~ ev 1.
 Proof.
-  intros H. inversion H. Qed.
+  unfold not.
+  intros H. inversion H.
+Qed.
 
 (** **** Exercise: 1 star (inversion_practice)  *)
 (** Prove the following results using [inversion]. *)
