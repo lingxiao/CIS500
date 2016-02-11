@@ -777,7 +777,8 @@ Proof.
     + simpl. apply MStar0.
     + simpl. apply MStarApp.
         - apply H. simpl. left. reflexivity.
-        - apply IHss'. intros s H1. apply H. simpl. right. apply H1.
+        - apply IHss'. intros s H1.
+          apply H. simpl. right. apply H1.
 Qed.          
   
 
@@ -785,11 +786,34 @@ Qed.
 (** Prove that [reg_exp_of_list] satisfies the following
     specification: *)
 
+(*
+   suppose s1,s2 are lists, then
+   s1 matches regex(s2)   if and only if   s1 = s2
+*)
 Lemma reg_exp_of_list_spec : forall T (s1 s2 : list T),
   s1 =~ reg_exp_of_list s2 <-> s1 = s2.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros T s1. split.
+  (* -> *)
+  + intros H. induction s2 as [|s s2'].
+      - inversion H. reflexivity.
+      - destruct s1 as [|t s1'].
+          * exfalso. admit.
+          * admit.
+
+
+  (* <- *)
+  + intros H. induction s2 as [|s s2'].
+      - simpl. rewrite H. apply MEmpty.
+      - rewrite  H. replace (s::s2') with ([s] ++ s2'). simpl. 
+       
+        
+        
+        
+      
+      
+   
+
 
 (** ** Rule Induction *)
 
