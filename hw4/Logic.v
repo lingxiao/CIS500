@@ -1682,9 +1682,8 @@ Qed.
     Lemma: forallb test l = true <-> forallb test (reverse l).
     Proof: by commutative property of (&&).
            In fact we can generalize reverse to arbitrary permuatations
-           of list [l].
-
-
+           of list [l]. This proof involves the commutatitve and
+           associsative property of (&&).
  *)
 
 (* todo: finish this one!! *)
