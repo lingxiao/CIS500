@@ -790,7 +790,6 @@ Qed.
    suppose s1,s2 are lists, then
    s1 matches regex(s2)   if and only if   s1 = s2
 *)
-(* todo: finish this one!! *)
 Lemma reg_exp_of_list_spec : forall T (s1 s2 : list T),
   s1 =~ reg_exp_of_list s2 <-> s1 = s2.
 Proof.
@@ -804,10 +803,9 @@ Proof.
   + intros H. induction s2 as [|s s2'].
       - simpl. rewrite H. apply MEmpty.
       - simpl. rewrite H. admit.
-Abort.
+Abort. (* todo: finish this one!! *)
         
         
-
 
 (** ** Rule Induction *)
 
@@ -819,12 +817,12 @@ Abort.
 
 Fixpoint re_chars {T} (re : reg_exp T) : list T :=
   match re with
-  | EmptySet => []
-  | EmptyStr => []
-  | Char x => [x]
-  | App re1 re2 => re_chars re1 ++ re_chars re2
+  | EmptySet      => []
+  | EmptyStr      => []
+  | Char x        => [x]
+  | App re1 re2   => re_chars re1 ++ re_chars re2
   | Union re1 re2 => re_chars re1 ++ re_chars re2
-  | Star re => re_chars re
+  | Star re       => re_chars re
   end.
 
 Lemma in_re_match :
