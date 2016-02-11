@@ -1679,6 +1679,12 @@ Qed.
 (** Are there any important properties of the function [forallb] which
     are not captured by your specification?
 
+    Lemma: forallb test l = true <-> forallb test (reverse l).
+    Proof: by commutative property of (&&).
+           In fact we can generalize reverse to arbitrary permuatations
+           of list [l].
+
+
  *)
 
 (* todo: finish this one!! *)
