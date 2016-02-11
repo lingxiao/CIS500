@@ -797,10 +797,9 @@ Proof.
   (* -> *)
   + intros H. induction s2 as [|s s2'].
       - inversion H. reflexivity.
-      - destruct s1 as [|t s1'].
+      - destruct s1 as [|t s1']. (* it seemse like H and IHs2' are in conflict?? *)
           * exfalso. admit.
           * admit.
-
 
   (* <- *)
   + intros H. induction s2 as [|s s2'].
