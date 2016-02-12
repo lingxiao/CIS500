@@ -822,7 +822,6 @@ Proof.
 Qed.
                      
 
-        
 
 (** ** Rule Induction *)
 
@@ -907,8 +906,11 @@ Qed.
     regular expression matches some string. Prove that your function
     is correct. *)
 
-Fixpoint re_not_empty {T} (re : reg_exp T) : bool :=
-  (* FILL IN HERE *) admit.
+Fixpoint re_not_empty {T} (re : reg_exp T) : bool := match re with
+  | EmptySet  => false
+  | _         => true
+  end.                 
+
 
 Lemma re_not_empty_correct : forall T (re : reg_exp T),
   (exists s, s =~ re) <-> re_not_empty re = true.
