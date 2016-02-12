@@ -911,7 +911,7 @@ Fixpoint re_not_empty {T} (re : reg_exp T) : bool := match re with
   | EmptyStr    => true
   | Char _      => true
   | App r1 r2   => re_not_empty r1 || re_not_empty r2
-  | Union r1 r2 =>                               
+  | Union r1 r2 =>                          
   | _           => true
   end.
 
