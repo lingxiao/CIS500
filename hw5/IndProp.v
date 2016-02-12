@@ -809,7 +809,17 @@ Lemma reg_exp_of_list_spec : forall T (s1 s2 : list T),
 Proof.
   intros T s1 s2. split.
   (* -> *)
-  + intros Hmatch. induction Hmatch as
+  + generalize dependent s1. induction s2 as [|s s2'].
+      - intros s1 H. inversion H. reflexivity.
+      - intros s1 H.
+    
+              
+      
+
+
+
+
+    intros Hmatch. induction Hmatch as
       [
       | x'
       | s1 re1 s2' re2 Hmatch1 IH1 HMatch2 IH2
@@ -1758,4 +1768,4 @@ Proof.
 (* FILL IN HERE *)
 
 
-(** $Date: 2015-08-11 12:03:04 -0400 (Tue, 11 Aug 2015) $ *)
+(** $Date: 2015-08-11 12:03:04 -0400 (Tue, 11 Aug 2015) $ *no)
