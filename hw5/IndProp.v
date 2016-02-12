@@ -807,11 +807,25 @@ Qed.
 Lemma reg_exp_of_list_spec : forall T (s1 s2 : list T),
   s1 =~ reg_exp_of_list s2 <-> s1 = s2.
 Proof.
-  intros. split.
+  intros T s1 s2. split.
   (* -> *)
-  + intros H. induction H.  (* this is a good move!! *)
-      - 
+  + intros Hmatch. induction Hmatch as
+      [
+      | x'
+      | s1 re1 s2' re2 Hmatch1 IH1 HMatch2 IH2
+      | s2' re1 re2 Hmatch IH
+      | re1 s2' re2 Hmatch IH
+      | re | s1 s2' re Hmatch1 IH1 Hmatch2 IH2
+      ].
+   - admit.
+   - 
+            
+                     
 
+
+
+(*
+      - 
     generalize dependent s1. induction s2 as [|s s2'].
       - intros s1 H. inversion H. reflexivity.
       - intros s1 H. 
@@ -819,8 +833,8 @@ Proof.
   + intros H. induction s2 as [|s s2'].
       - simpl. rewrite H. apply MEmpty.
       - simpl. rewrite H. 
-Abort. (* todo: finish this one!! *)
-        
+
+*)        
         
 
 (** ** Rule Induction *)
@@ -829,7 +843,8 @@ Abort. (* todo: finish this one!! *)
     a regular expression [re] matches some string [s], then all
     elements of [s] must occur somewhere in [re]. We begin by defining
     a function [re_chars] that lists all single-character elements
-    that occur anywhere in a regular expression: *)
+    that occur anywhere in a regular expression:
+*)
 
 Fixpoint re_chars {T} (re : reg_exp T) : list T :=
   match re with
