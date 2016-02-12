@@ -814,9 +814,12 @@ Proof.
       - intros s1 H. inversion H. subst.
         apply IHs2' in H4. rewrite H4. inversion H3. reflexivity.
   (* <- *)
-  + generalize dependent s1. induction s2 as [|s s2'].
+  +  generalize dependent s1. induction s2 as [|s s2'].
       - intros s1 H. simpl. rewrite H. apply MEmpty.
-      - intros s1 H. rewrite H. simpl. 
+      - intros s1 H. rewrite H. simpl. apply (MApp [s]).
+          * apply MChar.
+          * apply IHs2'. reflexivity.
+Qed.
                      
 
         
