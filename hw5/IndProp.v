@@ -811,40 +811,14 @@ Proof.
   (* -> *)
   + generalize dependent s1. induction s2 as [|s s2'].
       - intros s1 H. inversion H. reflexivity.
-      - intros s1 H.
-    
-              
-      
-
-
-
-
-    intros Hmatch. induction Hmatch as
-      [
-      | x'
-      | s1 re1 s2' re2 Hmatch1 IH1 HMatch2 IH2
-      | s2' re1 re2 Hmatch IH
-      | re1 s2' re2 Hmatch IH
-      | re | s1 s2' re Hmatch1 IH1 Hmatch2 IH2
-      ].
-   - admit.
-   - 
-            
+      - intros s1 H. inversion H. subst.
+        apply IHs2' in H4. rewrite H4. inversion H3. reflexivity.
+  (* <- *)
+  + generalize dependent s1. induction s2 as [|s s2'].
+      - intros s1 H. simpl. rewrite H. apply MEmpty.
+      - intros s1 H. rewrite H. simpl. 
                      
 
-
-
-(*
-      - 
-    generalize dependent s1. induction s2 as [|s s2'].
-      - intros s1 H. inversion H. reflexivity.
-      - intros s1 H. 
-  (* <- *)
-  + intros H. induction s2 as [|s s2'].
-      - simpl. rewrite H. apply MEmpty.
-      - simpl. rewrite H. 
-
-*)        
         
 
 (** ** Rule Induction *)
