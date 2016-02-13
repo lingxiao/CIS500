@@ -1403,7 +1403,6 @@ Proof.
     + apply le_S. apply IHle.
 Qed.
 
-
 Theorem Sn_le_Sm__n_le_m : forall n m,
   S n <= S m -> n <= m.
 Proof.
@@ -1411,7 +1410,7 @@ Proof.
     + intros n H. inversion H.
         -  reflexivity.
         - subst. inversion H1.
-    + intros n H. admit. (*maybedo: finish this up*)
+    + intros n H. apply le_S. apply IHm. admit. (*maybedo: finish this up*)
 Qed.      
 
 
@@ -1423,17 +1422,31 @@ Proof.
     + rewrite plus_comm. simpl. rewrite plus_comm.
       apply le_S. apply IHb.
 Qed.
+
+Lemma ss_lt : forall n m, S (S n) <= m -> S n <= m.
+Proof.
+  intros n m H. induction H.
+    + apply le_S. reflexivity.
+    + apply le_S. apply IHle.
+Qed.  
       
 
 Theorem plus_lt : forall n1 n2 m,
   n1 + n2 < m ->
   n1 < m /\ n2 < m.
 Proof.
- unfold lt. intros n1 n2 m H. split.
- (* LHS *)
- + induction H.
-     - 
+  unfold lt. split.
+  (* LHS *)
+  + induction n2.
+      - rewrite plus_comm in H. simpl in H. apply H.
+      - apply IHn2. rewrite plus_comm in H. simpl in H.
+       rewrite plus_comm in H. apply (ss_lt (n1 + n2) m). apply H.
 
+  (* RHS *)
+  + induction n1.
+      - apply H.
+      - apply IHn1. simpl in H. apply (ss_lt (n1+n2) _).apply H.
+Qed.
 
 
        
