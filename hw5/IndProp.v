@@ -1201,8 +1201,8 @@ Inductive pal {X} : list X -> Prop :=
 
 
 Lemma list_manip : forall (X : Type) (x1 x2 : X) (l :  list X),
-    (x1 :: x2 :: l ++ (rev l ++ [x2]) ++ [x1])
- =  ([x1] ++ ((x2 :: l) ++ rev (x2 :: l) ++ [x1])).
+    x1 :: x2 :: l ++ (rev l ++ [x2]) ++ [x1]
+ =  [x1] ++ ((x2 :: l) ++ rev (x2 :: l)) ++ [x1].
 Proof.  admit. Qed.
 
   
