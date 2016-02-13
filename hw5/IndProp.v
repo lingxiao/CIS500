@@ -1540,8 +1540,7 @@ Inductive R : nat -> nat -> nat -> Prop :=
 
        R 1 1 2 ===> R 0 1 1    by c2
                ===> R 1 0 1    by c5
-               ===> R 0 0 0    by c2
-
+               ===> R 0 0 0    by c2, now use c1.
 
       [R 2 2 6] would certainly not be provable since it now requires
       at least 6 moves to reduce 6 to 0.
