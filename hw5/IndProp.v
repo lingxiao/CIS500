@@ -1224,10 +1224,12 @@ Qed.
 Theorem pal_rev : forall (X: Type) (l : list X),
   pal l -> l = rev l.
 Proof.
-  
-
-
-
+  intros X l H. induction H.
+    + reflexivity.
+    + reflexivity.
+    + rewrite rev_app_distr. rewrite rev_app_distr. simpl.
+      rewrite <- IHpal. reflexivity.
+Qed.
 
 
 (* Again, the converse direction is much more difficult, due to the
@@ -1239,8 +1241,10 @@ lack of evidence. *)
      forall l, l = rev l -> pal l.
 *)
 
-(* FILL IN HERE *)
-(** [] *)
+Theorem palindrome_converse : forall (X : Type) (l : list X),
+  l = rev l -> pal l.                
+Proof.
+  intros X l. 
 
 
 
