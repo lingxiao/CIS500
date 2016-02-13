@@ -912,7 +912,7 @@ Fixpoint re_not_empty {T} (re : reg_exp T) : bool := match re with
   | Char _      => true
   | App r1 r2   => re_not_empty r1 && re_not_empty r2
   | Union r1 r2 => re_not_empty r1 || re_not_empty r2
-  | Star r      => true                              
+  | Star r      => true
   end.
 
 Lemma re_not_empty_correct : forall T (re : reg_exp T),
@@ -928,7 +928,7 @@ Proof.
           * apply IHexp_match2.
       - simpl. apply orb_true_iff. left. apply IHexp_match.
       - simpl. apply orb_true_iff. right. apply IHexp_match.
-      - reflexivity.
+      - simpl. reflexivity.
       - reflexivity.
  (* <- *)
  + induction re.
@@ -1160,14 +1160,15 @@ Qed.
     evidence for [ev_list], the converse direction must be stated very
     carefully. *)
 
-Lemma ev_length__ev_list: forall X n, ev n -> forall (l : list X), n = length l -> ev_list l.
+Lemma ev_length__ev_list: forall X n,
+  ev n -> forall (l : list X), n = length l -> ev_list l.
 Proof.
   intros X n H.
   induction H.
   - (* ev_0 *) intros l H. destruct l.
     + (* [] *) apply el_nil.
     + (* x::l *) inversion H.
-  - (* ev_SS *) intros l H2. destruct l as [| x [| x0 l]].
+  - (* ev_SS *) intros l H2. destruct l as [|x1 [| x2 l]].
     + (* [] *) inversion H2.
     + (* [x] *) inversion H2.
     + (* x :: x0 :: l *) apply el_cc. apply IHev. inversion H2. reflexivity.
@@ -1192,8 +1193,22 @@ Qed.
        forall l, pal l -> l = rev l.
 *)
 
-(* FILL IN HERE *)
-(** [] *)
+
+Inductive pal {X} : list X -> Prop :=
+  | pal_nil  : pal []
+  | pal_one  : forall (x : X), pal [x]                 
+  | pal_cons : forall (x : X) (l : list X), pal l -> pal ([x] ++ l ++ [x]).
+
+
+Theorem pal_app_rev : forall (X : Type) (l : list X),
+  pal (l ++ rev l).                        
+Proof.
+  
+
+
+
+
+
 
 (* Again, the converse direction is much more difficult, due to the
 lack of evidence. *)
