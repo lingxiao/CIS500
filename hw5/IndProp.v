@@ -1201,7 +1201,6 @@ Inductive pal {X} : list X -> Prop :=
 
 
 
-   
 Lemma list_manip : forall (X : Type) (x : X) (l :  list X),
   (x::l) ++ rev (x ::l) = [x] ++ (l ++ rev l) ++ [x].                     
 Proof.
@@ -1239,21 +1238,43 @@ lack of evidence. *)
 (** Using your definition of [pal] from the previous exercise, prove
     that
      forall l, l = rev l -> pal l.
-*)
+
 
 Theorem palindrome_converse : forall (X : Type) (l : list X),
   l = rev l -> pal l.                
 Proof.
   intros X l H. induction l as [|x1 l'].
     + apply pal_nil.
-    + 
 
-      
-  induction l as [|x1 [| x2 l]].
+ *) (* maybedo: finish this one *)
+
+(*  induction l as [|x1 [| x2 l]].
     + apply pal_nil.
     + apply pal_one.
     + 
+*)
 
+Check (nat_rect).
+Check (list_rect).
+
+(*
+Consider:
+
+proving this first:
+
+  forall X P, (P []) -> (forall x l, P (rev l) -> P (rev (x :: l))) -> forall l, P (rev l)"
+
+then prove this:
+list_rect_pal := forall (X : Type) (P : list X -> Type),
+       P [] -> forall (x : X), P [x] ->
+       (forall (x1 x2 : X) (l : list X), P l -> P ([x1] ++ l ++ [x2])) ->
+       forall l : list X, P l
+
+List_rect : forall P: forall A:Type, List A -> Type,
+            (forall A:Type, P A (nil A)) ->
+            (forall (A:Type) (a:A)(l:List A), P A l -> P A (cons A a l)) ->
+            forall (A:Type)(l:List A), P A l
+*) 
 
 
 (* ####################################################### *)
@@ -1344,15 +1365,15 @@ Inductive next_even : nat -> nat -> Prop :=
 (** Define an inductive binary relation [total_relation] that holds
     between every pair of natural numbers. *)
 
-(* FILL IN HERE *)
-(** [] *)
+
+Inductive total_relation : nat -> nat -> Prop :=
+  tot : forall (n m : nat), total_relation n m.
 
 (** **** Exercise: 2 stars (empty_relation)  *)
 (** Define an inductive binary relation [empty_relation] (on numbers)
     that never holds. *)
+Inductive empty_relation : nat -> nat -> Prop :=.
 
-(* FILL IN HERE *)
-(** [] *)
 
 (** **** Exercise: 2 stars, optional (le_exercises)  *)
 (** Here are a number of facts about the [<=] and [<] relations that
@@ -1362,6 +1383,8 @@ Inductive next_even : nat -> nat -> Prop :=
 Lemma le_trans : forall m n o, m <= n -> n <= o -> m <= o.
 Proof.
   (* FILL IN HERE *) Admitted.
+  
+
 
 Theorem O_le_n : forall n,
   0 <= n.
