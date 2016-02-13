@@ -1244,7 +1244,15 @@ lack of evidence. *)
 Theorem palindrome_converse : forall (X : Type) (l : list X),
   l = rev l -> pal l.                
 Proof.
-  intros X l. 
+  intros X l H. induction l as [|x1 l'].
+    + apply pal_nil.
+    + 
+
+      
+  induction l as [|x1 [| x2 l]].
+    + apply pal_nil.
+    + apply pal_one.
+    + 
 
 
 
