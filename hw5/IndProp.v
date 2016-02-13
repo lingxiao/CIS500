@@ -931,7 +931,10 @@ Proof.
       - reflexivity.
       - reflexivity.
  (* <- *)
- + intros H. exists []. 
+ + induction re.
+     - simpl. intros Hc. inversion Hc.
+     - simpl. intros _.  exists []. apply MEmpty.
+     - intros H. 
       
 
          
