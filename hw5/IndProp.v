@@ -1400,7 +1400,7 @@ Theorem n_le_m__Sn_le_Sm : forall n m,
 Proof.
   intros n m H1. induction H1.
     + reflexivity.
-    + apply le_S.   apply IHle.
+    + apply le_S. apply IHle.
 Qed.
 
 
@@ -1411,10 +1411,8 @@ Proof.
     + intros n H. inversion H.
         -  reflexivity.
         - subst. inversion H1.
-    + intros n H. admit.
+    + intros n H. admit. (*maybedo: finish this up*)
 Qed.      
-
-
 
 
 Theorem le_plus_l : forall a b,
