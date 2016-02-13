@@ -1496,20 +1496,60 @@ Inductive R : nat -> nat -> nat -> Prop :=
    | c4 : forall m n o, R (S m) (S n) (S (S o)) -> R m n o
    | c5 : forall m n o, R m n o -> R n m o.
 
-(** - Which of the following propositions are provable?
+(*
+   todo: confirm this in class
+*)
+(** (a) Which of the following propositions are provable?
       - [R 1 1 2]
       - [R 2 2 6]
 
-    - If we dropped constructor [c5] from the definition of [R],
+    (b) If we dropped constructor [c5] from the definition of [R],
       would the set of provable propositions change?  Briefly (1
       sentence) explain your answer.
 
-    - If we dropped constructor [c4] from the definition of [R],
+    (c) If we dropped constructor [c4] from the definition of [R],
       would the set of provable propositions change?  Briefly (1
       sentence) explain your answer.
 
-(* FILL IN HERE *)
+(*
+  (a)
+     [R 1 1 2] provable.
+     Proof by constructing a reduction.
+     By [c4] [c 1 1 2] becomes [c 0 0 0] where
+     [S m = 1], [S n = 1], and [S S o = 2]. Then apply c1.
+
+     [R 2 2 6] not provable.
+
+     There does not exist a series of applications of [c_n] so that
+     [R 2 2 6] reduces to [R 0 0 0]. Note it requires at most
+     6 moves to reduce 6 to 0 by iterative application of c2 or c3,
+     and at least 3 moves to reduce 6 to 0 by application of c4.
+     However, it takes at least 2 moves and at most 3 moves to
+     reduce either [m] or [n] to 0 by applications of c2, c3 and c5.
+     After 3 moves, one of m or n will be 0 while the other one is not,
+     so we have [R 0 n 0] or [R m 0 0] where m,n /= 0, which is not provable.
+
+
+   (b)
+      [R 1 1 2] still provable. Our reduction above does not use c5.
+      [R 2 2 6] still not provable. It now takes at most 2 moves to reduce
+      either m or n to 0 while the other two values are not 0.
+
+   (c)
+      [R 1 1 2] still provable. proof by constructing reduction:
+
+       R 1 1 2 ===> R 0 1 1    by c2
+               ===> R 1 0 1    by c5
+               ===> R 0 0 0    by c2
+
+
+      [R 2 2 6] would certainly not be provable since it now requires
+      at least 6 moves to reduce 6 to 0.
+      
+*)
 []
+
+
 *)
 
 (** **** Exercise: 3 stars, optional (R_fact)  *)
