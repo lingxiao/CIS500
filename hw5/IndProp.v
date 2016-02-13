@@ -1196,13 +1196,24 @@ Qed.
 
 Inductive pal {X} : list X -> Prop :=
   | pal_nil  : pal []
-  | pal_one  : forall (x : X), pal [x]                 
+  | pal_two  : forall (x : X), pal [x;x]                 
   | pal_cons : forall (x : X) (l : list X), pal l -> pal ([x] ++ l ++ [x]).
 
 
+Lemma list_manip : forall (X : Type) (x1 x2 : X) (l :  list X),
+    (x1 :: x2 :: l ++ (rev l ++ [x2]) ++ [x1])
+ =  ([x1] ++ ((x2 :: l) ++ rev (x2 :: l) ++ [x1])).
+Proof.  admit. Qed.
+
+  
 Theorem pal_app_rev : forall (X : Type) (l : list X),
   pal (l ++ rev l).                        
 Proof.
+  intros X l. induction l as [|x1 [| x2 l]].
+    - simpl. apply pal_nil.
+    - simpl. apply pal_two.
+    - simpl. rewrite list_manip. apply (pal_cons x1 l IHl).
+
   
 
 
