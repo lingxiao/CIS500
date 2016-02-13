@@ -1382,38 +1382,63 @@ Inductive empty_relation : nat -> nat -> Prop :=.
 
 Lemma le_trans : forall m n o, m <= n -> n <= o -> m <= o.
 Proof.
-  (* FILL IN HERE *) Admitted.
-  
+  intros m n o H1 H2.
+  rewrite H1. apply H2.
+Qed.  
 
 
 Theorem O_le_n : forall n,
   0 <= n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n.
+    - apply le_n.
+    - apply le_S. apply IHn.
+Qed.
 
 Theorem n_le_m__Sn_le_Sm : forall n m,
   n <= m -> S n <= S m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m H1. induction H1.
+    + reflexivity.
+    + apply le_S.   apply IHle.
+Qed.
 
 
 Theorem Sn_le_Sm__n_le_m : forall n m,
   S n <= S m -> n <= m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m. generalize dependent n. induction m.
+    + intros n H. inversion H.
+        -  reflexivity.
+        - subst. inversion H1.
+    + intros n H. admit.
+Qed.      
+
+
 
 
 Theorem le_plus_l : forall a b,
   a <= a + b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros a b. induction b.
+    + rewrite plus_comm. reflexivity.
+    + rewrite plus_comm. simpl. rewrite plus_comm.
+      apply le_S. apply IHb.
+Qed.
+      
 
 Theorem plus_lt : forall n1 n2 m,
   n1 + n2 < m ->
   n1 < m /\ n2 < m.
 Proof.
- unfold lt.
- (* FILL IN HERE *) Admitted.
+ unfold lt. intros n1 n2 m H. split.
+ (* LHS *)
+ + induction H.
+     - 
+
+
+
+       
 
 Theorem lt_S : forall n m,
   n < m ->
