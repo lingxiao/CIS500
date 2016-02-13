@@ -934,11 +934,18 @@ Proof.
  + induction re.
      - simpl. intros Hc. inversion Hc.
      - simpl. intros _.  exists []. apply MEmpty.
-     - intros H. 
-      
-
-         
-
+     - intros. exists [t]. apply MChar.
+     - simpl. rewrite andb_true_iff. intros [H1 H2]. 
+       apply IHre1 in H1. apply IHre2 in H2.
+       destruct H1 as [x1 H1]. destruct H2 as [x2 H2].
+       exists (x1 ++ x2). apply (MApp x1 re1 x2 re2 H1 H2).
+     - simpl. rewrite orb_true_iff. intros [H1 | H2].
+         * apply IHre1 in H1. destruct H1 as [s1 H1].
+           exists s1. apply (MUnionL s1 re1 _ H1).
+         * apply IHre2 in H2. destruct H2 as [s2 H2].
+           exists s2. apply (MUnionR re1 s2 re2 H2).
+     - simpl. intros _. exists []. apply MStar0.
+Qed.       
 
 
 (**  Text missing... (And: I'm not sure how much of this you (AAA)
