@@ -910,22 +910,33 @@ Fixpoint re_not_empty {T} (re : reg_exp T) : bool := match re with
   | EmptySet    => false
   | EmptyStr    => true
   | Char _      => true
-  | App r1 r2   => re_not_empty r1 || re_not_empty r2
-  | Union r1 r2 =>                               
-  | _           => true
+  | App r1 r2   => re_not_empty r1 && re_not_empty r2
+  | Union r1 r2 => re_not_empty r1 || re_not_empty r2
+  | Star r      => true                              
   end.
-
-
-
-
-
-
 
 Lemma re_not_empty_correct : forall T (re : reg_exp T),
   (exists s, s =~ re) <-> re_not_empty re = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros T re. split.
+  (* -> *)
+  + intros [s  H]. induction H.
+      - reflexivity.
+      - reflexivity.
+      - simpl. apply andb_true_iff. split.
+          * apply IHexp_match1.
+          * apply IHexp_match2.
+      - simpl. apply orb_true_iff. left. apply IHexp_match.
+      - simpl. apply orb_true_iff. right. apply IHexp_match.
+      - reflexivity.
+      - reflexivity.
+ (* <- *)
+ + intros H. 
+      
+
+         
+
+
 
 (**  Text missing... (And: I'm not sure how much of this you (AAA)
    envision being presented in class, and how much is exercises...) 
