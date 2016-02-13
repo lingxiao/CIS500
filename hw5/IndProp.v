@@ -931,7 +931,7 @@ Proof.
       - reflexivity.
       - reflexivity.
  (* <- *)
- + intros H. 
+ + intros H. exists []. 
       
 
          
