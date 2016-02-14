@@ -1840,7 +1840,62 @@ Qed.
     for one list to be a merge of two others.  Do this with an
     inductive relation, not a [Fixpoint].)  *)
 
-(* FILL IN HERE *)
+
+
+Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
+  | nils   :                                  in_order_merge [] [] []
+  | l1_nil : forall l1 l, l1 = l ->           in_order_merge l1 [] l
+  | l2_nil : forall l2 l, l2 = l ->           in_order_merge [] l2 l
+  | x_eq_z : forall l1 l2 l (x y z : X),
+             in_order_merge l1 (y :: l2) l -> in_order_merge (x :: l1) (y :: l2) (z :: l)
+  | y_eq_z : forall l1 l2 l (x y z : X),
+             in_order_merge (x :: l1) l2 l -> in_order_merge (x :: l1) (y :: l2) (z :: l).
+  
+
+
+
+(* first write a function to test whether l = l1 inorderMerge l2 *)
+Fixpoint beq_lnat (l1 l2 : list nat) : bool := match l1, l2 with
+  | []    ,  []     => true 
+  | _::_  ,  []     => false
+  | []    ,  _::_   => false
+  | x::l1',  y::l2' => if beq_nat x y then beq_lnat l1' l2' else false
+  end.                                                                 
+
+
+Fixpoint b_inOrder (l1 l2 l : list nat) : bool := match l1, l2, l with
+  | []    , []    , []        => true
+  | []    , _::_  , _::_      => if beq_lnat l2 l then true else false
+  | _::_  , []    , _::_      => if beq_lnat l1 l then true else false
+  | x::l1', y::l2', z :: l3'  => match beq_nat x z with
+                                     |true => b_inOrder l1' l2 l3'
+                                     |_    => match beq_nat y z with
+                                               |true => b_inOrder l1 l2' l3'
+                                               |_    => false
+                                               end
+                                     end
+  | _     , _     , _         => false                                 
+  end.                                 
+
+Definition l1 := [1;6;2].
+Definition l2 := [4;3].
+Definition la := [1;4;6;2;3].
+Definition lb := [1;4;6;3].
+Definition lc := [1;4;6;2].
+Definition ld := [1;6;2;3].
+Definition le := [1;4;6;2;3;5].
+Definition lf := [1;4;6;5;2;3].
+Definition lg := [0;1;4;6;5;2;3].
+
+Compute (b_inOrder l1 l2 la).
+Compute (b_inOrder l1 l2 lb).
+Compute (b_inOrder l1 l2 lc).
+Compute (b_inOrder l1 l2 ld).
+Compute (b_inOrder l1 l2 le).
+Compute (b_inOrder l1 l2 lf).
+Compute (b_inOrder l1 l2 lg).
+
+
 (** [] *)
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
