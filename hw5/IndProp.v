@@ -1617,7 +1617,7 @@ Inductive subseq : list nat -> list nat -> Prop :=
   | x_eq_y  : forall l1 l2 (x y : nat),
               subseq l1 l2 -> x = y -> subseq (x :: l1) (y :: l2)
   | x_neq_y : forall l1 l2 (x y : nat),
-              subseq (x :: l1) l2 -> ~(x=y) -> subseq (x :: l1) (y :: l2).
+              subseq (x :: l1) l2 -> x <> y -> subseq (x :: l1) (y :: l2).
 
 
 Notation "l1 <: l2" := (subseq l1 l2) (at level 80).
@@ -1635,7 +1635,8 @@ Theorem subseq_app : forall (l1 l2 l3 : list nat),
 Proof.  
   intros l1 l2 l3 H. induction H.
     + apply lft_nil.
-    + subst. 
+    + subst. apply (x_eq_y l2 l0).
+    + 
 
   
 Qed.
