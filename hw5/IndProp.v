@@ -1948,10 +1948,15 @@ Inductive disjoint {X : Type} : list X -> list X -> Prop :=
     bool []] should be provable, while [NoDup nat [1;2;1]] and
     [NoDup bool [true;true]] should not be.  *)
 
-(* FILL IN HERE *)
+Inductive NoDup {X : Type} : list X -> Prop :=
+  | nnils : NoDup []
+  | ncons : forall l (x : X), disjoint [x] l ->  NoDup (x::l).                 
 
 (** Finally, state and prove one or more interesting theorems relating
     [disjoint], [NoDup] and [++] (list append).  *)
+
+
+
 
 (* FILL IN HERE *)
 (** [] *)
