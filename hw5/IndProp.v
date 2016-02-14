@@ -1722,6 +1722,7 @@ Inductive reflect (P : Prop) : bool -> Prop :=
 | ReflectT : P -> reflect P true
 | ReflectF : ~ P -> reflect P false.
 
+
 (** The [reflect] property takes two arguments: a proposition
     [P] and a boolean [b]. Intuitively, it states that the property
     [P] is _reflected_ in (i.e., equivalent to) the boolean [b]: [P]
@@ -1747,8 +1748,13 @@ Qed.
 (** **** Exercise: 2 stars, recommended (reflect_iff)  *)
 Theorem reflect_iff : forall P b, reflect P b -> (P <-> b = true).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros P b H. split.
+  (* -> *)
+  + intros p. inversion H.
+      - reflexivity.
+      - subst. 
+      
+
 
 (** The advantage of [reflect] over the normal "if and only if"
     connective is that, by destructing a hypothesis or lemma of the
