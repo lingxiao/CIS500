@@ -1742,19 +1742,22 @@ Theorem iff_reflect : forall P b, (P <-> b = true) -> reflect P b.
 Proof.
   intros P [] H.
   - apply ReflectT. rewrite H. reflexivity.
-  - apply ReflectF. rewrite H. intros H'. inversion H'.
+  - apply ReflectF. rewrite H. unfold not. intros H'. inversion H'.
 Qed.
 
 (** **** Exercise: 2 stars, recommended (reflect_iff)  *)
 Theorem reflect_iff : forall P b, reflect P b -> (P <-> b = true).
 Proof.
-  intros P b H. split.
+  intros P b. split.
   (* -> *)
-  + intros p. inversion H.
-      - reflexivity.
-      - subst. 
-      
-
+  + inversion H. subst.
+      - intros _. reflexivity.
+      - intros p. subst. admit.
+  (* <- *)
+  + inversion H. subst.
+      - intros _. apply H0.
+      - intros Hc. inversion Hc.
+Qed.        
 
 (** The advantage of [reflect] over the normal "if and only if"
     connective is that, by destructing a hypothesis or lemma of the
