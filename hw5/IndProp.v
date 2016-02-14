@@ -1861,7 +1861,10 @@ Proof.
   + intros _ _. reflexivity.
   + intros H2 H3. subst. apply H2.
   + intros H2 H3. subst. apply H3.
-  + intros H2 H3. rewrite <- H2. 
+  + intros H2 H3. rewrite <- H2. simpl. destruct (test z).
+      - destruct (test x).
+          * 
+
 
   
 
