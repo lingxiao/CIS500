@@ -1937,12 +1937,9 @@ Compute (b_inOrder l1 l2 lg).
     common. *)
 
 Inductive disjoint {X : Type} : list X -> list X -> Prop :=
-  | dnils :                                           disjoint [] []
-  | dcons : forall l1 l2 (x y : X), disjoint l1 l2 -> disjoint (x::l1) (y::l2).
-  
+  | dnils :                                                 disjoint [] []
+  | dcons : forall l1 l2 (x : X), In x l1 -> ~ (In x l2) -> disjoint l1 l2.
 
-
-(* FILL IN HERE *)
 
 (** Next, use [In] to define an inductive proposition [NoDup X
     l], which should be provable exactly when [l] is a list (with
