@@ -1936,9 +1936,22 @@ Compute (b_inOrder l1 l2 lg).
     lists (with elements of type X) that have no elements in
     common. *)
 
+Definition not (b : bool) : bool := match b with
+  | true => false
+  | _    => true
+  end.            
+
+Fixpoint b_disjoint (l1 l2 : list nat) : bool := match l1, l2 with
+  | x :: xs, y :: ys => not (beq_nat x y) && (b_disjoint xs ys)
+  | _      , _       => true
+  end.                        
+
+(* todo: is this def repetitive? is dnils needed? *)
 Inductive disjoint {X : Type} : list X -> list X -> Prop :=
-  | dnils :                                                 disjoint [] []
-  | dcons : forall l1 l2 (x : X), In x l1 -> ~ (In x l2) -> disjoint l1 l2.
+  | dnils  :                                                 disjoint [] []
+  | dnil1  : forall l1,                                      disjoint l1 []
+  | dnil2  : forall l2,                                      disjoint [] l2
+  | dcons  : forall l1 l2 (x : X), In x l1 -> ~ (In x l2) -> disjoint l1 l2.
 
 
 (** Next, use [In] to define an inductive proposition [NoDup X
@@ -1949,12 +1962,31 @@ Inductive disjoint {X : Type} : list X -> list X -> Prop :=
     [NoDup bool [true;true]] should not be.  *)
 
 Inductive NoDup {X : Type} : list X -> Prop :=
-  | nnils : NoDup []
-  | ncons : forall l (x : X), disjoint [x] l ->  NoDup (x::l).                 
+  | nnils :                                     NoDup []
+  | ncons : forall l (x : X), disjoint [x] l -> NoDup (x::l).                 
 
 (** Finally, state and prove one or more interesting theorems relating
     [disjoint], [NoDup] and [++] (list append).  *)
 
+Theorem absolutely_fascinating :
+  forall (X: Type) (l1 l2 l3 : list X),
+  NoDup l1 -> l1 = l2 ++ l3 -> disjoint l2 l3.
+Proof.
+  intros X l1 l2 l3 H1 H2. induction H1.
+    + destruct l2.
+        - destruct l3.
+            * apply dnils.
+            * inversion H2.
+        - inversion H2.
+    + destruct l2.
+        - apply dnil2.
+        - destruct l3.
+            * apply dnil1.
+            *
+              
+
+            
+  
 
 
 
