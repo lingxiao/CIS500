@@ -1596,24 +1596,48 @@ End R.
       Hint: choose your induction carefully!
 *)
 
+(* boolean definition *)
+Fixpoint b_subseq (l1 l2 : list nat) : bool := match l1,l2 with
+  | []     , _        => true
+  | _      , []       => false
+  | x::l1' , y::l2'   => if beq_nat x y then b_subseq l1' l2' else b_subseq l1 l2'           
+  end.               
+
+(* adhoc test boolean definition *)
+Definition l1 := [1;2;3].
+Compute (b_subseq l1 l1).
+Compute (b_subseq l1 [1;1;1;2;2;3]).
+Compute (b_subseq l1 [1;2;7;3]).
+Compute (b_subseq l1 [1;2]).
+Compute (b_subseq l1 [1;3]).
+Compute (b_subseq l1 [5;6;2;1;7;3;8]).
+
 Inductive subseq : list nat -> list nat -> Prop :=
-  | refl : forall l, subseq l l
-  | hd   : forall l1 l2 (x : nat), subseq l1 l2 -> subseq l1 ([x] ++ l2)
-  | tail : forall l1 l2 (x : nat), subseq l1 l2 -> subseq l1 (l2 ++ [x]).                                                      
+  | lft_nil : forall l, subseq [] l
+  | x_eq_y  : forall l1 l2 (x y : nat),
+              subseq l1 l2 -> x = y -> subseq (x :: l1) (y :: l2)
+  | x_neq_y : forall l1 l2 (x y : nat),
+              subseq (x :: l1) l2 -> ~(x=y) -> subseq (x :: l1) (y :: l2).
+
 
 Notation "l1 <: l2" := (subseq l1 l2) (at level 80).
-
 
 Theorem subseq_refl : forall (l : list nat),
    l <: l.
 Proof.
-  intros l. apply refl.
-Qed.  
+  intros l. induction l.
+    + apply lft_nil.
+    + apply x_eq_y. apply IHl. reflexivity.
+Qed.
 
 Theorem subseq_app : forall (l1 l2 l3 : list nat),
   l1 <: l2 -> l1 <: (l2 ++ l3).
 Proof.  
- admit.                       
+  intros l1 l2 l3 H. induction H.
+    + apply lft_nil.
+    + subst. 
+
+  
 Qed.
 
 Theorem subseq_trans : forall (l1 l2 l3 : list nat),
