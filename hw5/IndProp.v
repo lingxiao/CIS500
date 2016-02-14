@@ -1861,7 +1861,7 @@ Proof.
   + intros _ _. reflexivity.
   + intros H2 H3. subst. apply H2.
   + intros H2 H3. subst. apply H3.
-  + intros H2 H3. inversion H1. subst.
+  + intros H2 H3. rewrite <- H2. 
 
   
 
