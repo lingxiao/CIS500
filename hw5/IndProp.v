@@ -1841,6 +1841,7 @@ Qed.
     inductive relation, not a [Fixpoint].)  *)
 
 
+Compute (filter evenb [2;4;6]).
 
 Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
   | nils   :                                  in_order_merge [] [] []
@@ -1850,6 +1851,18 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
              in_order_merge l1 (y :: l2) l -> in_order_merge (x :: l1) (y :: l2) (z :: l)
   | y_eq_z : forall l1 l2 l (x y z : X),
              in_order_merge (x :: l1) l2 l -> in_order_merge (x :: l1) (y :: l2) (z :: l).
+
+Theorem filter_l : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
+  in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
+  filter test l = l1.
+Proof.
+  intros X test l l1 l2 H1. induction H1.
+
+  + intros _ _. reflexivity.
+  + intros H2 H3. subst. apply H2.
+  + intros H2 H3. subst. apply H3.
+  + intros H2 H3. inversion H1. subst.
+
   
 
 
@@ -1895,8 +1908,6 @@ Compute (b_inOrder l1 l2 le).
 Compute (b_inOrder l1 l2 lf).
 Compute (b_inOrder l1 l2 lg).
 
-
-(** [] *)
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
 (** A different way to formally characterize the behavior of [filter]
