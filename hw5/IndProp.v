@@ -1445,7 +1445,7 @@ Proof.
   (* RHS *)
   + induction n1.
       - apply H.
-      - apply IHn1. simpl in H. apply (ss_lt (n1+n2) _).apply H.
+      - apply IHn1. simpl in H. apply (ss_lt (n1+n2) _). apply H.
 Qed.
 
 
@@ -1578,16 +1578,17 @@ End R.
     [1;3]
     [5;6;2;1;7;3;8]
 
+
     - Define an inductive proposition [subseq] on [list nat] that
       captures what it means to be a subsequence. (Hint: You'll need
-      three cases.)
+      three cases.) 
 
     - Prove [subseq_refl] that subsequence is reflexive, that is,
-      any list is a subsequence of itself.
+      any list is a subsequence of itself. 
 
     - Prove [subseq_app] that for any lists [l1], [l2], and [l3],
       if [l1] is a subsequence of [l2], then [l1] is also a subsequence
-      of [l2 ++ l3].
+      of [l2 ++ l3]. 
 
     - (Optional, harder) Prove [subseq_trans] that subsequence is
       transitive -- that is, if [l1] is a subsequence of [l2] and [l2]
@@ -1595,7 +1596,32 @@ End R.
       Hint: choose your induction carefully!
 *)
 
-(* FILL IN HERE *)
+Inductive subseq : list nat -> list nat -> Prop :=
+  | refl : forall l, subseq l l
+  | hd   : forall l1 l2 (x : nat), subseq l1 l2 -> subseq l1 ([x] ++ l2)
+  | tail : forall l1 l2 (x : nat), subseq l1 l2 -> subseq l1 (l2 ++ [x]).                                                      
+
+Notation "l1 <: l2" := (subseq l1 l2) (at level 80).
+
+
+Theorem subseq_refl : forall (l : list nat),
+   l <: l.
+Proof.
+  intros l. apply refl.
+Qed.  
+
+Theorem subseq_app : forall (l1 l2 l3 : list nat),
+  l1 <: l2 -> l1 <: (l2 ++ l3).
+Proof.  
+ admit.                       
+Qed.
+
+Theorem subseq_trans : forall (l1 l2 l3 : list nat),
+  l1 <: l2 -> l2 <: l3 -> l1 <: l3.
+Proof.
+  admit.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (R_provability)  *)
