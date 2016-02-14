@@ -1859,20 +1859,37 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
              in_order_merge (x :: l1) l2 l -> in_order_merge (x :: l1) (y :: l2) (z :: l).
 *)
 
+
+
 Theorem filter_l : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
   filter test l = l1.
 Proof.
-  intros X test l l1 l2 H1. induction H1.
+  intros X test l l1 l2 H1 H2 H3. induction H1.
+    + reflexivity.
+    + apply H2.
+    + apply H3.
+    + rewrite <- H2. simpl in H2. destruct (test x).
+        - 
+Abort.
 
-  + intros _ _. reflexivity.
-  + intros H2 H3. apply H2.
-  + intros H2 H3. apply H3.
-  + intros H2 H3. 
 
 
 
-(* first write a function to test whether l = l1 inorderMerge l2 
+(*
+
+      simpl. simpl in H2. destruct (test x) in *.
+        - apply f_equal. 
+
+
+      simpl. destruct (test x).
+        - apply f_equal. simpl in H2. destruct (test x) in H2.
+            * apply f_equal in H2.
+
+
+
+
+first write a function to test whether l = l1 inorderMerge l2 
 Fixpoint beq_lnat (l1 l2 : list nat) : bool := match l1, l2 with
   | []    ,  []     => true 
   | _::_  ,  []     => false
@@ -1953,7 +1970,7 @@ Fixpoint b_disjoint (l1 l2 : list nat) : bool := match l1, l2 with
 
 (* todo: is this def repetitive? is dnils needed? *)
 Inductive disjoint {X : Type} : list X -> list X -> Prop :=
-  | dnils  :                                                 disjoint [] []
+  | dnils  :                                                 disjoint [] [] (* tbd *)
   | dnil1  : forall l1,                                      disjoint l1 []
   | dnil2  : forall l2,                                      disjoint [] l2
   | dcons  : forall l1 l2 (x : X), In x l1 -> ~ (In x l2) -> disjoint l1 l2.
