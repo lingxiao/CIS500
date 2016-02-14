@@ -1844,13 +1844,20 @@ Qed.
 Compute (filter evenb [2;4;6]).
 
 Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
-  | nils   :                                  in_order_merge [] [] []
-  | l1_nil : forall l1 l, l1 = l ->           in_order_merge l1 [] l
-  | l2_nil : forall l2 l, l2 = l ->           in_order_merge [] l2 l
+  | nils   :                            in_order_merge [] [] [] (* maybe delete? *)
+  | l1_nil : forall l,                  in_order_merge l [] l
+  | l2_nil : forall l,                  in_order_merge [] l l
+  | icons1 : forall l1 l2 l (x : X),
+             in_order_merge l1 l2 l  -> in_order_merge (x :: l1) l2 (x :: l)
+  | icons2 : forall l1 l2 l (x : X),
+             in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
+
+(*                                                             
   | x_eq_z : forall l1 l2 l (x y z : X),
              in_order_merge l1 (y :: l2) l -> in_order_merge (x :: l1) (y :: l2) (z :: l)
   | y_eq_z : forall l1 l2 l (x y z : X),
              in_order_merge (x :: l1) l2 l -> in_order_merge (x :: l1) (y :: l2) (z :: l).
+*)
 
 Theorem filter_l : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
@@ -1859,12 +1866,10 @@ Proof.
   intros X test l l1 l2 H1. induction H1.
 
   + intros _ _. reflexivity.
-  + intros H2 H3. subst. apply H2.
-  + intros H2 H3. subst. apply H3.
-  + intros H2 H3. rewrite <- H2. simpl. destruct (test z).
-      - destruct (test x).
-          *
-Abort.  (* todo: must finish this one! *)           
+  + intros H2 H3. apply H2.
+  + intros H2 H3. apply H3.
+  + intros H2 H3. 
+
 
 
 (* first write a function to test whether l = l1 inorderMerge l2 
@@ -1882,7 +1887,8 @@ Fixpoint b_inOrder (l1 l2 l : list nat) : bool := match l1, l2, l with
   | _::_  , []    , _::_      => if beq_lnat l1 l then true else false
   | x::l1', y::l2', z :: l3'  => match beq_nat x z with
                                      |true => b_inOrder l1' l2 l3'
-                                     |_    => match beq_nat y z with
+
+                                   |_    => match beq_nat y z with
                                                |true => b_inOrder l1 l2' l3'
                                                |_    => false
                                                end
@@ -1907,7 +1913,6 @@ Compute (b_inOrder l1 l2 ld).
 Compute (b_inOrder l1 l2 le).
 Compute (b_inOrder l1 l2 lf).
 Compute (b_inOrder l1 l2 lg).
-
 *)
 
 
