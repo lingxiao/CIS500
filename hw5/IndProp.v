@@ -1651,7 +1651,8 @@ Theorem subseq_trans : forall (l1 l2 l3 : list nat),
 Proof.
   intros l1 l2 l3 H1. induction H1.
     + intros _. apply lft_nil.
-    + intros H2. subst.
+    + intros H2. subst. inversion H2. subst.
+        - apply x_eq_y.  
 Abort.    (* maybedo: finish this one *)
 
 
