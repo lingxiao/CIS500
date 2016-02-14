@@ -1752,7 +1752,7 @@ Proof.
   (* -> *)
   + inversion H. subst.
       - intros _. reflexivity.
-      - subst. intros p. admit.  (* todo: must finis this! *)
+      - subst. intros p. exfalso. apply H0. apply p.
   (* <- *)
   + inversion H. subst.
       - intros _. apply H0.
