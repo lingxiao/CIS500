@@ -1748,11 +1748,11 @@ Qed.
 (** **** Exercise: 2 stars, recommended (reflect_iff)  *)
 Theorem reflect_iff : forall P b, reflect P b -> (P <-> b = true).
 Proof.
-  intros P b. split.
+  intros P b H. split.
   (* -> *)
   + inversion H. subst.
       - intros _. reflexivity.
-      - intros p. subst. admit.
+      - intros p. subst. admit.  (* todo: must finis this! *)
   (* <- *)
   + inversion H. subst.
       - intros _. apply H0.
