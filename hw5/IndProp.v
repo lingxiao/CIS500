@@ -1596,7 +1596,7 @@ End R.
       Hint: choose your induction carefully!
 *)
 
-(* boolean definition *)
+(* boolean definition
 Fixpoint b_subseq (l1 l2 : list nat) : bool := match l1,l2 with
   | []     , _        => true
   | _      , []       => false
@@ -1611,6 +1611,7 @@ Compute (b_subseq l1 [1;2;7;3]).
 Compute (b_subseq l1 [1;2]).
 Compute (b_subseq l1 [1;3]).
 Compute (b_subseq l1 [5;6;2;1;7;3;8]).
+ *)
 
 Inductive subseq : list nat -> list nat -> Prop :=
   | lft_nil : forall l, subseq [] l
@@ -1635,17 +1636,24 @@ Theorem subseq_app : forall (l1 l2 l3 : list nat),
 Proof.  
   intros l1 l2 l3 H. induction H.
     + apply lft_nil.
-    + subst. apply (x_eq_y l2 l0).
-    + 
-
-  
+    + subst. simpl. apply x_eq_y.  apply IHsubseq. reflexivity.
+    + simpl. apply x_neq_y. apply IHsubseq. apply H0.
 Qed.
 
+(*
+   (Optional, harder) Prove [subseq_trans] that subsequence is
+   transitive -- that is, if [l1] is a subsequence of [l2] and [l2]
+   is a subsequence of [l3], then [l1] is a subsequence of [l3].
+   Hint: choose your induction carefully!
+*)
 Theorem subseq_trans : forall (l1 l2 l3 : list nat),
   l1 <: l2 -> l2 <: l3 -> l1 <: l3.
 Proof.
-  admit.
-Qed.
+  intros l1 l2 l3 H1. induction H1.
+    + intros _. apply lft_nil.
+    + intros H2. subst.
+Abort.    (* maybedo: finish this one *)
+
 
 (** [] *)
 
