@@ -1863,14 +1863,11 @@ Proof.
   + intros H2 H3. subst. apply H3.
   + intros H2 H3. rewrite <- H2. simpl. destruct (test z).
       - destruct (test x).
-          * 
+          *
+Abort.  (* todo: must finish this one! *)           
 
 
-  
-
-
-
-(* first write a function to test whether l = l1 inorderMerge l2 *)
+(* first write a function to test whether l = l1 inorderMerge l2 
 Fixpoint beq_lnat (l1 l2 : list nat) : bool := match l1, l2 with
   | []    ,  []     => true 
   | _::_  ,  []     => false
@@ -1911,6 +1908,8 @@ Compute (b_inOrder l1 l2 le).
 Compute (b_inOrder l1 l2 lf).
 Compute (b_inOrder l1 l2 lg).
 
+*)
+
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
 (** A different way to formally characterize the behavior of [filter]
@@ -1936,6 +1935,12 @@ Compute (b_inOrder l1 l2 lg).
     l1 l2], which should be provable exactly when [l1] and [l2] are
     lists (with elements of type X) that have no elements in
     common. *)
+
+Inductive disjoint {X : Type} : list X -> list X -> Prop :=
+  | dnils :                                           disjoint [] []
+  | dcons : forall l1 l2 (x y : X), disjoint l1 l2 -> disjoint (x::l1) (y::l2).
+  
+
 
 (* FILL IN HERE *)
 
