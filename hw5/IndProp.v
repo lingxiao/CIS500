@@ -1994,13 +1994,8 @@ Compute (b_inOrder l1 l2 lg).
     lists (with elements of type X) that have no elements in
     common. *)
 
-Definition not (b : bool) : bool := match b with
-  | true => false
-  | _    => true
-  end.            
-
 Fixpoint b_disjoint (l1 l2 : list nat) : bool := match l1, l2 with
-  | x :: xs, y :: ys => not (beq_nat x y) && (b_disjoint xs ys)
+  | x :: xs, y :: ys => negb (beq_nat x y) && (b_disjoint xs ys)
   | _      , _       => true
   end.                        
 
@@ -2040,15 +2035,9 @@ Proof.
         - apply dnil2.
         - destruct l3.
             * apply dnil1.
-            * 
-              
+            * admit.  (* todo: finish this !! *)
+Qed.              
 
-            
-  
-
-
-
-(* FILL IN HERE *)
 (** [] *)
 
 (** **** Exercise: 3 stars, recommended (nostutter)  *)
@@ -2064,8 +2053,11 @@ Proof.
     stutter.) *)
 
 Inductive nostutter {X:Type} : list X -> Prop :=
- (* FILL IN HERE *)
-.
+  | snils  :                 nostutter []
+  | sone   : forall (x : X), nostutter [x]                     
+  | scons  : forall (l : list X) (x y : X),
+             nostutter l ->  nostutter (x::y::l).
+
 
 (** Make sure each of these tests succeeds, but you are free
     to change the proof if the given one doesn't work for you.
@@ -2080,27 +2072,37 @@ Inductive nostutter {X:Type} : list X -> Prop :=
     tactics.  *)
 
 Example test_nostutter_1:      nostutter [3;1;4;1;5;6].
-(* FILL IN HERE *) Admitted.
+Proof. repeat constructor. Qed.
+
 (* 
   Proof. repeat constructor; apply beq_nat_false_iff; auto.
   Qed.
 *)
 
 Example test_nostutter_2:  nostutter (@nil nat).
-(* FILL IN HERE *) Admitted.
+Proof. apply snils. Qed.
+ 
 (* 
   Proof. repeat constructor; apply beq_nat_false_iff; auto.
   Qed.
 *)
 
 Example test_nostutter_3:  nostutter [5].
-(* FILL IN HERE *) Admitted.
+Proof. apply sone. Qed.
+
 (* 
   Proof. repeat constructor; apply beq_nat_false; auto. Qed.
 *)
 
-Example test_nostutter_4:      not (nostutter [3;1;1;4]).
-(* FILL IN HERE *) Admitted.
+Example test_nostutter_4:  not (nostutter [3;1;1;4]).
+Proof.
+  intro.
+  repeat match goal with
+    h: nostutter _ |- _ => inversion h; clear h; subst
+  end.
+Abort. (* todo: where did H1 go?? *)
+
+
 (* 
   Proof. intro.
   repeat match goal with
