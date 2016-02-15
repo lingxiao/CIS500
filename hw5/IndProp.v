@@ -1859,8 +1859,18 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
              in_order_merge (x :: l1) l2 l -> in_order_merge (x :: l1) (y :: l2) (z :: l).
 *)
 
-
-
+Lemma double_filter : forall (X : Type) (test : X -> bool) (l : list X),
+  filter test (filter test l)  = filter test l.                        
+Proof.
+  intros. induction l.
+    + simpl. reflexivity.
+    + simpl. destruct (test x) eqn: H1.
+        - simpl. destruct (test x) eqn: H2.
+            * rewrite IHl. reflexivity.
+            * inversion H1.
+        - 
+  
+  
 Theorem filter_l : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
   filter test l = l1.
@@ -1869,14 +1879,28 @@ Proof.
     + reflexivity.
     + apply H2.
     + apply H3.
-    + rewrite <- H2. simpl in H2. destruct (test x).
-        - 
+    + rewrite <- H2. simpl. destruct (test x). apply f_equal.
+        - simpl in H2. destruct (test x).
+            * inversion H2. apply IHin_order_merge in H0.
+              rewrite double_filter. rewrite H0. symmetry.
+              apply IHin_order_merge. (* why can't you do this?*)
+
+      
+        - apply f_equal.  simpl in H2. destruct (test x).
+            * inversion H2.  
+
 Abort.
 
 
 
 
 (*
+
+
+
+simpl in H2. destruct (test x) with test x -> True
+you can proof your goal with (test x -> False) you have  a contradiction
+
 
       simpl. simpl in H2. destruct (test x) in *.
         - apply f_equal. 
