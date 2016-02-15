@@ -2110,7 +2110,8 @@ Abort. (* todo: where did H1 go?? *)
   end.
   contradiction H1; auto. Qed.
 *)
-(** [] *)
+
+
 
 (** **** Exercise: 4 stars, advanced (pigeonhole principle)  *)
 (** The "pigeonhole principle" states a basic fact about counting:
@@ -2126,7 +2127,16 @@ Lemma in_split : forall (X:Type) (x:X) (l:list X),
   In x l ->
   exists l1 l2, l = l1 ++ x :: l2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. induction l as [|a l'].
+    + inversion H.
+    + inversion H.
+        (* case x = a *)
+        - subst. exists []. exists l'. simpl. reflexivity.
+        (* case In x l' *)
+        - apply IHl' in H0. inversion H0. exists x0. inversion H1.
+          exists l'. subst.
+Abort. (* todo: why is this one giving you trouble?? *)
+           
 
 (** Now define a property [repeats] such that [repeats X l] asserts
     that [l] contains at least one repeated element (of type [X]).  *)
