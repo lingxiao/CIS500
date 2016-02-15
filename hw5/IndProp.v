@@ -2021,10 +2021,15 @@ Inductive NoDup {X : Type} : list X -> Prop :=
 (** Finally, state and prove one or more interesting theorems relating
     [disjoint], [NoDup] and [++] (list append).  *)
 
+(* todo: finish this - but is this the simplest theorem you can state? !! *)
+
 Theorem absolutely_fascinating :
   forall (X: Type) (l1 l2 l3 : list X),
-  NoDup l1 -> l1 = l2 ++ l3 -> disjoint l2 l3.
-Proof.
+  NoDup l1 -> exists l1 l2, l1 = l2 ++ l3 -> disjoint l2 l3.
+Proof. Abort.
+
+
+(*Proof.
   intros X l1 l2 l3 H1 H2. induction H1.
     + destruct l2.
         - destruct l3.
@@ -2035,8 +2040,8 @@ Proof.
         - apply dnil2.
         - destruct l3.
             * apply dnil1.
-            * admit.  (* todo: finish this !! *)
-Qed.              
+
+*)
 
 (** [] *)
 
