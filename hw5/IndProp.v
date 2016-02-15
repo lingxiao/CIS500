@@ -2031,7 +2031,7 @@ Proof.
     + exists []. exists []. simpl. intros H1. rewrite <- H1. apply dnils.
     + inversion H.
         - subst.
-
+Abort.
 
 (*
 
@@ -2139,21 +2139,36 @@ Lemma in_split : forall (X:Type) (x:X) (l:list X),
 Proof.
   intros. induction l as [|a l'].
     + inversion H.
-    + inversion H.
+    + inversion H.  (* In x (a :: l') -> x = a \/ In x l' *)
         (* case x = a *)
         - subst. exists []. exists l'. simpl. reflexivity.
         (* case In x l' *)
-        - apply IHl' in H0. inversion H0. exists x0. inversion H1.
-          exists l'. subst.
-Abort. (* todo: why is this one giving you trouble?? *)
-           
+        - apply IHl' in H0. destruct H0. destruct H0.
+          exists x0. exists l'. admit.
+          (* todo: why is this one giving you trouble?? *)
+Qed.
+
+
+Inductive repeats {X:Type} : list X -> Prop :=
+  | rcons : forall (l : list X) (x : X),
+            In x l -> repeats (x :: l).
+(*
+
+Fixpoint inl  (x : nat) (l : list nat) : bool := match l with
+  | []      => false
+  | y :: l' => if beq_nat x y then true else inl x l'
+  end.                                               
 
 (** Now define a property [repeats] such that [repeats X l] asserts
     that [l] contains at least one repeated element (of type [X]).  *)
 
-Inductive repeats {X:Type} : list X -> Prop :=
-  (* FILL IN HERE *)
-.
+Fixpoint repeats (l : list nat) : bool := match l with
+  | []       => false
+  | x :: l'  => if inl x l' then true else repeats l'
+  end.
+
+
+*)
 
 (** Now here's a way to formalize the pigeonhole principle. List [l2]
     represents a list of pigeonhole labels, and list [l1] represents
