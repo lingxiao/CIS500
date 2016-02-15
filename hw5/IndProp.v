@@ -1843,7 +1843,6 @@ Qed.
 
 Compute (filter evenb [2;4;6]).
 
-
 (* todo: is this well stated? seems to be really hard to prove things with this *)
 Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
   | nils   :                            in_order_merge [] [] [] (* maybe delete? *)
@@ -1873,7 +1872,7 @@ Qed.
 
 
 (* todo: seem to be taking the hard way around ... *)
-Theorem filter_l : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
+Theorem filter_spec : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
   filter test l = l1.
 Proof.
@@ -1886,28 +1885,13 @@ Proof.
         - rewrite H2. apply IHin_order_merge. apply H2. apply H3.
     + simpl. destruct (test x) eqn: Hx.
         - inversion H3. destruct (test x) in H0.
-            *
 Abort.              
 
           
         
 
-Abort.
 
 (*
-
-Lemma filter_twice : forall (X : Type) (test : X -> bool) (l : list X),
-  filter test (filter test l)  = filter test l.                        
-Proof.
-  intros. induction l.
-    + simpl. reflexivity.
-    + simpl. destruct (test x) eqn: H1.
-        - simpl. destruct (test x) eqn: H2.
-            * rewrite IHl. reflexivity.
-            * inversion H1.
-        - apply IHl.
-Qed.
-
 
          simpl in H2. destruct (test x).
             * inversion H2.
@@ -1920,10 +1904,6 @@ Qed.
       
         (*- apply f_equal.  simpl in H2. destruct (test x).
             * inversion H2.  *)
-
-Abort.
-
-
 
 
 (*
@@ -2056,11 +2036,11 @@ Proof.
             * apply dnils.
             * inversion H2.
         - inversion H2.
-    + destruct l2.
+    + destruct l2 as [|y l2'].
         - apply dnil2.
         - destruct l3.
             * apply dnil1.
-            *
+            * 
               
 
             
