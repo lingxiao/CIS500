@@ -1200,7 +1200,6 @@ Inductive pal {X} : list X -> Prop :=
   | pal_cons : forall (x : X) (l : list X), pal l -> pal ([x] ++ l ++ [x]).
 
 
-
 Lemma list_manip : forall (X : Type) (x : X) (l :  list X),
   (x::l) ++ rev (x ::l) = [x] ++ (l ++ rev l) ++ [x].                     
 Proof.
@@ -1619,6 +1618,7 @@ Inductive subseq : list nat -> list nat -> Prop :=
               subseq l1 l2 -> x = y -> subseq (x :: l1) (y :: l2)
   | x_neq_y : forall l1 l2 (x y : nat),
               subseq (x :: l1) l2 -> x <> y -> subseq (x :: l1) (y :: l2).
+
 
 
 Notation "l1 <: l2" := (subseq l1 l2) (at level 80).
@@ -2144,14 +2144,42 @@ Proof.
         - subst. exists []. exists l'. simpl. reflexivity.
         (* case In x l' *)
         - apply IHl' in H0. destruct H0. destruct H0.
-          exists x0. exists l'. admit.
-          (* todo: why is this one giving you trouble?? *)
+          exists (a :: x0). exists x1. rewrite H0.
+          reflexivity.
 Qed.
 
 
 Inductive repeats {X:Type} : list X -> Prop :=
   | rcons : forall (l : list X) (x : X),
             In x l -> repeats (x :: l).
+
+(** Now here's a way to formalize the pigeonhole principle. List [l2]
+    represents a list of pigeonhole labels, and list [l1] represents
+    the labels assigned to a list of items: if there are more items
+    than labels, at least two items must have the same label.  This
+    proof is much easier if you use the [excluded_middle] hypothesis
+    to show that [In] is decidable, i.e. [forall x l, (In x l) \/ ~
+    (In x l)].  However, it is also possible to make the proof go
+    through _without_ assuming that [In] is decidable; if you can
+    manage to do this, you will not need the [excluded_middle]
+    hypothesis. *)
+
+Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
+   excluded_middle ->
+   (forall x, In x l1 -> In x l2) ->
+   length l2 < length l1 ->
+   repeats l1.
+Proof.
+   intros X l1. induction l1 as [|x l1' IHl1'].
+  (* FILL IN HERE *) Admitted.
+(** [] *)
+
+(* FILL IN HERE *)
+
+
+(** $Date: 2015-08-11 12:03:04 -0400 (Tue, 11 Aug 2015) $ *no)
+
+
 (*
 
 Fixpoint inl  (x : nat) (l : list nat) : bool := match l with
@@ -2167,31 +2195,4 @@ Fixpoint repeats (l : list nat) : bool := match l with
   | x :: l'  => if inl x l' then true else repeats l'
   end.
 
-
 *)
-
-(** Now here's a way to formalize the pigeonhole principle. List [l2]
-    represents a list of pigeonhole labels, and list [l1] represents
-    the labels assigned to a list of items: if there are more items
-    than labels, at least two items must have the same label.  This
-    proof is much easier if you use the [excluded_middle] hypothesis
-    to show that [In] is decidable, i.e. [forall x l, (In x l) \/ ~
-    (In x l)].  However, it is also possible to make the proof go
-    through _without_ assuming that [In] is decidable; if you can
-    manage to do this, you will not need the [excluded_middle]
-    hypothesis. *)
-
-Theorem pigeonhole_principle: forall (X:Type) (l1  l2:list X),
-   excluded_middle ->
-   (forall x, In x l1 -> In x l2) ->
-   length l2 < length l1 ->
-   repeats l1.
-Proof.
-   intros X l1. induction l1 as [|x l1' IHl1'].
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
-(* FILL IN HERE *)
-
-
-(** $Date: 2015-08-11 12:03:04 -0400 (Tue, 11 Aug 2015) $ *no)
