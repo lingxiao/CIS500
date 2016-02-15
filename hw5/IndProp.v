@@ -1843,6 +1843,8 @@ Qed.
 
 Compute (filter evenb [2;4;6]).
 
+
+(* todo: is this well stated? seems to be really hard to prove things with this *)
 Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
   | nils   :                            in_order_merge [] [] [] (* maybe delete? *)
   | l1_nil : forall l,                  in_order_merge l [] l
@@ -1875,10 +1877,10 @@ Qed.
 Lemma filter_cons: forall (X : Type) (test : X -> bool) (l : list X) (x : X),
   filter test (x :: l) = x :: l -> filter test l = l.
 Proof. 
-  intros. simpl in H. destruct (test x) in H.
-    + admit.
-    + admit.
-Qed.
+  intros X test l x. simpl. destruct (test x) eqn : Hx.
+    + intros H. inversion H. rewrite H1.  apply H1.
+    + intros H. admit. (* todo: make sure you can actually prove this!! *)
+Qed.      
 
 Theorem filter_l : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
@@ -1888,11 +1890,15 @@ Proof.
     + reflexivity.
     + apply H2.
     + apply H3.
-    + rewrite <- H2. simpl. apply filter_cons in H2. destruct (test x). apply f_equal.
+    + rewrite <- H2. apply filter_cons in H2. simpl. destruct (test x).
+        - apply f_equal. rewrite H2. apply IHin_order_merge. apply H2. apply H3.
         - rewrite H2. apply IHin_order_merge. apply H2. apply H3.
-        - rewrite H2. apply IHin_order_merge. apply H2. apply H3.
-    + admit.
-Qed.
+    + simpl. destruct (test x) eqn: Hx.
+        - 
+      
+        
+
+Abort.
 
 (*          simpl in H2. destruct (test x).
             * inversion H2.
