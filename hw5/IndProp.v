@@ -1868,7 +1868,8 @@ Proof.
         - simpl. destruct (test x) eqn: H2.
             * rewrite IHl. reflexivity.
             * inversion H1.
-        - 
+        - apply IHl.
+Qed.      
   
   
 Theorem filter_l : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
@@ -1883,7 +1884,7 @@ Proof.
         - simpl in H2. destruct (test x).
             * inversion H2. apply IHin_order_merge in H0.
               rewrite double_filter. rewrite H0. symmetry.
-              apply IHin_order_merge. (* why can't you do this?*)
+              apply IHin_order_merge in H0.
 
       
         - apply f_equal.  simpl in H2. destruct (test x).
