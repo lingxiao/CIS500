@@ -2171,8 +2171,8 @@ Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    repeats l1.
 Proof.
    intros X l1. induction l1 as [|x l1' IHl1'].
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+     + intros l2 Hem. intros H1 H2. 
+
 
 (* FILL IN HERE *)
 
