@@ -1882,6 +1882,8 @@ Proof.
     + intros H. admit. (* todo: make sure you can actually prove this!! *)
 Qed.      
 
+
+(* todo: seem to be taking the hard way around ... *)
 Theorem filter_l : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
   filter test l = l1.
@@ -1894,8 +1896,11 @@ Proof.
         - apply f_equal. rewrite H2. apply IHin_order_merge. apply H2. apply H3.
         - rewrite H2. apply IHin_order_merge. apply H2. apply H3.
     + simpl. destruct (test x) eqn: Hx.
-        - 
-      
+        - inversion H3. destruct (test x) in H0.
+            *
+Abort.              
+
+          
         
 
 Abort.
