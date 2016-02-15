@@ -1861,17 +1861,6 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
              in_order_merge (x :: l1) l2 l -> in_order_merge (x :: l1) (y :: l2) (z :: l).
 *)
 
-Lemma filter_twice : forall (X : Type) (test : X -> bool) (l : list X),
-  filter test (filter test l)  = filter test l.                        
-Proof.
-  intros. induction l.
-    + simpl. reflexivity.
-    + simpl. destruct (test x) eqn: H1.
-        - simpl. destruct (test x) eqn: H2.
-            * rewrite IHl. reflexivity.
-            * inversion H1.
-        - apply IHl.
-Qed.
 
 (* todo: is this even provable?? *)
 Lemma filter_cons: forall (X : Type) (test : X -> bool) (l : list X) (x : X),
@@ -1879,7 +1868,7 @@ Lemma filter_cons: forall (X : Type) (test : X -> bool) (l : list X) (x : X),
 Proof. 
   intros X test l x. simpl. destruct (test x) eqn : Hx.
     + intros H. inversion H. rewrite H1.  apply H1.
-    + intros H. admit. (* todo: make sure you can actually prove this!! *)
+    + intros H.  admit. (* todo: make sure you can actually prove this!! *)
 Qed.      
 
 
@@ -1905,7 +1894,22 @@ Abort.
 
 Abort.
 
-(*          simpl in H2. destruct (test x).
+(*
+
+Lemma filter_twice : forall (X : Type) (test : X -> bool) (l : list X),
+  filter test (filter test l)  = filter test l.                        
+Proof.
+  intros. induction l.
+    + simpl. reflexivity.
+    + simpl. destruct (test x) eqn: H1.
+        - simpl. destruct (test x) eqn: H2.
+            * rewrite IHl. reflexivity.
+            * inversion H1.
+        - apply IHl.
+Qed.
+
+
+         simpl in H2. destruct (test x).
             * inversion H2.
           
             * inversion H2. apply IHin_order_merge in H0.
