@@ -1881,7 +1881,7 @@ Theorem filter_spec : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
 Proof.
   intros X test l l1 l2 H1 H2 H3. induction H1.
     + reflexivity.
-    + apply H2.
+    + apply H2. (* now no longer work since there's no l1_nil, l2_ nil *)
     + apply H3.
     + rewrite <- H2. apply filter_cons in H2. simpl. destruct (test x).
         - apply f_equal. rewrite H2. apply IHin_order_merge. apply H2. apply H3.
@@ -1921,8 +1921,30 @@ Fixpoint beq_lnat (l1 l2 : list nat) : bool := match l1, l2 with
   end.                                                                 
 
 
-Fixpoint b_inOrder (l1 l2 l : list nat) : bool := match l1, l2, l with
-  | []    , []    , []        => true
+Fixpoint b_inOrder (l1 l2 l : list nat) : bool := match l with
+  | []     => match l1, l2 with
+              | [], [] => true
+              | _ , _  => false
+           end
+  | z:: l' =>          
+
+
+  match l1, l2, l with
+  | []     , []    , []        => true
+  | x::l1' , l2    , x'::l'    => if beq_nat x x'
+                                  then b_inOrder l1' l2 l'
+                                  else b_inOrder b_inOrder l1 l2 l
+                                                                 
+
+
+
+
+  | icons1 : forall l1 l2 l (x : X),
+             in_order_merge l1 l2 l  -> in_order_merge (x :: l1) l2 (x :: l)
+  | icons2 : forall l1 l2 l (x : X),
+             in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
+
+  
   | []    , _::_  , _::_      => if beq_lnat l2 l then true else false
   | _::_  , []    , _::_      => if beq_lnat l1 l then true else false
   | x::l1', y::l2', z :: l3'  => match beq_nat x z with
