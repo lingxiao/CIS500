@@ -1874,7 +1874,7 @@ Proof.
   intros X test l x. simpl. destruct (test x) eqn : Hx.
     + intros H. inversion H. rewrite H1.  apply H1.
     + intros H. 
-    + intros H. admit. (* todo: make sure you can actually prove this!! *)
+      admit. (* todo: make sure you can actually prove this!! *)
 Qed.      
 
 
@@ -1913,26 +1913,10 @@ Abort.
             * inversion H2.  *)
 
 
-(*
 
 
 
-simpl in H2. destruct (test x) with test x -> True
-you can proof your goal with (test x -> False) you have  a contradiction
-
-
-      simpl. simpl in H2. destruct (test x) in *.
-        - apply f_equal. 
-
-
-      simpl. destruct (test x).
-        - apply f_equal. simpl in H2. destruct (test x) in H2.
-            * apply f_equal in H2.
-
-
-
-
-first write a function to test whether l = l1 inorderMerge l2 
+(*first write a function to test whether l = l1 inorderMerge l2 *)
 Fixpoint beq_lnat (l1 l2 : list nat) : bool := match l1, l2 with
   | []    ,  []     => true 
   | _::_  ,  []     => false
@@ -1966,14 +1950,16 @@ Definition le := [1;4;6;2;3;5].
 Definition lf := [1;4;6;5;2;3].
 Definition lg := [0;1;4;6;5;2;3].
 
-Compute (b_inOrder l1 l2 la).
+Fact b_inOrder_1 : b_inOrder l1 l2 la = true.
+reflexivity.
+
 Compute (b_inOrder l1 l2 lb).
 Compute (b_inOrder l1 l2 lc).
 Compute (b_inOrder l1 l2 ld).
 Compute (b_inOrder l1 l2 le).
 Compute (b_inOrder l1 l2 lf).
 Compute (b_inOrder l1 l2 lg).
-*)
+
 
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
