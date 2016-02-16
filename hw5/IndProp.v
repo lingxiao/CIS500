@@ -1863,14 +1863,21 @@ Lemma filter_length : forall (X : Type) (p : X -> bool) (l : list X),
   length (filter p l) <= length l.
 Proof.  Admitted.
 
+Lemma filter_len : forall (X : Type) (test : X -> bool) (l : list X) (x : X),
+  filter test l = x :: l -> False.
+Proof.
+  intros X p l x. induction l as [|a l'].
+    - simpl. intros H. inversion H.
+    - simpl. exfalso. apply IHl'.  admit.
+Qed.
+
 (* todo: is this even provable?? *)
 Lemma filter_cons: forall (X : Type) (test : X -> bool) (l : list X) (x : X),
   filter test (x :: l) = x :: l -> filter test l = l.
 Proof. 
   intros X test l x. simpl. destruct (test x) eqn : Hx.
     + intros H. inversion H. rewrite H1.  apply H1.
-    + intros H. 
-      admit. (* todo: make sure you can actually prove this!! *)
+    + intros H. apply filter_len in H. inversion H.
 Qed.
 
 Lemma filter_hd_false:  forall (X : Type) (test : X -> bool) (l : list X) (x : X),
@@ -1885,7 +1892,6 @@ Proof.
 Qed.       
 
 
-(* todo: seem to be taking the hard way around ... *)
 Theorem filter_spec : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
   filter test l = l1.
@@ -1912,7 +1918,7 @@ Qed.
 
 
 
-(*first write a function to test whether l = l1 inorderMerge l2 *)
+(*first write a function to test whether l = l1 inorderMerge l2 
 Fixpoint beq_lnat (l1 l2 : list nat) : bool := match l1, l2 with
   | []    ,  []     => true 
   | _::_  ,  []     => false
@@ -1983,7 +1989,7 @@ reflexivity.
 Fact b_inOrder_7 : b_inOrder l1 l2 lg = false.
 reflexivity.
 
-
+*)
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
 (** A different way to formally characterize the behavior of [filter]
