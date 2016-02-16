@@ -2071,8 +2071,11 @@ that l contains at least one repeated element (of type X).
 
 (* todo: double check this makes senes *)
 Inductive repeats {X:Type} : list X -> Prop :=
-  | rcons : forall (l : list X) (x : X),
-            In x l -> repeats (x :: l).
+  | rconst : forall (l : list X) (x : X),
+            In x l -> repeats (x :: l)
+  | rconsf : forall (l : list X) (x : X),
+            repeats l -> repeats (x :: l).
+             
 
 (** Now here's a way to formalize the pigeonhole principle. List [l2]
     represents a list of pigeonhole labels, and list [l1] represents
@@ -2108,6 +2111,7 @@ Definition excluded_middle := ∀P : Prop,
   P ∨ ¬ P.
 *)       
 
+(*
 
 Fixpoint inl  (x : nat) (l : list nat) : bool := match l with
   | []      => false
@@ -2122,7 +2126,7 @@ Fixpoint repeats (l : list nat) : bool := match l with
   | x :: l'  => if inl x l' then true else repeats l'
   end.
 
-         
+*)       
 
 
 
