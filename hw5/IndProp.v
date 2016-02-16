@@ -1863,13 +1863,18 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
 *)
 
 
+Lemma filter_length : forall (X : Type) (p : X -> bool) (l : list X),
+  length (filter p l) <= length l.
+Proof.  Admitted.
+
 (* todo: is this even provable?? *)
 Lemma filter_cons: forall (X : Type) (test : X -> bool) (l : list X) (x : X),
   filter test (x :: l) = x :: l -> filter test l = l.
 Proof. 
   intros X test l x. simpl. destruct (test x) eqn : Hx.
     + intros H. inversion H. rewrite H1.  apply H1.
-    + intros H.  admit. (* todo: make sure you can actually prove this!! *)
+    + intros H. 
+    + intros H. admit. (* todo: make sure you can actually prove this!! *)
 Qed.      
 
 
