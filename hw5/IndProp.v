@@ -1879,35 +1879,23 @@ Theorem filter_spec : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
   filter test l = l1.
 Proof.
-  intros X test l l1 l2 H1 H2 H3. induction H1.
+  intros X test l l1 l2 Hm Hl1 Hl2. induction Hm.
+    (* case: l1 = l2 = l3 = [] *)
     + reflexivity.
-    + apply H2. (* now no longer work since there's no l1_nil, l2_ nil *)
-    + apply H3.
-    + rewrite <- H2. apply filter_cons in H2. simpl. destruct (test x).
-        - apply f_equal. rewrite H2. apply IHin_order_merge. apply H2. apply H3.
-        - rewrite H2. apply IHin_order_merge. apply H2. apply H3.
+    (* case : head in l1 is also the head in l*)
     + simpl. destruct (test x) eqn: Hx.
-        - inversion H3. destruct (test x) in H0.
-Abort.              
-
-          
-        
-
-
-(*
-
-         simpl in H2. destruct (test x).
-            * inversion H2.
-          
-            * inversion H2. apply IHin_order_merge in H0.
-              rewrite filter_twice. rewrite H0. symmetry.
-              (* apply IHin_order_merge in H0. why doesnt this owrk???*)
-*)
-
-      
-        (*- apply f_equal.  simpl in H2. destruct (test x).
-            * inversion H2.  *)
-
+        (* case: head in l1 passes the test   <- must be true  by Hl1 *)
+        - apply f_equal. apply IHHm. apply filter_cons in Hl1. apply Hl1.
+          apply Hl2.
+        (* case: head in l1 not pass the test <- must be false by Hl1 *)
+        - rewrite <- Hl1. simpl. destruct (test x).
+            * inversion Hx.
+            * apply filter_cons in Hl1. rewrite Hl1.
+              apply IHHm. apply Hl1. apply Hl2.
+   (* case: head in l2 is also head in l <- must be false by Hl2 *)           
+   + simpl. destruct (test x) eqn: Hx.
+       (* case: head in l1 passes the test *)
+       - 
 
 
 
