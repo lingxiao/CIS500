@@ -1851,32 +1851,46 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
   | icons2 : forall l1 l2 l (x : X),
              in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
 
-
-Lemma stuff : forall (X: Type) (l1 l2 : list X ),
+(*
+Lemma length_of_l1l2 : forall (X: Type) (l1 l2 : list X ),
   (length l1 = length l2 -> False) -> l1 = l2 -> False.
 Proof.
   intros X l1 l2 Hl H. apply Hl. subst. reflexivity.
-Qed.  
-  
-Lemma filter_len : forall (X : Type) (test : X -> bool) (l : list X) (x : X),
-  filter test l = x :: l -> False.
-Proof. 
-  intros X p l x. apply stuff. induction l as [|a l'].
-    + simpl. intros H. inversion H.
-    + simpl. destruct (p a) eqn: Ha.
-        - simpl. intros H. apply IHl'. inversion H.
-	  simpl. apply H1.
-        - intros H. apply IHl'. rewrite H. simpl.
+Qed.
+*)
 
+Lemma filter_len1 : forall (X : Type) (p : X -> bool) (l : list X),
+  length (filter p l ) <= length l.
+Proof.
+  intros. induction l as [|x l'].
+    + simpl. reflexivity.
+    + simpl. destruct (p x).
+        - 
 Qed.
 
+
+Lemma duh : forall (n : nat), S n <= n -> False.
+Proof.
+  intros. induction n.
+    - inversion H.
+    - apply IHn. apply le_S_n in H. apply H.
+Qed.
+      
+Lemma filter_len : forall (X : Type) (test : X -> bool) (l : list X) (x : X),
+  filter test l = x :: l -> False.
+Proof.
+  intros. assert (length (filter test l) <= length l).
+    + apply filter_len1.
+    + rewrite H in H0. simpl in H0. apply duh in H0.
+      inversion H0.
+Qed.      
 
 Lemma filter_cons: forall (X : Type) (test : X -> bool) (l : list X) (x : X),
   filter test (x :: l) = x :: l -> filter test l = l.
 Proof. 
   intros X test l x. simpl. destruct (test x) eqn : Hx.
     + intros H. inversion H. rewrite H1.  apply H1.
-    + intros H. apply filter_len in H. inversion H.
+    + intros H.  apply filter_len in H. inversion H.
 Qed.
 
 Lemma filter_hd_false:  forall (X : Type) (test : X -> bool) (l : list X) (x : X),
@@ -1889,7 +1903,6 @@ Proof.
         + reflexivity.
         + apply H.
 Qed.       
-
 
 Theorem filter_spec : forall (X : Type) (test : X -> bool) (l l1 l2 : list X),
   in_order_merge l1 l2 l -> filter test l1 = l1 -> filter test l2 = [] ->
@@ -1914,7 +1927,6 @@ Proof.
        - inversion Hl2l.
        - apply IHHm. apply Hl1.  apply Hl2r.
 Qed.
-
 
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
