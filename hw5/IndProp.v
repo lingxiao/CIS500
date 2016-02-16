@@ -1981,7 +1981,8 @@ Qed.
 Fixpoint b_disjoint (l1 l2 : list nat) : bool := match l1, l2 with
   | x :: xs, y :: ys => negb (beq_nat x y) && (b_disjoint xs ys)
   | _      , _       => true
-  end.     
+  end.
+*)
 
 (** **** Exercise: 3 stars, recommended (nostutter)  *)
 (** Formulating inductive definitions of properties is an important
@@ -2081,6 +2082,10 @@ Proof.
           reflexivity.
 Qed.
 
+(*
+Now define a property repeats such that repeats X l asserts
+that l contains at least one repeated element (of type X).
+*)
 
 (* todo: double check this makes senes *)
 Inductive repeats {X:Type} : list X -> Prop :=
@@ -2092,8 +2097,11 @@ Inductive repeats {X:Type} : list X -> Prop :=
     the labels assigned to a list of items: if there are more items
     than labels, at least two items must have the same label.  This
     proof is much easier if you use the [excluded_middle] hypothesis
-    to show that [In] is decidable, i.e. [forall x l, (In x l) \/ ~
-    (In x l)].  However, it is also possible to make the proof go
+    to show that [In] is decidable, i.e.
+
+         [forall x l, (In x l) \/ ~  (In x l)].
+
+    However, it is also possible to make the proof go
     through _without_ assuming that [In] is decidable; if you can
     manage to do this, you will not need the [excluded_middle]
     hypothesis. *)
