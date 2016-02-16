@@ -1875,7 +1875,14 @@ Qed.
 
 Lemma filter_hd_false:  forall (X : Type) (test : X -> bool) (l : list X) (x : X),
   filter test (x :: l) = []-> test x = false /\ filter test l = [].
-Proof.       Admitted.
+Proof. 
+  intros X p l x. simpl. destruct (p x) eqn: Hx. intros H. split.
+    - inversion H.
+    - inversion H.
+    - intros H. split.
+        + reflexivity.
+        + apply H.
+Qed.       
 
 
 (* todo: seem to be taking the hard way around ... *)
