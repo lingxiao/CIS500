@@ -1852,13 +1852,12 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
              in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
 
 
-
-
 Lemma stuff : forall (X: Type) (l1 l2 : list X ),
   (length l1 = length l2 -> False) -> l1 = l2 -> False.
-Proof. Admitted.  
-                                       
-
+Proof.
+  intros X l1 l2 Hl H. apply Hl. subst. reflexivity.
+Qed.  
+  
 Lemma filter_len : forall (X : Type) (test : X -> bool) (l : list X) (x : X),
   filter test l = x :: l -> False.
 Proof. 
@@ -1867,7 +1866,8 @@ Proof.
     + simpl. destruct (p a) eqn: Ha.
         - simpl. intros H. apply IHl'. inversion H.
 	  simpl. apply H1.
-       
+        - intros H. apply IHl'. rewrite H. simpl.
+
 Qed.
 
 
@@ -2069,7 +2069,7 @@ Now define a property repeats such that repeats X l asserts
 that l contains at least one repeated element (of type X).
 *)
 
-(* todo: double check this makes senes *)
+
 Inductive repeats {X:Type} : list X -> Prop :=
   | rconst : forall (l : list X) (x : X),
             In x l -> repeats (x :: l)
