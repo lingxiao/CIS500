@@ -189,7 +189,12 @@ Proof. reflexivity. Qed.
 
 Lemma t_update_eq : forall A (m: total_map A) x v,
   (t_update m x v) x = v.
-Proof. Admitted.
+Proof.
+  intros. unfold t_update. destruct (beq_id x x).
+    + reflexivity.
+    + admit.
+Qed.      
+  
   
 
 (** **** Exercise: 2 stars, optional (t_update_neq)  *)
@@ -245,11 +250,25 @@ Qed.
     update a map to assign key [x] the same value as it already has in
     [m], then the result is equal to [m]: *)
 
-Theorem t_update_same : forall X x (m : total_map X),
+Definition n0 := t_empty 0.
+Definition n1 := t_update n0 (Id 1) 12.
+Definition n2 := t_update n1 (Id 1) (n1 (Id 1)).
+Compute (n2 (Id 1)).
+
+
+Theorem t_update_same : forall (X : Type)  (x : id) (m : total_map X),
   t_update m x (m x) = m.
 Proof.
-  intros. unfold t_update. 
+  intros. apply functional_extensionality.
+  intros x'. unfold t_update. destruct (beq_id x x') eqn: Hb.
+    + apply beq_id_true_iff in Hb. rewrite Hb. reflexivity.
+    + reflexivity.
+Qed.      
 
+(*
+Axiom functional_extensionality : ∀ {X Y: Type} {f g : X → Y},
+  (∀(x:X), f x = g x) → f = g.
+*)
 
 (** **** Exercise: 3 stars, recommended (t_update_permute)  *)
 (** Use [beq_idP] to prove one final property of the [update]
@@ -262,8 +281,11 @@ Theorem t_update_permute : forall (X:Type) v1 v2 x1 x2
     (t_update (t_update m x2 v2) x1 v1)
   = (t_update (t_update m x1 v1) x2 v2).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros. apply functional_extensionality. intros x.
+  unfold t_update. destruct (beq_id x1 x) eqn: Hb1.
+    + destruct (beq_id x2 x) eqn: Hb2.
+        - 
+
 
 (* ###################################################################### *)
 (** * Partial maps *)
