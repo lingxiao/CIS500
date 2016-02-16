@@ -59,6 +59,8 @@ Proof.
   intros [n]. simpl. rewrite <- beq_nat_refl.
   reflexivity. Qed.
 
+Check ((Id 1) = (Id 2)).
+
 (** The following useful property of [beq_id] follows from a similar
     lemma about numbers: *)
 
@@ -284,7 +286,8 @@ Proof.
   intros. apply functional_extensionality. intros x.
   unfold t_update. destruct (beq_id x1 x) eqn: Hb1.
     + destruct (beq_id x2 x) eqn: Hb2.
-        - admit.
+        - apply beq_id_true_iff in Hb1. apply beq_id_true_iff in Hb2.
+          subst. exfalso. apply H. reflexivity.
         - reflexivity.
     + destruct (beq_id x2 x) eqn: Hb2.
         - reflexivity.
