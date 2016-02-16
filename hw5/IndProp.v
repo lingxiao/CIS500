@@ -1446,8 +1446,6 @@ Proof.
       - apply H.
       - apply IHn1. simpl in H. apply (ss_lt (n1+n2) _). apply H.
 Qed.
-
-
        
 
 Theorem lt_S : forall n m,
@@ -1855,16 +1853,21 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
 
 
 
-Lemma filter_length : forall (X : Type) (p : X -> bool) (l : list X),
-  length (filter p l) <= length l.
-Proof.  Admitted.
+
+Lemma stuff : forall (X: Type) (l1 l2 : list X ),
+  (length l1 = length l2 -> False) -> l1 = l2 -> False.
+Proof. Admitted.  
+                                       
 
 Lemma filter_len : forall (X : Type) (test : X -> bool) (l : list X) (x : X),
   filter test l = x :: l -> False.
-Proof.
-  intros X p l x. induction l as [|a l'].
-    - simpl. intros H. inversion H.
-    - simpl. admit. (* todo: prove filter_len or figure out how to apply filer_length *)
+Proof. 
+  intros X p l x. apply stuff. induction l as [|a l'].
+    + simpl. intros H. inversion H.
+    + simpl. destruct (p a) eqn: Ha.
+        - simpl. intros H. apply IHl'. inversion H.
+	  simpl. apply H1.
+       
 Qed.
 
 
@@ -1961,8 +1964,6 @@ Inductive NoDup {X : Type} : list X -> Prop :=
 
 (** Finally, state and prove one or more interesting theorems relating
     [disjoint], [NoDup] and [++] (list append).  *)
-
-(* is this interesting enough *)
 Theorem absolutely_fascinating :
   forall (X: Type) (l1 l2 l3 : list X),
   NoDup l1 -> exists l2 l3, l1 = l2 ++ l3 -> disjoint l2 l3.
@@ -1973,8 +1974,7 @@ Proof.
     (* l1 is some x :: l1' *)
     + exists [x]. exists l. intros _. apply H.
 Qed.    
-    + exists []. exists []. simpl. intros H1. rewrite <- H1. apply dnils.
-    + inversion H.
+
 
 (*
 
@@ -1998,15 +1998,16 @@ Fixpoint b_disjoint (l1 l2 : list nat) : bool := match l1, l2 with
 
 Inductive nostutter {X:Type} : list X -> Prop :=
   | snils  :                 nostutter []
-  | sone   : forall (x : X), nostutter [x]                     
+  | sone   : forall (x : X), nostutter [x]
   | scons  : forall (l : list X) (x y : X),
-             nostutter l ->  nostutter (x::y::l).
+             x <> y -> nostutter (y::l) -> nostutter (x::y::l).
 
 
 (** Make sure each of these tests succeeds, but you are free
     to change the proof if the given one doesn't work for you.
     Your definition might be different from mine and still correct,
     in which case the examples might need a different proof.
+
 
     The suggested proofs for the examples (in comments) use a number
     of tactics we haven't talked about, to try to make them robust
@@ -2016,45 +2017,26 @@ Inductive nostutter {X:Type} : list X -> Prop :=
     tactics.  *)
 
 Example test_nostutter_1:      nostutter [3;1;4;1;5;6].
-Proof. repeat constructor. Qed.
-
-(* 
   Proof. repeat constructor; apply beq_nat_false_iff; auto.
   Qed.
-*)
+
 
 Example test_nostutter_2:  nostutter (@nil nat).
-Proof. apply snils. Qed.
- 
-(* 
   Proof. repeat constructor; apply beq_nat_false_iff; auto.
   Qed.
-*)
+
 
 Example test_nostutter_3:  nostutter [5].
-Proof. apply sone. Qed.
-
-(* 
   Proof. repeat constructor; apply beq_nat_false; auto. Qed.
-*)
+
 
 Example test_nostutter_4:  not (nostutter [3;1;1;4]).
 Proof.
-  intro.
-  repeat match goal with
-    h: nostutter _ |- _ => inversion h; clear h; subst
-  end.
-Abort. (* todo: where did H1 go?? *)
-
-
-(* 
   Proof. intro.
   repeat match goal with
     h: nostutter _ |- _ => inversion h; clear h; subst
   end.
   contradiction H1; auto. Qed.
-*)
-
 
 
 (** **** Exercise: 4 stars, advanced (pigeonhole principle)  *)
@@ -2106,31 +2088,26 @@ Inductive repeats {X:Type} : list X -> Prop :=
     manage to do this, you will not need the [excluded_middle]
     hypothesis. *)
 
+(* todo: how do you use the excluded middle thing? *)
 Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    excluded_middle ->
    (forall x, In x l1 -> In x l2) ->
    length l2 < length l1 ->
    repeats l1.
 Proof.
-   intros X l1. induction l1 as [|x l1' IHl1'].
-     + intros l2 Hem. intros H1 H2. inversion H2.
-     + intros l2 Hem. intros H1 H2. apply rcons.
+   intros. induction l1 as [|a l1'].
+     + inversion H1.
+     + 
+
 Abort. (* todo: finish this one !! *)       
 
-
-       
-
-         
-
-
-
-(* FILL IN HERE *)
-
-
-(** $Date: 2015-08-11 12:03:04 -0400 (Tue, 11 Aug 2015) $ *no)
-
-
 (*
+how do you use this thing:
+
+Definition excluded_middle := ∀P : Prop,
+  P ∨ ¬ P.
+*)       
+
 
 Fixpoint inl  (x : nat) (l : list nat) : bool := match l with
   | []      => false
@@ -2145,4 +2122,13 @@ Fixpoint repeats (l : list nat) : bool := match l with
   | x :: l'  => if inl x l' then true else repeats l'
   end.
 
-*)
+         
+
+
+
+(* FILL IN HERE *)
+
+
+(** $Date: 2015-08-11 12:03:04 -0400 (Tue, 11 Aug 2015) $ *no)
+
+
