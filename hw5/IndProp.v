@@ -1847,9 +1847,11 @@ Compute (filter evenb [2;4;6]).
 
 (* todo: is this well stated? seems to be really hard to prove things with this *)
 Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
-  | nils   :                            in_order_merge [] [] [] (* maybe delete? *)
+  | nils   :                            in_order_merge [] [] []
+  (* delete these next two 
   | l1_nil : forall l,                  in_order_merge l [] l
   | l2_nil : forall l,                  in_order_merge [] l l
+  *)
   | icons1 : forall l1 l2 l (x : X),
              in_order_merge l1 l2 l  -> in_order_merge (x :: l1) l2 (x :: l)
   | icons2 : forall l1 l2 l (x : X),
@@ -1952,13 +1954,18 @@ Definition lg := [0;1;4;6;5;2;3].
 
 Fact b_inOrder_1 : b_inOrder l1 l2 la = true.
 reflexivity.
-
-Compute (b_inOrder l1 l2 lb).
-Compute (b_inOrder l1 l2 lc).
-Compute (b_inOrder l1 l2 ld).
-Compute (b_inOrder l1 l2 le).
-Compute (b_inOrder l1 l2 lf).
-Compute (b_inOrder l1 l2 lg).
+Fact b_inOrder_2 : b_inOrder l1 l2 lb = false.
+reflexivity.
+Fact b_inOrder_3 : b_inOrder l1 l2 lc = false.
+reflexivity.
+Fact b_inOrder_4 : b_inOrder l1 l2 ld = false.
+reflexivity.
+Fact b_inOrder_5 : b_inOrder l1 l2 le = false.
+reflexivity.
+Fact b_inOrder_6 : b_inOrder l1 l2 lf = false.
+reflexivity.
+Fact b_inOrder_7 : b_inOrder l1 l2 lg = false.
+reflexivity.
 
 
 
