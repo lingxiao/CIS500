@@ -1865,6 +1865,8 @@ Proof.
   intros. induction l as [|x l'].
     + simpl. reflexivity.
     + simpl. destruct (p x).
+        (* le_n_S: forall n m : nat, n <= m -> S n <= S m *)
+        - simpl. apply le_n_S in IHl'. apply IHl'.
         - 
 Qed.
 
