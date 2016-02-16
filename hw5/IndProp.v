@@ -1864,11 +1864,10 @@ Lemma filter_len : forall (X : Type) (test : X -> bool) (l : list X) (x : X),
 Proof.
   intros X p l x. induction l as [|a l'].
     - simpl. intros H. inversion H.
-    - simpl. admit.
-
+    - simpl. admit. (* todo: prove filter_len or figure out how to apply filer_length *)
 Qed.
 
-(* todo: prove filter_len or figure out how to apply filer_length *)
+
 Lemma filter_cons: forall (X : Type) (test : X -> bool) (l : list X) (x : X),
   filter test (x :: l) = x :: l -> filter test l = l.
 Proof. 
@@ -1914,79 +1913,6 @@ Proof.
 Qed.
 
 
-
-(*first write a function to test whether l = l1 inorderMerge l2 
-Fixpoint beq_lnat (l1 l2 : list nat) : bool := match l1, l2 with
-  | []    ,  []     => true 
-  | _::_  ,  []     => false
-  | []    ,  _::_   => false
-  | x::l1',  y::l2' => if beq_nat x y then beq_lnat l1' l2' else false
-  end.                                                                 
-
-
-Fixpoint b_inOrder (l1 l2 l : list nat) : bool := match l with
-  | []     => match l1, l2 with
-              | [], [] => true
-              | _ , _  => false
-           end
-  | z:: l' =>          
-
-
-  match l1, l2, l with
-  | []     , []    , []        => true
-  | x::l1' , l2    , x'::l'    => if beq_nat x x'
-                                  then b_inOrder l1' l2 l'
-                                  else b_inOrder b_inOrder l1 l2 l
-                                                                 
-
-
-
-
-  | icons1 : forall l1 l2 l (x : X),
-             in_order_merge l1 l2 l  -> in_order_merge (x :: l1) l2 (x :: l)
-  | icons2 : forall l1 l2 l (x : X),
-             in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
-
-  
-  | []    , _::_  , _::_      => if beq_lnat l2 l then true else false
-  | _::_  , []    , _::_      => if beq_lnat l1 l then true else false
-  | x::l1', y::l2', z :: l3'  => match beq_nat x z with
-                                     |true => b_inOrder l1' l2 l3'
-
-                                   |_    => match beq_nat y z with
-                                               |true => b_inOrder l1 l2' l3'
-                                               |_    => false
-                                               end
-                                     end
-  | _     , _     , _         => false                                 
-  end.                                 
-
-Definition l1 := [1;6;2].
-Definition l2 := [4;3].
-Definition la := [1;4;6;2;3].
-Definition lb := [1;4;6;3].
-Definition lc := [1;4;6;2].
-Definition ld := [1;6;2;3].
-Definition le := [1;4;6;2;3;5].
-Definition lf := [1;4;6;5;2;3].
-Definition lg := [0;1;4;6;5;2;3].
-
-Fact b_inOrder_1 : b_inOrder l1 l2 la = true.
-reflexivity.
-Fact b_inOrder_2 : b_inOrder l1 l2 lb = false.
-reflexivity.
-Fact b_inOrder_3 : b_inOrder l1 l2 lc = false.
-reflexivity.
-Fact b_inOrder_4 : b_inOrder l1 l2 ld = false.
-reflexivity.
-Fact b_inOrder_5 : b_inOrder l1 l2 le = false.
-reflexivity.
-Fact b_inOrder_6 : b_inOrder l1 l2 lf = false.
-reflexivity.
-Fact b_inOrder_7 : b_inOrder l1 l2 lg = false.
-reflexivity.
-
-*)
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
 (** A different way to formally characterize the behavior of [filter]
