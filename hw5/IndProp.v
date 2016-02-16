@@ -1848,21 +1848,15 @@ Compute (filter evenb [2;4;6]).
 (* todo: is this well stated? seems to be really hard to prove things with this *)
 Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
   | nils   :                            in_order_merge [] [] []
-  (* delete these next two 
-  | l1_nil : forall l,                  in_order_merge l [] l
-  | l2_nil : forall l,                  in_order_merge [] l l
-  *)
   | icons1 : forall l1 l2 l (x : X),
              in_order_merge l1 l2 l  -> in_order_merge (x :: l1) l2 (x :: l)
   | icons2 : forall l1 l2 l (x : X),
              in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
+  (* delete these next two 
+  | l1_nil : forall l,                  in_order_merge l [] l
+  | l2_nil : forall l,                  in_order_merge [] l l
+  *)
 
-(*                                                             
-  | x_eq_z : forall l1 l2 l (x y z : X),
-             in_order_merge l1 (y :: l2) l -> in_order_merge (x :: l1) (y :: l2) (z :: l)
-  | y_eq_z : forall l1 l2 l (x y z : X),
-             in_order_merge (x :: l1) l2 l -> in_order_merge (x :: l1) (y :: l2) (z :: l).
-*)
 
 
 Lemma filter_length : forall (X : Type) (p : X -> bool) (l : list X),
