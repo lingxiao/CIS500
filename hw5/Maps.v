@@ -284,7 +284,12 @@ Proof.
   intros. apply functional_extensionality. intros x.
   unfold t_update. destruct (beq_id x1 x) eqn: Hb1.
     + destruct (beq_id x2 x) eqn: Hb2.
-        - 
+        - admit.
+        - reflexivity.
+    + destruct (beq_id x2 x) eqn: Hb2.
+        - reflexivity.
+        - reflexivity.
+Qed.    
 
 
 (* ###################################################################### *)
