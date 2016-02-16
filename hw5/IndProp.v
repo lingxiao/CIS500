@@ -1938,15 +1938,11 @@ Qed.
     l1 l2], which should be provable exactly when [l1] and [l2] are
     lists (with elements of type X) that have no elements in
     common. *)
-
-Fixpoint b_disjoint (l1 l2 : list nat) : bool := match l1, l2 with
-  | x :: xs, y :: ys => negb (beq_nat x y) && (b_disjoint xs ys)
-  | _      , _       => true
-  end.                        
+                   
 
 (* todo: is this def repetitive? is dnils needed? *)
 Inductive disjoint {X : Type} : list X -> list X -> Prop :=
-  | dnils  :                                                 disjoint [] [] (* tbd *)
+  | dnils  :                                                 disjoint [] [] 
   | dnil1  : forall l1,                                      disjoint l1 []
   | dnil2  : forall l2,                                      disjoint [] l2
   | dcons  : forall l1 l2 (x : X), In x l1 -> ~ (In x l2) -> disjoint l1 l2.
@@ -1966,34 +1962,26 @@ Inductive NoDup {X : Type} : list X -> Prop :=
 (** Finally, state and prove one or more interesting theorems relating
     [disjoint], [NoDup] and [++] (list append).  *)
 
-(* todo: finish this - but is this the simplest theorem you can state? !! *)
-(* does the l1 and l2 need to be existinally quantified? *)
+(* is this interesting enough *)
 Theorem absolutely_fascinating :
   forall (X: Type) (l1 l2 l3 : list X),
-  NoDup l1 -> exists l1 l2, l1 = l2 ++ l3 -> disjoint l2 l3.
+  NoDup l1 -> exists l2 l3, l1 = l2 ++ l3 -> disjoint l2 l3.
 Proof.
-  intros. induction l1.
+  intros. induction H.
+    (* l1 is [] *)
+    + exists []. exists []. intros _. apply dnils.
+    (* l1 is some x :: l1' *)
+    + exists [x]. exists l. intros _. apply H.
+Qed.    
     + exists []. exists []. simpl. intros H1. rewrite <- H1. apply dnils.
     + inversion H.
-        - subst.
-Abort.
 
 (*
 
-Proof.
-  intros X l1 l2 l3 H1 H2. induction H1.
-    + destruct l2.
-        - destruct l3.
-            * apply dnils.
-            * inversion H2.
-        - inversion H2.
-    + destruct l2 as [|y l2'].
-        - apply dnil2.
-        - destruct l3.
-            * apply dnil1.
-*)
-
-(** [] *)
+Fixpoint b_disjoint (l1 l2 : list nat) : bool := match l1, l2 with
+  | x :: xs, y :: ys => negb (beq_nat x y) && (b_disjoint xs ys)
+  | _      , _       => true
+  end.     
 
 (** **** Exercise: 3 stars, recommended (nostutter)  *)
 (** Formulating inductive definitions of properties is an important
