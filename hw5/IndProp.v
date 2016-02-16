@@ -1871,7 +1871,11 @@ Proof.
     + intros H. inversion H. rewrite H1.  apply H1.
     + intros H. 
       admit. (* todo: make sure you can actually prove this!! *)
-Qed.      
+Qed.
+
+Lemma filter_hd_false:  forall (X : Type) (test : X -> bool) (l : list X) (x : X),
+  filter test (x :: l) = []-> test x = false /\ filter test l = [].
+Proof.       Admitted.
 
 
 (* todo: seem to be taking the hard way around ... *)
@@ -1893,10 +1897,11 @@ Proof.
             * apply filter_cons in Hl1. rewrite Hl1.
               apply IHHm. apply Hl1. apply Hl2.
    (* case: head in l2 is also head in l <- must be false by Hl2 *)           
-   + simpl. destruct (test x) eqn: Hx.
-       (* case: head in l1 passes the test *)
-       - 
-
+   + apply filter_hd_false in Hl2. destruct Hl2 as [Hl2l Hl2r]. simpl.
+     destruct (test x) eqn: Hx.
+       - inversion Hl2l.
+       - apply IHHm. apply Hl1.  apply Hl2r.
+Qed.
 
 
 
