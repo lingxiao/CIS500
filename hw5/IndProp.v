@@ -1851,13 +1851,6 @@ Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
   | icons2 : forall l1 l2 l (x : X),
              in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
 
-(*
-Lemma length_of_l1l2 : forall (X: Type) (l1 l2 : list X ),
-  (length l1 = length l2 -> False) -> l1 = l2 -> False.
-Proof.
-  intros X l1 l2 Hl H. apply Hl. subst. reflexivity.
-Qed.
-*)
 
 Lemma filter_len1 : forall (X : Type) (p : X -> bool) (l : list X),
   length (filter p l ) <= length l.
@@ -1867,9 +1860,8 @@ Proof.
     + simpl. destruct (p x).
         (* le_n_S: forall n m : nat, n <= m -> S n <= S m *)
         - simpl. apply le_n_S in IHl'. apply IHl'.
-        - 
+        - rewrite IHl'. apply le_n_Sn.
 Qed.
-
 
 Lemma duh : forall (n : nat), S n <= n -> False.
 Proof.
