@@ -2074,8 +2074,6 @@ Qed.
 Now define a property repeats such that repeats X l asserts
 that l contains at least one repeated element (of type X).
 *)
-
-
 Inductive repeats {X:Type} : list X -> Prop :=
   | rconst : forall (l : list X) (x : X),
             In x l -> repeats (x :: l)
@@ -2106,9 +2104,11 @@ Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
 Proof.
    intros. induction l1 as [|a l1'].
      + inversion H1.
-     + 
+     + apply rconsf. apply IHl1'.
+         - admit.
+         - admit.
+Abort.
 
-Abort. (* todo: finish this one !! *)       
 
 (*
 how do you use this thing:
