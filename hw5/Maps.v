@@ -79,8 +79,7 @@ Qed.
 (** Similarly: *)
 
 Theorem beq_id_false_iff : forall x y : id,
-  beq_id x y = false
-  <-> x <> y.
+  beq_id x y = false <-> x <> y.
 Proof.
   intros x y. rewrite <- beq_id_true_iff.
   rewrite not_true_iff_false. reflexivity. Qed.
@@ -88,8 +87,7 @@ Proof.
 (** Now this useful variant follows just by rewriting: *)
 
 Theorem false_beq_id : forall x y : id,
-   x <> y
-   -> beq_id x y = false.
+   x <> y  -> beq_id x y = false.
 Proof.
   intros x y. rewrite beq_id_false_iff.
   intros H. apply H. Qed.
@@ -125,6 +123,11 @@ Definition total_map (A:Type) := id -> A.
 Definition t_empty {A:Type} (v : A) : total_map A :=
   (fun _ => v).
 
+
+Compute ((t_empty false) (Id 1)).
+Compute (total_map nat).
+
+
 (** More interesting is the [update] function, which (as before) takes
     a map [m], a key [x], and a value [v] and returns a new map that
     takes [x] to [v] and takes every other key to whatever [m] does. *)
@@ -140,6 +143,17 @@ Definition t_update {A:Type} (m : total_map A)
     For example, we can build a map taking [id]s to [bool]s, where [Id
     3] is mapped to [true] and every other key is mapped to [false],
     like this: *)
+
+Definition m0 := t_empty 0.
+Definition m1 := t_update m0 (Id 1) 1.
+Definition m2 := t_update m1 (Id 2) 2.
+Definition m3 := t_update m2 (Id 2) 20.
+Compute (m0 (Id 1)).
+Compute (m1 (Id 1)).
+Compute (m2 (Id 1)).
+Compute (m2 (Id 2)).
+Compute (m3 (Id 2)).
+
 
 Definition examplemap :=
   t_update (t_update (t_empty false) (Id 1) false)
@@ -175,9 +189,8 @@ Proof. reflexivity. Qed.
 
 Lemma t_update_eq : forall A (m: total_map A) x v,
   (t_update m x v) x = v.
-Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+Proof. Admitted.
+  
 
 (** **** Exercise: 2 stars, optional (t_update_neq)  *)
 (** On the other hand, if we update a map [m] at a key [x1] and then
@@ -217,10 +230,10 @@ Proof.
     prove the following: *)
 
 Lemma beq_idP : forall x y, reflect (x = y) (beq_id x y).
-Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
+Proof. 
+  intros x y. apply iff_reflect. rewrite beq_id_true_iff. reflexivity.
+Qed.  
+                                                                 
 (** Now, given [id]s [x1] and [x2], we can use the [destruct (beq_idP
     x1 x2)] to simultaneously perform case analysis on the result of
     [beq_id x1 x2] and generate hypotheses about the equality (in the
@@ -235,8 +248,8 @@ Proof.
 Theorem t_update_same : forall X x (m : total_map X),
   t_update m x (m x) = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros. unfold t_update. 
+
 
 (** **** Exercise: 3 stars, recommended (t_update_permute)  *)
 (** Use [beq_idP] to prove one final property of the [update]
