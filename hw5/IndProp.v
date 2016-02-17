@@ -2051,6 +2051,7 @@ Proof.
    pigeonhole must contain at least two items.  As is often the case,
    this apparently trivial fact about numbers requires non-trivial
    machinery to prove, but we now have enough... *)
+  
 
 (** First a useful lemma (we already proved it for lists of naturals,
     but not for arbitrary lists). *)
@@ -2090,6 +2091,8 @@ Inductive repeats {X:Type} : list X -> Prop :=
 
          [forall x l, (In x l) \/ ~  (In x l)].
 
+         [ Definition excluded_middle := ∀P : Prop, P ∨ ¬ P].
+
     However, it is also possible to make the proof go
     through _without_ assuming that [In] is decidable; if you can
     manage to do this, you will not need the [excluded_middle]
@@ -2102,20 +2105,18 @@ Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    length l2 < length l1 ->
    repeats l1.
 Proof.
-   intros. induction l1 as [|a l1'].
-     + inversion H1.
-     + apply rconsf. apply IHl1'.
-         - admit.
-         - admit.
-Abort.
+   intros X l1. induction l1 as [|x l1'].
+     + intros. inversion H1.
+     (* case l1 = x :: l1', x is either repeating in l1' or it's not *)
+     + intros. destruct (H (In x l1')).
+          (* x is repeated in l1' *) 
+          - apply rconst. apply H2.
+          (* x is not repeated in l1', we must find another witness x' that does repeat *)
+          (* we can find this witness in *)
+          - apply rconsf. destruct (H (In x l2)).
+          (* case x in l2 *)
+          
 
-
-(*
-how do you use this thing:
-
-Definition excluded_middle := ∀P : Prop,
-  P ∨ ¬ P.
-*)       
 
 (*
 
