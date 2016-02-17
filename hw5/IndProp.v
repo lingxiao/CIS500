@@ -2080,7 +2080,6 @@ Inductive repeats {X:Type} : list X -> Prop :=
             In x l -> repeats (x :: l)
   | rconsf : forall (l : list X) (x : X),
             repeats l -> repeats (x :: l).
-             
 
 (** Now here's a way to formalize the pigeonhole principle. List [l2]
     represents a list of pigeonhole labels, and list [l1] represents
@@ -2106,17 +2105,39 @@ Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    repeats l1.
 Proof.
    intros X l1. induction l1 as [|x l1'].
-     + intros. inversion H1.
-     (* case l1 = x :: l1', x is either repeating in l1' or it's not *)
-     + intros. destruct (H (In x l1')).
-          (* x is repeated in l1' *) 
-          - apply rconst. apply H2.
-          (* x is not repeated in l1', we must find another witness x' that does repeat *)
-          (* we can find this witness in *)
-          - apply rconsf. destruct (H (In x l2)).
-          (* case x in l2 *)
-          
+   (* case l1 = [], contradicts hypo *)
+   { intros. inversion H1. }
+   (* case l1 = x :: l1', x is either repeating in l1' or it's not *)
+   { intros. destruct (H (In x l1')).
+      (* x is repeated in l1', then goal is true by assumption *) 
+      + apply rconst. apply H2.
+      (* x is not repeated in l1',
+          we must find another witness x' that does repeat in l1' *)
+      + apply rconsf. (* where do you find this witness x' ? *)
 
+
+
+
+
+        destruct (H (In x l2)).
+         (* case x in l2, but we know this x is not in l1'
+            so we can't really be helped here
+              -> so how do we get rid of this case?
+         *)
+          - destruct (H (In x l1')).
+              * apply H2 in H4. inversion H4.  (* contradiction *)
+              * 
+
+     }     
+
+   
+(*
+
+  Lemma in_split : forall (X:Type) (x:X) (l:list X),
+    In x l -> exists l1 l2, l = l1 ++ x :: l2.
+
+*)
+    
 
 (*
 
