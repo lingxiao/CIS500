@@ -1926,7 +1926,6 @@ Proof.
          apply Hl2r.
 Qed.
 
-  
 
 (*
 
@@ -1951,12 +1950,7 @@ Proof.
         - simpl. destruct (test x').
             * 
 Qed.
-Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
-  | nils   :                            in_order_merge [] [] []
-  | icons1 : forall l1 l2 l (x : X),
-             in_order_merge l1 l2 l  -> in_order_merge (x :: l1) l2 (x :: l)
-  | icons2 : forall l1 l2 l (x : X),
-             in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
+
 
 *)
   
@@ -2137,6 +2131,18 @@ Inductive repeats {X:Type} : list X -> Prop :=
     manage to do this, you will not need the [excluded_middle]
     hypothesis. *)
 
+Theorem l2_le_l1 : forall (X: Type) (l2 l1' l21 l22 : list X) (x : X),
+  length l2 < length (x :: l1') ->
+   In x l2                      ->
+(*   l2 = l21 ++ x :: l22         ->*)
+   length l2 < length l1'.
+Proof.
+  intros X l2. induction l2 as [|y l2'].
+    + intros. simpl in H0. inversion H0.
+    + intros. 
+
+
+
 Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    excluded_middle ->
    (forall x, In x l1 -> In x l2) ->
@@ -2144,17 +2150,38 @@ Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    repeats l1.
 Proof.
    intros X l1. induction l1 as [|x l1'].
+
    (* case l1 = [], contradicts hypo *)
-   { intros. inversion H1. }
+   - intros. inversion H1. 
+
    (* case l1 = x :: l1', x is either repeating in l1' or it's not *)
-   { intros. destruct (H (In x l1')).
+   - intros. destruct (H (In x l1')).
       (* x is repeated in l1', then goal is true by assumption *) 
       + apply rconst. apply H2.
-      (* x is not repeated in l1',
-          we must find another witness x' that does repeat in l1' *)
-      + apply rconsf.
-        assert (In x l2). apply H0. simpl. left. reflexivity.
+      (* x is not repeated in l1', *)
+      + apply rconsf. 
+
+        (* it can be shown that x is in l2 *)
+        assert (In x l2).
+          apply (H0 x). simpl. left. reflexivity.
+
+        (* since x in l2, we know l2 = l21 ++ [x] ++ l22 *)
         destruct (in_split X x l2 H3) as [l21 [l22 Hl2x]].
+
+        (* now it can be shown that len l2 < len l1' *)
+        assert (length l2 < length l1').
+          apply (l2_le_l1 X l2 l1' l21 l22 x).
+          apply H1. apply H3. apply Hl2x.
+        
+
+        (* now we apply the induction hypothesis *)
+        (* and prove the premise of the induction hypothesis *)
+        apply (IHl1' l2).
+          apply H.
+          (* we must show forall x, x In l1' -> x in l2 *)
+          admit.
+          apply H4.
+Qed.        
         
    
 (*
