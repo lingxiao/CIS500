@@ -1908,19 +1908,58 @@ Proof.
     (* case : head in l1 is also the head in l*)
     + simpl. destruct (test x) eqn: Hx.
         (* case: head in l1 passes the test   <- must be true  by Hl1 *)
-        - apply f_equal. apply IHHm. apply filter_cons in Hl1. apply Hl1.
+        - apply f_equal. apply IHHm.
+          apply filter_cons in Hl1. apply Hl1.
           apply Hl2.
         (* case: head in l1 not pass the test <- must be false by Hl1 *)
         - rewrite <- Hl1. simpl. destruct (test x).
             * inversion Hx.
-            * apply filter_cons in Hl1. rewrite Hl1.
-              apply IHHm. apply Hl1. apply Hl2.
+            * apply filter_cons in Hl1. rewrite Hl1. apply IHHm.
+              apply Hl1.
+              apply Hl2.
    (* case: head in l2 is also head in l <- must be false by Hl2 *)           
    + apply filter_hd_false in Hl2. destruct Hl2 as [Hl2l Hl2r]. simpl.
      destruct (test x) eqn: Hx.
        - inversion Hl2l.
-       - apply IHHm. apply Hl1.  apply Hl2r.
+       - apply IHHm.
+         apply Hl1.
+         apply Hl2r.
 Qed.
+
+  
+
+(*
+
+Proof.
+  intros X test l. induction l as [|x' l'].
+    + intros. inversion H. reflexivity.
+    + intros. inversion H. subst.
+      (* case in_order_merge l1 l2 l -> in_order_merge (x :: l1) l2 (x :: l)
+         note : coq named the l1 in (x :: l1) l0.
+       *)
+        - simpl in H0. simpl. destruct (test x').
+            * rewrite (IHl' l0 l2).
+              reflexivity.
+              apply H5. inversion H0. rewrite H3. rewrite H3. reflexivity.
+              apply H1.
+            * apply filter_len in H0. inversion H0.
+      (* case in_order_merge l1 l2 l -> in_order_merge l1 (x :: l2) (x :: l)
+         note : coq named the l2 in (x :: l2) l3.
+         but this can't be the case since filter test l2 = [], so no x in
+         l2 may appear in l.
+      *)
+        - simpl. destruct (test x').
+            * 
+Qed.
+Inductive in_order_merge {X : Type} : list X -> list X -> list X -> Prop :=
+  | nils   :                            in_order_merge [] [] []
+  | icons1 : forall l1 l2 l (x : X),
+             in_order_merge l1 l2 l  -> in_order_merge (x :: l1) l2 (x :: l)
+  | icons2 : forall l1 l2 l (x : X),
+             in_order_merge l1 l2 l  -> in_order_merge l1 (x :: l2) (x :: l).
+
+*)
+  
 
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
@@ -2081,6 +2120,7 @@ Inductive repeats {X:Type} : list X -> Prop :=
   | rconsf : forall (l : list X) (x : X),
             repeats l -> repeats (x :: l).
 
+
 (** Now here's a way to formalize the pigeonhole principle. List [l2]
     represents a list of pigeonhole labels, and list [l1] represents
     the labels assigned to a list of items: if there are more items
@@ -2112,23 +2152,10 @@ Proof.
       + apply rconst. apply H2.
       (* x is not repeated in l1',
           we must find another witness x' that does repeat in l1' *)
-      + apply rconsf. (* where do you find this witness x' ? *)
-
-
-
-
-
-        destruct (H (In x l2)).
-         (* case x in l2, but we know this x is not in l1'
-            so we can't really be helped here
-              -> so how do we get rid of this case?
-         *)
-          - destruct (H (In x l1')).
-              * apply H2 in H4. inversion H4.  (* contradiction *)
-              * 
-
-     }     
-
+      + apply rconsf.
+        assert (In x l2). apply H0. simpl. left. reflexivity.
+        destruct (in_split X x l2 H3) as [l21 [l22 Hl2x]].
+        
    
 (*
 
@@ -2157,7 +2184,7 @@ Fixpoint repeats (l : list nat) : bool := match l with
 
 
 
-(* FILL IN HERE *)
+(* FILL IN HERE *
 
 
 (** $Date: 2015-08-11 12:03:04 -0400 (Tue, 11 Aug 2015) $ *no)
