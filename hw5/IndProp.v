@@ -2155,7 +2155,20 @@ Theorem inx0 : forall (X : Type) (l1' : list X) (x0 x : X),
 Proof.
   intros. simpl. right. apply H.
 Qed.
-                      
+
+
+Theorem inx0_l2 : forall (X : Type) (l21 l22 : list X) (x0 x : X),
+  x0 <> x -> In x0 (l21 ++ x :: l22) -> In x0 (l21 ++ l22).
+Proof.
+  intros. induction l21.
+    + simpl. simpl in H0. destruct H0.
+        - exfalso. apply H. symmetry. apply H0.
+        - apply H0.
+    + simpl. right. apply IHl21. simpl in H0. destruct H0.
+        - admit.
+        - apply H0.
+Qed.
+
 Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    excluded_middle ->
    (forall x, In x l1 -> In x l2) ->
@@ -2192,6 +2205,7 @@ Proof.
 
         assert (H6 : x0 <> x -> In x0 (l21 ++ x :: l22) -> In x0 (l21 ++ l22)).
         admit.
+        
 
         apply H6. apply H4. apply H5.
 
