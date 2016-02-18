@@ -2141,13 +2141,13 @@ Proof. Admitted.
 *)
 
 
-Theorem rmv_all_occ : forall (X : Type) (l l' : list X) (x : X),
-   excluded_middle -> In x l -> (exists l', ~ In x l').
-Proof.  Admitted.
 
-Theorem doh : forall (X : Type) (l1 l2 : list X) (x : X), In x (l1 ++ x :: l2).
-Proof. Admitted.
-
+Theorem inx : forall (X : Type) (l1 l2 : list X) (x : X), In x (l1 ++ x :: l2).
+Proof.
+  intros. induction l1.
+    - simpl. left. reflexivity.
+    - simpl. right. apply IHl1.
+Qed. 
 
 Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    excluded_middle ->
@@ -2177,7 +2177,7 @@ Proof.
         
         assert (x0 <> x). unfold not. intros H_x0x. apply in_split in H_x0.
         inversion H_x0. inversion H4. rewrite H_x0x in H5.
-        rewrite H5 in H2. apply H2. apply doh.
+        rewrite H5 in H2. apply H2. apply inx.
 
         assert (H5 : In x0 (x :: l1')). admit.
 
