@@ -2179,37 +2179,26 @@ Proof.
         inversion H_x0. inversion H4. rewrite H_x0x in H5.
         rewrite H5 in H2. apply H2. apply doh.
 
-        
-        
+        assert (H5 : In x0 (x :: l1')). admit.
 
-        
-        (* now we show len l2' < len l1' where l2' = l21 ++ l22
-          and l2 = l21 ++ [x] ++ l22
-        *)
-        
+        apply H0 in H5. rewrite Hl2x in H5.
 
-        (* now it can be shown that len l2' < len l1' *)
-        (* that is to say:
-           if l2 = l21 ++ [x] ++ l22, then
-              len (l2 where l2 = l21 ++ l22 ) < len l1'
+        assert (H6 : x0 <> x -> In x0 (l21 ++ x :: l22) -> In x0 (l21 ++ l22)).
+        admit.
 
-           so we need to get some l2' in here, use 
-         *)
-(*
-        assert (length l2 < length l1').
-          apply (l2_le_l1 X l2 l1' l21 l22 x).
-          apply H1. apply H3. apply Hl2x.
-        
+        apply H6. apply H4. apply H5.
 
-        (* now we apply the induction hypothesis *)
-        (* and prove the premise of the induction hypothesis *)
-        apply (IHl1' l2).
-          apply H.
-          (* we must show forall x, x In l1' -> x in l2 *)
-          admit.
-          apply H4.
-*)
-Qed.        
+        assert (H7 : length (x :: l1') = S (length l1')). admit.
+        assert (H8 : length (l21 ++ x :: l22) = S (length (l21 ++ l22))). admit.
+
+        rewrite <- Hl2x in H8. rewrite H8 in H1.
+        rewrite H7 in H1.
+
+        assert (H9 : forall n m : nat, S m < S n -> m < n). admit.
+
+        apply H9 in H1. apply H1.
+Qed.
+
         
    
 (*
