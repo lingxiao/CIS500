@@ -1908,52 +1908,19 @@ Proof.
     (* case : head in l1 is also the head in l*)
     + simpl. destruct (test x) eqn: Hx.
         (* case: head in l1 passes the test   <- must be true  by Hl1 *)
-        - apply f_equal. apply IHHm.
-          apply filter_cons in Hl1. apply Hl1.
+        - apply f_equal. apply IHHm. apply filter_cons in Hl1. apply Hl1.
           apply Hl2.
         (* case: head in l1 not pass the test <- must be false by Hl1 *)
         - rewrite <- Hl1. simpl. destruct (test x).
             * inversion Hx.
-            * apply filter_cons in Hl1. rewrite Hl1. apply IHHm.
-              apply Hl1.
-              apply Hl2.
+            * apply filter_cons in Hl1. rewrite Hl1.
+              apply IHHm. apply Hl1. apply Hl2.
    (* case: head in l2 is also head in l <- must be false by Hl2 *)           
    + apply filter_hd_false in Hl2. destruct Hl2 as [Hl2l Hl2r]. simpl.
      destruct (test x) eqn: Hx.
        - inversion Hl2l.
-       - apply IHHm.
-         apply Hl1.
-         apply Hl2r.
+       - apply IHHm. apply Hl1.  apply Hl2r.
 Qed.
-
-
-(*
-
-Proof.
-  intros X test l. induction l as [|x' l'].
-    + intros. inversion H. reflexivity.
-    + intros. inversion H. subst.
-      (* case in_order_merge l1 l2 l -> in_order_merge (x :: l1) l2 (x :: l)
-         note : coq named the l1 in (x :: l1) l0.
-       *)
-        - simpl in H0. simpl. destruct (test x').
-            * rewrite (IHl' l0 l2).
-              reflexivity.
-              apply H5. inversion H0. rewrite H3. rewrite H3. reflexivity.
-              apply H1.
-            * apply filter_len in H0. inversion H0.
-      (* case in_order_merge l1 l2 l -> in_order_merge l1 (x :: l2) (x :: l)
-         note : coq named the l2 in (x :: l2) l3.
-         but this can't be the case since filter test l2 = [], so no x in
-         l2 may appear in l.
-      *)
-        - simpl. destruct (test x').
-            * 
-Qed.
-
-
-*)
-  
 
 
 (** **** Exercise: 5 stars, advanced, optional (filter_challenge_2)  *)
@@ -2115,6 +2082,8 @@ Inductive repeats {X:Type} : list X -> Prop :=
             repeats l -> repeats (x :: l).
 
 
+
+
 (** Now here's a way to formalize the pigeonhole principle. List [l2]
     represents a list of pigeonhole labels, and list [l1] represents
     the labels assigned to a list of items: if there are more items
@@ -2131,13 +2100,6 @@ Inductive repeats {X:Type} : list X -> Prop :=
     manage to do this, you will not need the [excluded_middle]
     hypothesis. *)
 
-
-Theorem l2_le_l1 : forall (X: Type) (l2 l1 l21 l22 : list X) (x : X),
-  length l2 < length (x :: l1)   ->
-   l2 = l21 ++ x :: l22          ->
-   length (l21 ++ l22)  < length l1.
-Proof. Admitted.
-
 Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    excluded_middle ->
    (forall x, In x l1 -> In x l2) ->
@@ -2145,51 +2107,31 @@ Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    repeats l1.
 Proof.
    intros X l1. induction l1 as [|x l1'].
-
    (* case l1 = [], contradicts hypo *)
-   - intros. inversion H1. 
-
+   { intros. inversion H1. }
    (* case l1 = x :: l1', x is either repeating in l1' or it's not *)
-   - intros. destruct (H (In x l1')).
+   { intros. destruct (H (In x l1')).
       (* x is repeated in l1', then goal is true by assumption *) 
       + apply rconst. apply H2.
-      (* x is not repeated in l1', *)
-      + apply rconsf. 
+      (* x is not repeated in l1',
+          we must find another witness x' that does repeat in l1' *)
+      + apply rconsf. (* where do you find this witness x' ? *)
 
-        (* it can be shown that x is in l2 *)
-        assert (In x l2).
-          apply (H0 x). simpl. left. reflexivity.
 
-        (* since x in l2, we know l2 = l21 ++ [x] ++ l22 *)
-        destruct (in_split X x l2 H3) as [l21 [l22 Hl2x]].
-        (* now we show len l2' < len l1' where l2' = l21 ++ l22
-          and l2 = l21 ++ [x] ++ l22
-        *)
-        
 
-        (* now it can be shown that len l2' < len l1' *)
-        (* that is to say:
-           if l2 = l21 ++ [x] ++ l22, then
-              len (l2 where l2 = l21 ++ l22 ) < len l1'
 
-           so we need to get some l2' in here, use 
+
+        destruct (H (In x l2)).
+         (* case x in l2, but we know this x is not in l1'
+            so we can't really be helped here
+              -> so how do we get rid of this case?
          *)
-(*
-        assert (length l2 < length l1').
-          apply (l2_le_l1 X l2 l1' l21 l22 x).
-          apply H1. apply H3. apply Hl2x.
-        
+          - destruct (H (In x l1')).
+              * apply H2 in H4. inversion H4.  (* contradiction *)
+              * 
 
-        (* now we apply the induction hypothesis *)
-        (* and prove the premise of the induction hypothesis *)
-        apply (IHl1' l2).
-          apply H.
-          (* we must show forall x, x In l1' -> x in l2 *)
-          admit.
-          apply H4.
-*)
-Qed.        
-        
+     }     
+
    
 (*
 
@@ -2218,7 +2160,7 @@ Fixpoint repeats (l : list nat) : bool := match l with
 
 
 
-(* FILL IN HERE *
+(* FILL IN HERE *)
 
 
 (** $Date: 2015-08-11 12:03:04 -0400 (Tue, 11 Aug 2015) $ *no)
