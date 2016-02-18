@@ -2131,12 +2131,23 @@ Inductive repeats {X:Type} : list X -> Prop :=
     manage to do this, you will not need the [excluded_middle]
     hypothesis. *)
 
-
-Theorem l2_le_l1 : forall (X: Type) (l2 l1 l21 l22 : list X) (x : X),
+(*
+Theorem l2_le_l1 : forall (X: Type) (l1 l21 l22 : list X) (x : X),
   length l2 < length (x :: l1)   ->
+   In x l2                       ->
    l2 = l21 ++ x :: l22          ->
    length (l21 ++ l22)  < length l1.
 Proof. Admitted.
+*)
+
+
+Theorem rmv_all_occ : forall (X : Type) (l l' : list X) (x : X),
+   excluded_middle -> In x l -> (exists l', ~ In x l').
+Proof.  Admitted.
+
+Theorem doh : forall (X : Type) (l1 l2 : list X) (x : X), In x (l1 ++ x :: l2).
+Proof. Admitted.
+
 
 Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    excluded_middle ->
@@ -2162,6 +2173,16 @@ Proof.
 
         (* since x in l2, we know l2 = l21 ++ [x] ++ l22 *)
         destruct (in_split X x l2 H3) as [l21 [l22 Hl2x]].
+        apply (IHl1' (l21 ++ l22)). apply H. intros x0 H_x0.
+        
+        assert (x0 <> x). unfold not. intros H_x0x. apply in_split in H_x0.
+        inversion H_x0. inversion H4. rewrite H_x0x in H5.
+        rewrite H5 in H2. apply H2. apply doh.
+
+        
+        
+
+        
         (* now we show len l2' < len l1' where l2' = l21 ++ l22
           and l2 = l21 ++ [x] ++ l22
         *)
