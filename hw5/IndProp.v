@@ -2149,6 +2149,13 @@ Proof.
     - simpl. right. apply IHl1.
 Qed. 
 
+
+Theorem inx0 : forall (X : Type) (l1' : list X) (x0 x : X),
+  In x0 l1' ->  In x0 (x:: l1'). 
+Proof.
+  intros. simpl. right. apply H.
+Qed.
+                      
 Theorem pigeonhole_principle: forall (X:Type) (l1 l2 : list X),
    excluded_middle ->
    (forall x, In x l1 -> In x l2) ->
@@ -2177,9 +2184,9 @@ Proof.
         
         assert (x0 <> x). unfold not. intros H_x0x. apply in_split in H_x0.
         inversion H_x0. inversion H4. rewrite H_x0x in H5.
-        rewrite H5 in H2. apply H2. apply inx.
+        rewrite H5 in H2. apply H2. apply inx. 
 
-        assert (H5 : In x0 (x :: l1')). admit.
+        assert (H5 : In x0 (x :: l1')). apply inx0. apply H_x0.
 
         apply H0 in H5. rewrite Hl2x in H5.
 
@@ -2200,15 +2207,6 @@ Proof.
 Qed.
 
         
-   
-(*
-
-  Lemma in_split : forall (X:Type) (x:X) (l:list X),
-    In x l -> exists l1 l2, l = l1 ++ x :: l2.
-
-*)
-    
-
 (*
 
 Fixpoint inl  (x : nat) (l : list nat) : bool := match l with
