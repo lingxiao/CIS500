@@ -871,8 +871,13 @@ Proof.
       try (simpl; reflexivity);
       try (simpl; rewrite IHHb; reflexivity);
       try (simpl; rewrite IHHb1; rewrite IHHb2; reflexivity).
+      - 
+
+
+
+        
       - admit.
-      - admit.
+  + intros He. generalize dependent e. admit.
 Qed.
 
 
@@ -940,26 +945,26 @@ Module aevalR_extended.
 Reserved Notation "e '\\' n" (at level 50, left associativity).
 
 Inductive aexp : Type :=
-  | AAny  : aexp                   (* <--- NEW *)
-  | ANum : nat -> aexp
-  | APlus : aexp -> aexp -> aexp
+  | AAny   : aexp                   (* <--- NEW *)
+  | ANum   : nat -> aexp
+  | APlus  : aexp -> aexp -> aexp
   | AMinus : aexp -> aexp -> aexp
-  | AMult : aexp -> aexp -> aexp.
+  | AMult  : aexp -> aexp -> aexp.
 
 (** Again, extending [aeval] would be tricky (because evaluation is
     _not_ a deterministic function from expressions to numbers), but
     extending [aevalR] is no problem: *)
 
 Inductive aevalR : aexp -> nat -> Prop :=
-  | E_Any : forall (n:nat),
+  | E_Any    : forall (n:nat),
       AAny \\ n                 (* <--- new *)
-  | E_ANum : forall (n:nat),
+  | E_ANum   : forall (n:nat),
       (ANum n) \\ n
-  | E_APlus : forall (a1 a2: aexp) (n1 n2 : nat),
+  | E_APlus  : forall (a1 a2: aexp) (n1 n2 : nat),
       (a1 \\ n1) -> (a2 \\ n2) -> (APlus a1 a2) \\ (n1 + n2)
   | E_AMinus : forall (a1 a2: aexp) (n1 n2 : nat),
       (a1 \\ n1) -> (a2 \\ n2) -> (AMinus a1 a2) \\ (n1 - n2)
-  | E_AMult :  forall (a1 a2: aexp) (n1 n2 : nat),
+  | E_AMult  :  forall (a1 a2: aexp) (n1 n2 : nat),
       (a1 \\ n1) -> (a2 \\ n2) -> (AMult a1 a2) \\ (n1 * n2)
 
 where "a '\\' n" := (aevalR a n) : type_scope.
@@ -1007,11 +1012,11 @@ Definition empty_state : state :=
     simply adding one more constructor: *)
 
 Inductive aexp : Type :=
-  | ANum : nat -> aexp
-  | AId : id -> aexp                (* <----- NEW *)
-  | APlus : aexp -> aexp -> aexp
+  | ANum   : nat -> aexp
+  | AId    : id -> aexp                (* <----- NEW *)
+  | APlus  : aexp -> aexp -> aexp
   | AMinus : aexp -> aexp -> aexp
-  | AMult : aexp -> aexp -> aexp.
+  | AMult  : aexp -> aexp -> aexp.
 
 (** Defining a few variable names as notational shorthands will make
     examples easier to read: *)
@@ -1019,6 +1024,7 @@ Inductive aexp : Type :=
 Definition X : id := Id 0.
 Definition Y : id := Id 1.
 Definition Z : id := Id 2.
+
 
 (** (This convention for naming program variables ([X], [Y],
     [Z]) clashes a bit with our earlier use of uppercase letters for
@@ -1029,12 +1035,12 @@ Definition Z : id := Id 2.
     [aexp]s): *)
 
 Inductive bexp : Type :=
-  | BTrue : bexp
+  | BTrue  : bexp
   | BFalse : bexp
-  | BEq : aexp -> aexp -> bexp
-  | BLe : aexp -> aexp -> bexp
-  | BNot : bexp -> bexp
-  | BAnd : bexp -> bexp -> bexp.
+  | BEq    : aexp -> aexp -> bexp
+  | BLe    : aexp -> aexp -> bexp
+  | BNot   : bexp -> bexp
+  | BAnd   : bexp -> bexp -> bexp.
 
 (* ################################################### *)
 (** ** Evaluation  *)
