@@ -867,18 +867,18 @@ Theorem beval_iff_bevalR : forall e b,
 Proof.
   split.
   (* -> *)
-  + intro Hb. induction Hb;
-      try (simpl; reflexivity);
-      try (simpl; rewrite IHHb; reflexivity);
-      try (simpl; rewrite IHHb1; rewrite IHHb2; reflexivity).
+  + intro Hb.
+      induction Hb; simpl;
+      try (subst; reflexivity);
+      try (apply aeval_iff_aevalR in H; apply aeval_iff_aevalR in H0;
+             rewrite H; rewrite H0; reflexivity).
+  (* <- *)  
+  + intros He. induction e.
       - 
-
-
-
-        
-      - admit.
-  + intros He. generalize dependent e. admit.
 Qed.
+
+Theorem aeval_iff_aevalR' : forall a n,
+  (a \\ n) <-> aeval a = n.
 
 
 End AExp.
