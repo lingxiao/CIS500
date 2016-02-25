@@ -847,19 +847,47 @@ Qed.
 
  *)
 
-
 Inductive bevalR : bexp -> bool -> Prop :=
   | E_BTrue  : bevalR BTrue true
   | E_BFalse : bevalR BFalse false
   | E_BEq    : forall (e1 e2 : aexp) (n1 n2 : nat),
-                 (e1 \\ n1)   -> (e2 \\ n2) -> bevalR (BEq e1 e2) (beq_nat n1 n2)
+                 (e1 \\ n1)   -> (e2 \\ n2) -> bevalR (BEq e1 e2) (beq_nat n1 n2) 
+   (* todo: what is less than returning bool ?? *)
   | E_BLe    : forall (e1 e2 : aexp) (n1 n2 : nat),
-                 (e1 \\ n1)   -> (e2 \\ n2) -> bevalR (BLe e1 e2) (le n1 n2)
+                 (e1 \\ n1)   -> (e2 \\ n2) -> bevalR (BLe e1 e2) (leb n1 n2)
+  
   | E_BNot   : forall (e : bexp) (b : bool),
                  bevalR e b   -> bevalR (BNot e) (negb b)
   | E_BAnd   : forall (e1 e2 : bexp) (b1 b2 : bool),
                  bevalR e1 b1 -> bevalR e2 b2  -> bevalR (BAnd e1 e2) (b1 && b2).
-                       
+
+Notation "e '//' n"
+         := (bevalR e n) (at level 50, left associativity)
+         : type_scope.                             
+
+
+Theorem beval_iff_bevalR' : forall e b,
+  (e // b) <-> beval e = b.
+Proof.
+  split.
+  + intro. induction H. 
+
+
+
+
+
+
+Proof.
+  (* WORKED IN CLASS *)
+  split.
+  - (* -> *)
+    intros H; induction H; subst; reflexivity.
+  - (* <- *)
+    generalize dependent n.
+    induction a; simpl; intros; subst; constructor;
+       try apply IHa1; try apply IHa2; reflexivity.
+Qed.
+
 
 End AExp.
 
