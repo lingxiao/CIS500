@@ -52,18 +52,18 @@ Module AExp.
     arithmetic and boolean expressions. *)
 
 Inductive aexp : Type :=
-  | ANum : nat -> aexp
-  | APlus : aexp -> aexp -> aexp
+  | ANum   : nat  -> aexp
+  | APlus  : aexp -> aexp -> aexp
   | AMinus : aexp -> aexp -> aexp
-  | AMult : aexp -> aexp -> aexp.
+  | AMult  : aexp -> aexp -> aexp.
 
 Inductive bexp : Type :=
-  | BTrue : bexp
+  | BTrue  : bexp
   | BFalse : bexp
-  | BEq : aexp -> aexp -> bexp
-  | BLe : aexp -> aexp -> bexp
-  | BNot : bexp -> bexp
-  | BAnd : bexp -> bexp -> bexp.
+  | BEq    : aexp -> aexp -> bexp
+  | BLe    : aexp -> aexp -> bexp
+  | BNot   : bexp -> bexp
+  | BAnd   : bexp -> bexp -> bexp.
 
 (** In this chapter, we'll elide the translation from the
     concrete syntax that a programmer would actually write to these
@@ -129,10 +129,10 @@ Inductive bexp : Type :=
 
 Fixpoint aeval (a : aexp) : nat :=
   match a with
-  | ANum n => n
-  | APlus a1 a2 => (aeval a1) + (aeval a2)
+  | ANum n        => n
+  | APlus a1 a2   => (aeval a1) + (aeval a2)
   | AMinus a1 a2  => (aeval a1) - (aeval a2)
-  | AMult a1 a2 => (aeval a1) * (aeval a2)
+  | AMult a1 a2   => (aeval a1) * (aeval a2)
   end.
 
 Example test_aeval1:
@@ -162,17 +162,16 @@ Fixpoint beval (b : bexp) : bool :=
 
 Fixpoint optimize_0plus (a:aexp) : aexp :=
   match a with
-  | ANum n =>
-      ANum n
-  | APlus (ANum 0) e2 =>
-      optimize_0plus e2
-  | APlus e1 e2 =>
+  | ANum n            =>  ANum n
+  | APlus (ANum 0) e2 =>  optimize_0plus e2
+  | APlus e1 e2       =>
       APlus (optimize_0plus e1) (optimize_0plus e2)
-  | AMinus e1 e2 =>
+  | AMinus e1 e2      =>
       AMinus (optimize_0plus e1) (optimize_0plus e2)
-  | AMult e1 e2 =>
+  | AMult e1 e2       =>
       AMult (optimize_0plus e1) (optimize_0plus e2)
   end.
+
 
 (** To make sure our optimization is doing the right thing we
     can test it on some examples and see if the output looks OK. *)
