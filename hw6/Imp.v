@@ -861,6 +861,7 @@ Notation "e '//' n"
          : type_scope.                             
 
 
+(* todo: finish this, how do you use automation ?? *)
 Theorem beval_iff_bevalR : forall e b,
   (e // b) <-> beval e = b.
 Proof.
@@ -870,23 +871,8 @@ Proof.
       try (simpl; reflexivity);
       try (simpl; rewrite IHHb; reflexivity);
       try (simpl; rewrite IHHb1; rewrite IHHb2; reflexivity).
-      - 
-
-        destruct H.
-          * destruct H0.
-              { simpl. reflexivity.}
-              { simpl. 
-
-
-Proof.
-  (* WORKED IN CLASS *)
-  split.
-  - (* -> *)
-    intros H; induction H; subst; reflexivity.
-  - (* <- *)
-    generalize dependent n.
-    induction a; simpl; intros; subst; constructor;
-       try apply IHa1; try apply IHa2; reflexivity.
+      - admit.
+      - admit.
 Qed.
 
 
