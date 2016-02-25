@@ -530,11 +530,11 @@ Theorem optimize_0plus_b_sound : forall b,
 Proof.
   intros b.
   induction b;
+    try reflexivity;
+    try (simpl; rewrite optimize_0plus_sound;
+        rewrite (optimize_0plus_sound a0); reflexivity);
     try (simpl; rewrite IHb; reflexivity);
-    try (simpl; rewrite IHb1; rewrite IHb2; reflexivity);
-    try (simpl; rewrite optimize_0plus_sound; rewrite (optimize_0plus_sound a0);
-      reflexivity);
-    try reflexivity.
+    try (simpl; rewrite IHb1; rewrite IHb2; reflexivity).
 Qed.  
 
 
@@ -670,6 +670,9 @@ End aevalR_first_try.
     definition together with a declaration of what the notation
     means. *)
 
+(*
+   avalR is the interpretation of aexp in terms of functions over nat
+*)
 Reserved Notation "e '\\' n" (at level 50, left associativity).
 
 Inductive aevalR : aexp -> nat -> Prop :=
@@ -811,6 +814,61 @@ Qed.
 (** **** Exercise: 3 stars  (bevalR)  *)
 (** Write a relation [bevalR] in the same style as
     [aevalR], and prove that it is equivalent to [beval].*)
+
+
+(** For example, [\\] is the smallest relation closed under these
+    rules:
+                             -----------                              (E_BTrue)
+                             BTrue // true
+
+                             -----------                              (E_BFals)
+                             BFalse // false
+
+                               e1 \\ n1
+                               e2 \\ n2
+                         --------------------                          (E_Beq) 
+                         Beq e1 e2 // beq_nat n1 n2
+
+                               e1 \\ n1
+                               e2 \\ n2
+                        ---------------------                          (E_BLe)
+                        BLe e1 e2 // ble_nat n1 n2
+
+
+                               e // b
+                        ---------------------                          (E_BNot)
+                            BNot e // negb b
+
+                               e1 // b1
+                               e2 // b2
+                        ---------------------                          (E_BAnd)
+                        BAnd e1 e2 // b1 && b2
+
+
+ *)
+
+
+Reserved Notation "e `//` b" (at level 50, left associativity).
+
+Inductive bvalR : bexp -> bool -> Prop :=
+  | E_BTrue  : BTrue  // true
+  | E_BFalse : BFalse // false
+  | E_BEq    : forall (e1 e2 : aexp) (n1 n2 : nat),
+                 (e1 \\ n1) -> (e2 \\ n2) -> beq_nat b1 b2
+  | E_BLe    : forall (e1 e2 : aexp) (n1 n2 : nat),
+                 (e1 \\ n1) -> (e2 \\ n2) -> le n1 n2
+  | E_BNot   : forall (e : bexp) (b : bool),
+                 e // b     -> negb b
+  | E_BAnd   : forall (e1 e2 : beq) (b1 b2 : bool),
+                 e1 // b1   -> e2 // b2  -> b1 && b2
+                       
+  where "e '//' b" := (bevalR e b) : type_scope.
+  
+
+
+
+
+
 
 (* 
 Inductive bevalR:
