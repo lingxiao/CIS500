@@ -532,6 +532,9 @@ Proof.
   induction b;
     try (simpl; reflexivity).
     + simpl. rewrite optimize_0plus_sound. rewrite (optimize_0plus_sound a0).
+
+
+      
       
 
 
