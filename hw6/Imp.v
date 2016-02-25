@@ -861,18 +861,21 @@ Notation "e '//' n"
          : type_scope.                             
 
 
-Theorem beval_iff_bevalR' : forall e b,
+Theorem beval_iff_bevalR : forall e b,
   (e // b) <-> beval e = b.
 Proof.
   split.
   (* -> *)
   + intro Hb. induction Hb;
-      try (simpl; reflexivity).
-      - destruct H. destruct H0.
-          * simpl. reflexivity.
-          * simpl. 
+      try (simpl; reflexivity);
+      try (simpl; rewrite IHHb; reflexivity);
+      try (simpl; rewrite IHHb1; rewrite IHHb2; reflexivity).
+      - 
 
-
+        destruct H.
+          * destruct H0.
+              { simpl. reflexivity.}
+              { simpl. 
 
 
 Proof.
