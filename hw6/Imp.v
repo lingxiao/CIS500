@@ -834,7 +834,6 @@ Qed.
                         ---------------------                          (E_BLe)
                         BLe e1 e2 // ble_nat n1 n2
 
-
                                e // b
                         ---------------------                          (E_BNot)
                             BNot e // negb b
@@ -843,23 +842,19 @@ Qed.
                                e2 // b2
                         ---------------------                          (E_BAnd)
                         BAnd e1 e2 // b1 && b2
-
-
  *)
 
 Inductive bevalR : bexp -> bool -> Prop :=
-  | E_BTrue  : bevalR BTrue true
-  | E_BFalse : bevalR BFalse false
+  | E_BTrue  :                                   bevalR BTrue true
+  | E_BFalse :                                   bevalR BFalse false
   | E_BEq    : forall (e1 e2 : aexp) (n1 n2 : nat),
-                 (e1 \\ n1)   -> (e2 \\ n2) -> bevalR (BEq e1 e2) (beq_nat n1 n2) 
-   (* todo: what is less than returning bool ?? *)
+                 (e1 \\ n1)   -> (e2 \\ n2) ->   bevalR (BEq e1 e2) (beq_nat n1 n2) 
   | E_BLe    : forall (e1 e2 : aexp) (n1 n2 : nat),
-                 (e1 \\ n1)   -> (e2 \\ n2) -> bevalR (BLe e1 e2) (leb n1 n2)
-  
+                 (e1 \\ n1)   -> (e2 \\ n2) ->   bevalR (BLe e1 e2) (leb n1 n2)
   | E_BNot   : forall (e : bexp) (b : bool),
-                 bevalR e b   -> bevalR (BNot e) (negb b)
+                 bevalR e b   ->                 bevalR (BNot e) (negb b)
   | E_BAnd   : forall (e1 e2 : bexp) (b1 b2 : bool),
-                 bevalR e1 b1 -> bevalR e2 b2  -> bevalR (BAnd e1 e2) (b1 && b2).
+                 bevalR e1 b1 -> bevalR e2 b2 -> bevalR (BAnd e1 e2) (b1 && b2).
 
 Notation "e '//' n"
          := (bevalR e n) (at level 50, left associativity)
@@ -878,22 +873,7 @@ Proof.
           * simpl. 
 
 
-            simpl. destruct H.
-          * destruct H0.
-            { simpl. reflexivity. }
-            { simpl. 
 
- Theorem optimize_0plus_b_sound : forall b,
-  beval (optimize_0plus_b b) = beval b.
-Proof.
-  intros b.
-  induction b;
-    try (simpl; rewrite IHb; reflexivity);
-    try (simpl; rewrite IHb1; rewrite IHb2; reflexivity);
-    try (simpl; rewrite optimize_0plus_sound; rewrite (optimize_0plus_sound a0);
-      reflexivity);
-    try reflexivity.
-Qed.  
 
 Proof.
   (* WORKED IN CLASS *)
