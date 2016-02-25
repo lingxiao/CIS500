@@ -515,16 +515,46 @@ Proof.
     it is sound.  Use the tacticals we've just seen to make the proof
     as elegant as possible. *)
 
-Fixpoint optimize_0plus_b (b : bexp) : bexp :=
-  (* FILL IN HERE *) admit.
+Fixpoint optimize_0plus_b (b : bexp) : bexp := match b with
+  | BTrue       => BTrue
+  | BFalse      => BFalse
+  | BEq e1 e2   => BEq (optimize_0plus e1) (optimize_0plus e2)
+  | BLe e1 e2   => BLe (optimize_0plus e1) (optimize_0plus e2)
+  | BNot e      => BNot (optimize_0plus_b e)
+  | BAnd e1 e2  => BAnd (optimize_0plus_b e1) (optimize_0plus_b e2)
+  end.                      
+
+
+  
 
 Theorem optimize_0plus_b_sound : forall b,
   beval (optimize_0plus_b b) = beval b.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros b.
+  induction b;
+    try (simpl; rewrite optimize_0plus_sound; rewrite IHa1; rewrite IHa2; reflexivity);
+    try reflexivity.
+    (*try (simpl; rewrite IHb1; rewrite IHb2; reflexivity);*)
 
-(** **** Exercise: 4 stars, optional (optimizer)  *)
+
+  
+(*
+   The long way:
+
+    + reflexivity.
+    + reflexivity.
+    + simpl. rewrite optimize_0plus_sound.
+      replace (aeval (optimize_0plus a0)) with (aeval a0).
+      reflexivity. symmetry. apply optimize_0plus_sound.
+    + simpl. rewrite optimize_0plus_sound.
+      replace (aeval(optimize_0plus a0)) with (aeval a0).
+      reflexivity. symmetry. apply  optimize_0plus_sound.
+    + simpl. rewrite IHb. reflexivity.
+    + simpl. rewrite IHb1. rewrite IHb2. reflexivity.
+*)      
+      
+
+      (** **** Exercise: 4 stars, optional (optimizer)  *)
 (** _Design exercise_: The optimization implemented by our
     [optimize_0plus] function is only one of many imaginable
     optimizations on arithmetic and boolean expressions.  Write a more
