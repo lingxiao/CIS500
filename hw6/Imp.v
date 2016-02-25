@@ -848,33 +848,18 @@ Qed.
  *)
 
 
-Reserved Notation "e `//` b" (at level 50, left associativity).
-
-Inductive bvalR : bexp -> bool -> Prop :=
-  | E_BTrue  : BTrue  // true
-  | E_BFalse : BFalse // false
+Inductive bevalR : bexp -> bool -> Prop :=
+  | E_BTrue  : bevalR BTrue true
+  | E_BFalse : bevalR BFalse false
   | E_BEq    : forall (e1 e2 : aexp) (n1 n2 : nat),
-                 (e1 \\ n1) -> (e2 \\ n2) -> beq_nat b1 b2
+                 (e1 \\ n1)   -> (e2 \\ n2) -> bevalR (BEq e1 e2) (beq_nat n1 n2)
   | E_BLe    : forall (e1 e2 : aexp) (n1 n2 : nat),
-                 (e1 \\ n1) -> (e2 \\ n2) -> le n1 n2
+                 (e1 \\ n1)   -> (e2 \\ n2) -> bevalR (BLe e1 e2) (le n1 n2)
   | E_BNot   : forall (e : bexp) (b : bool),
-                 e // b     -> negb b
-  | E_BAnd   : forall (e1 e2 : beq) (b1 b2 : bool),
-                 e1 // b1   -> e2 // b2  -> b1 && b2
+                 bevalR e b   -> bevalR (BNot e) (negb b)
+  | E_BAnd   : forall (e1 e2 : bexp) (b1 b2 : bool),
+                 bevalR e1 b1 -> bevalR e2 b2  -> bevalR (BAnd e1 e2) (b1 && b2).
                        
-  where "e '//' b" := (bevalR e b) : type_scope.
-  
-
-
-
-
-
-
-(* 
-Inductive bevalR:
-(* FILL IN HERE *)
-*)
-(** [] *)
 
 End AExp.
 
