@@ -873,8 +873,14 @@ Proof.
       try (apply aeval_iff_aevalR in H; apply aeval_iff_aevalR in H0;
              rewrite H; rewrite H0; reflexivity).
   (* <- *)  
-  + intros He. induction e.
-      - 
+  + intros He. 
+      induction e; simpl; simpl in He; subst.
+      - apply E_BTrue.
+      - apply E_BFalse.
+      - destruct a.
+          * destruct a0.
+              { 
+
 Qed.
 
 Theorem aeval_iff_aevalR' : forall a n,
