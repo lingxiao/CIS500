@@ -530,34 +530,13 @@ Theorem optimize_0plus_b_sound : forall b,
 Proof.
   intros b.
   induction b;
-    try (simpl; reflexivity).
-    + simpl. rewrite optimize_0plus_sound. rewrite (optimize_0plus_sound a0).
-      
-
-
-      
-(*    
-    try (simpl; rewrite optimize_0plus_sound; rewrite IHa1; rewrite IHa2; reflexivity);
+    try (simpl; rewrite IHb; reflexivity);
+    try (simpl; rewrite IHb1; rewrite IHb2; reflexivity);
+    try (simpl; rewrite optimize_0plus_sound; rewrite (optimize_0plus_sound a0);
+      reflexivity);
     try reflexivity.
-    (*try (simpl; rewrite IHb1; rewrite IHb2; reflexivity);*)
+Qed.  
 
-
-  
-(*
-   The long way:
-
-    + reflexivity.
-    + reflexivity.
-    + simpl. rewrite optimize_0plus_sound.
-      replace (aeval (optimize_0plus a0)) with (aeval a0).
-      reflexivity. symmetry. apply optimize_0plus_sound.
-    + simpl. rewrite optimize_0plus_sound.
-      replace (aeval(optimize_0plus a0)) with (aeval a0).
-      reflexivity. symmetry. apply  optimize_0plus_sound.
-    + simpl. rewrite IHb. reflexivity.
-    + simpl. rewrite IHb1. rewrite IHb2. reflexivity.
-*)      
-      
 
       (** **** Exercise: 4 stars, optional (optimizer)  *)
 (** _Design exercise_: The optimization implemented by our
