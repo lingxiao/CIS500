@@ -870,12 +870,30 @@ Theorem beval_iff_bevalR' : forall e b,
   (e // b) <-> beval e = b.
 Proof.
   split.
-  + intro. induction H. 
+  (* -> *)
+  + intro Hb. induction Hb;
+      try (simpl; reflexivity).
+      - destruct H. destruct H0.
+          * simpl. reflexivity.
+          * simpl. 
 
 
+            simpl. destruct H.
+          * destruct H0.
+            { simpl. reflexivity. }
+            { simpl. 
 
-
-
+ Theorem optimize_0plus_b_sound : forall b,
+  beval (optimize_0plus_b b) = beval b.
+Proof.
+  intros b.
+  induction b;
+    try (simpl; rewrite IHb; reflexivity);
+    try (simpl; rewrite IHb1; rewrite IHb2; reflexivity);
+    try (simpl; rewrite optimize_0plus_sound; rewrite (optimize_0plus_sound a0);
+      reflexivity);
+    try reflexivity.
+Qed.  
 
 Proof.
   (* WORKED IN CLASS *)
