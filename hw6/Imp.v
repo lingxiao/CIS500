@@ -861,7 +861,7 @@ Notation "e '//' b"
          : type_scope.                             
 
 
-(* todo: finish this, how do i know e1 \\ n1 and e2 \\ n2 ?? *) 
+(* todo: simplify *)
 Theorem beval_iff_bevalR : forall (e : bexp) (b : bool),
   (e // b) <-> beval e = b.
 Proof.
@@ -886,11 +886,6 @@ Proof.
       - intros. simpl in H. subst. constructor. apply IHe1. reflexivity.
         apply IHe2. reflexivity.
 Qed.
-
-(*
-aeval :: aexp -> nat
-Theorem aeval_iff_aevalR : forall a n, (a \\ n) <-> aeval a = n.
-*)
 
 End AExp.
 
@@ -1323,31 +1318,24 @@ Fixpoint ceval_fun_no_while (st : state) (c : com) : state :=
 Reserved Notation "c1 '/' st '\\' st'" (at level 40, st at level 39).
 
 Inductive ceval : com -> state -> state -> Prop :=
-  | E_Skip : forall st,
-      SKIP / st \\ st
-  | E_Ass  : forall st a1 n x,
-      aeval st a1 = n ->
-      (x ::= a1) / st \\ (t_update st x n)
-  | E_Seq : forall c1 c2 st st' st'',
-      c1 / st  \\ st' ->
-      c2 / st' \\ st'' ->
-      (c1 ;; c2) / st \\ st''
-  | E_IfTrue : forall st st' b c1 c2,
-      beval st b = true ->
-      c1 / st \\ st' ->
-      (IFB b THEN c1 ELSE c2 FI) / st \\ st'
-  | E_IfFalse : forall st st' b c1 c2,
-      beval st b = false ->
-      c2 / st \\ st' ->
-      (IFB b THEN c1 ELSE c2 FI) / st \\ st'
-  | E_WhileEnd : forall b st c,
-      beval st b = false ->
-      (WHILE b DO c END) / st \\ st
-  | E_WhileLoop : forall st st' st'' b c,
-      beval st b = true ->
-      c / st \\ st' ->
-      (WHILE b DO c END) / st' \\ st'' ->
-      (WHILE b DO c END) / st \\ st''
+  | E_Skip : forall st,                      SKIP / st \\ st
+  | E_Ass  : forall st a1 n x,               aeval st a1 = n ->
+                                             (x ::= a1) / st \\ (t_update st x n)
+  | E_Seq : forall c1 c2 st st' st'',        c1 / st  \\ st' ->
+                                             c2 / st' \\ st'' ->
+                                             (c1 ;; c2) / st \\ st''
+  | E_IfTrue : forall st st' b c1 c2,        beval st b = true ->
+                                             c1 / st \\ st' ->
+                                             (IFB b THEN c1 ELSE c2 FI) / st \\ st'
+  | E_IfFalse : forall st st' b c1 c2,       beval st b = false ->
+                                             c2 / st \\ st' ->
+                                             (IFB b THEN c1 ELSE c2 FI) / st \\ st'
+  | E_WhileEnd : forall b st c,              beval st b = false ->
+                                             (WHILE b DO c END) / st \\ st
+  | E_WhileLoop : forall st st' st'' b c,    beval st b = true ->
+                                             c / st \\ st' ->
+                                             (WHILE b DO c END) / st' \\ st'' ->
+                                             (WHILE b DO c END) / st \\ st''
 
   where "c1 '/' st '\\' st'" := (ceval c1 st st').
 
