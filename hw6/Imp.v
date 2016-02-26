@@ -845,7 +845,7 @@ Qed.
  *)
 
 Inductive bevalR : bexp -> bool -> Prop :=
-  | E_BTrue  :                                   bevalR BTrue true
+  | E_BTrue  :                                   bevalR BTrue  true
   | E_BFalse :                                   bevalR BFalse false
   | E_BEq    : forall (e1 e2 : aexp) (n1 n2 : nat),
                  (e1 \\ n1)   -> (e2 \\ n2) ->   bevalR (BEq e1 e2) (beq_nat n1 n2) 
@@ -873,18 +873,14 @@ Proof.
       try (apply aeval_iff_aevalR in H; apply aeval_iff_aevalR in H0;
              rewrite H; rewrite H0; reflexivity).
   (* <- *)  
-  + intros He. 
-      induction e; simpl; simpl in He; subst.
-      - apply E_BTrue.
-      - apply E_BFalse.
-      - destruct a.
-          * destruct a0.
-              { 
+  + generalize dependent b. induction e.
+      - intros. subst. constructor.  
+      - intros. subst. constructor.
+      - intros. 
 
 Qed.
 
-Theorem aeval_iff_aevalR' : forall a n,
-  (a \\ n) <-> aeval a = n.
+Theorem aeval_iff_aevalR : forall a n, (a \\ n) <-> aeval a = n.
 
 
 End AExp.
