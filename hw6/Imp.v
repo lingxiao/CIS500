@@ -862,7 +862,7 @@ Notation "e '//' b"
 
 
 (* todo: finish this, how do you use automation ?? *)
-Theorem beval_iff_bevalR : forall e b,
+Theorem beval_iff_bevalR : forall (e : bexp) (b : bool),
   (e // b) <-> beval e = b.
 Proof.
   split.
@@ -876,13 +876,17 @@ Proof.
   + generalize dependent b. induction e.
       - intros. subst. constructor.  
       - intros. subst. constructor.
-      - intros. admit.
-      - intros. admit.
-      - intros. admit.
-      - intros. admit.
- Qed.
+      - intros. simpl in H. subst. constructor. admit. admit.
+      - intros. simpl in H. subst. constructor. admit. admit.
+      - intros. simpl in H. subst. constructor. apply IHe. reflexivity.
+      - intros. simpl in H. subst. constructor. apply IHe1. reflexivity.
+        apply IHe2. reflexivity.
+Qed.
 
-(*Theorem aeval_iff_aevalR : forall a n, (a \\ n) <-> aeval a = n.*)
+(*
+aeval :: aexp -> nat
+Theorem aeval_iff_aevalR : forall a n, (a \\ n) <-> aeval a = n.
+*)
 
 End AExp.
 
@@ -1155,8 +1159,12 @@ Definition fact_in_coq : com :=
 
 (** Assignment: *)
 
+Check (@t_update).
+Check (t_update empty_state X 5).
+Compute (aeval (t_update empty_state X 5) (AId X)).
+
 Definition plus2 : com :=
-  X ::= (APlus (AId X) (ANum 2)).
+  X ::= (APlus (AId X) (ANum 2)).   (* x = x + 2 *)
 
 Definition XtimesYinZ : com :=
   Z ::= (AMult (AId X) (AId Y)).
@@ -1201,20 +1209,22 @@ Definition loop : com :=
 
 Fixpoint ceval_fun_no_while (st : state) (c : com) : state :=
   match c with
-    | SKIP =>
-        st
-    | x ::= a1 =>
-        t_update st x (aeval st a1)
-    | c1 ;; c2 =>
+    | SKIP                     =>  st
+
+    | x ::= a1                 =>  t_update st x (aeval st a1)
+
+    | c1 ;; c2                 =>
         let st' := ceval_fun_no_while st c1 in
         ceval_fun_no_while st' c2
+                           
     | IFB b THEN c1 ELSE c2 FI =>
         if (beval st b)
           then ceval_fun_no_while st c1
           else ceval_fun_no_while st c2
-    | WHILE b DO c END =>
-        st  (* bogus *)
+
+    | WHILE b DO c END =>      st  (* bogus *)
   end.
+
 (** In a traditional functional programming language like ML or
     Haskell we could write the [WHILE] case as follows:
 <<
@@ -1269,6 +1279,7 @@ Fixpoint ceval_fun_no_while (st : state) (c : com) : state :=
 
 *)
 (** *** Operational Semantics
+
                            ----------------                            (E_Skip)
                            SKIP / st \\ st
 
