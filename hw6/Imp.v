@@ -856,8 +856,8 @@ Inductive bevalR : bexp -> bool -> Prop :=
   | E_BAnd   : forall (e1 e2 : bexp) (b1 b2 : bool),
                  bevalR e1 b1 -> bevalR e2 b2 -> bevalR (BAnd e1 e2) (b1 && b2).
 
-Notation "e '//' n"
-         := (bevalR e n) (at level 50, left associativity)
+Notation "e '//' b"
+         := (bevalR e b) (at level 50, left associativity)
          : type_scope.                             
 
 
@@ -1015,8 +1015,8 @@ Definition empty_state : state :=
     simply adding one more constructor: *)
 
 Inductive aexp : Type :=
-  | ANum   : nat -> aexp
-  | AId    : id -> aexp                (* <----- NEW *)
+  | ANum   : nat  -> aexp
+  | AId    : id   -> aexp              (* <----- NEW *)
   | APlus  : aexp -> aexp -> aexp
   | AMinus : aexp -> aexp -> aexp
   | AMult  : aexp -> aexp -> aexp.
@@ -1053,11 +1053,11 @@ Inductive bexp : Type :=
 
 Fixpoint aeval (st : state) (a : aexp) : nat :=
   match a with
-  | ANum n => n
-  | AId x => st x                                        (* <----- NEW *)
-  | APlus a1 a2 => (aeval st a1) + (aeval st a2)
+  | ANum n        => n
+  | AId x         => st x                          (* <----- NEW *)
+  | APlus a1 a2   => (aeval st a1) + (aeval st a2)
   | AMinus a1 a2  => (aeval st a1) - (aeval st a2)
-  | AMult a1 a2 => (aeval st a1) * (aeval st a2)
+  | AMult a1 a2   => (aeval st a1) * (aeval st a2)
   end.
 
 Fixpoint beval (st : state) (b : bexp) : bool :=
@@ -1093,11 +1093,11 @@ Proof. reflexivity. Qed.
 
 (** Informally, commands [c] are described by the following BNF
     grammar:
-     c ::= SKIP
-         | x ::= a
-         | c ;; c
-         | IFB b THEN c ELSE c FI
-         | WHILE b DO c END
+     c ::= SKIP                          no action
+         | x ::= a                       variable assignment
+         | c ;; c                        chaining
+         | IFB b THEN c ELSE c FI        conditional
+         | WHILE b DO c END              while 
 *)
 (**
     For example, here's the factorial function in Imp.
@@ -1114,11 +1114,11 @@ Proof. reflexivity. Qed.
 (** Here is the formal definition of the syntax of commands: *)
 
 Inductive com : Type :=
-  | CSkip : com
-  | CAss : id -> aexp -> com
-  | CSeq : com -> com -> com
-  | CIf : bexp -> com -> com -> com
-  | CWhile : bexp -> com -> com.
+  | CSkip  : com
+  | CAss   : id   -> aexp -> com
+  | CSeq   : com  -> com  -> com
+  | CIf    : bexp -> com  -> com -> com
+  | CWhile : bexp -> com  -> com.
 
 (** As usual, we can use a few [Notation] declarations to make things
     more readable.  We need to be a bit careful to avoid conflicts
