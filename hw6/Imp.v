@@ -861,7 +861,7 @@ Notation "e '//' b"
          : type_scope.                             
 
 
-(* todo: finish this, how do you use automation ?? *)
+(* todo: finish this, how do i know e1 \\ n1 and e2 \\ n2 ?? *) 
 Theorem beval_iff_bevalR : forall (e : bexp) (b : bool),
   (e // b) <-> beval e = b.
 Proof.
@@ -872,12 +872,16 @@ Proof.
       try (subst; reflexivity);
       try (apply aeval_iff_aevalR in H; apply aeval_iff_aevalR in H0;
              rewrite H; rewrite H0; reflexivity).
-  (* <- *)  
+  (* <- *)
   + generalize dependent b. induction e.
       - intros. subst. constructor.  
       - intros. subst. constructor.
-      - intros. simpl in H. subst. constructor. admit. admit.
-      - intros. simpl in H. subst. constructor. admit. admit.
+      - intros. simpl in H. subst. constructor.
+        apply aeval_iff_aevalR. reflexivity.
+        apply aeval_iff_aevalR. reflexivity.        
+      - intros. simpl in H. subst. constructor.
+        apply aeval_iff_aevalR. reflexivity.
+        apply aeval_iff_aevalR. reflexivity.
       - intros. simpl in H. subst. constructor. apply IHe. reflexivity.
       - intros. simpl in H. subst. constructor. apply IHe1. reflexivity.
         apply IHe2. reflexivity.
