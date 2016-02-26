@@ -876,12 +876,13 @@ Proof.
   + generalize dependent b. induction e.
       - intros. subst. constructor.  
       - intros. subst. constructor.
-      - intros. 
+      - intros. admit.
+      - intros. admit.
+      - intros. admit.
+      - intros. admit.
+ Qed.
 
-Qed.
-
-Theorem aeval_iff_aevalR : forall a n, (a \\ n) <-> aeval a = n.
-
+(*Theorem aeval_iff_aevalR : forall a n, (a \\ n) <-> aeval a = n.*)
 
 End AExp.
 
@@ -907,11 +908,11 @@ Module aevalR_division.
     operations by considering also a division operation:*)
 
 Inductive aexp : Type :=
-  | ANum : nat -> aexp
-  | APlus : aexp -> aexp -> aexp
+  | ANum   : nat -> aexp
+  | APlus  : aexp -> aexp -> aexp
   | AMinus : aexp -> aexp -> aexp
-  | AMult : aexp -> aexp -> aexp
-  | ADiv : aexp -> aexp -> aexp.   (* <--- new *)
+  | AMult  : aexp -> aexp -> aexp
+  | ADiv   : aexp -> aexp -> aexp.   (* <--- new *)
 
 (** Extending the definition of [aeval] to handle this new operation
     would not be straightforward (what should we return as the result
