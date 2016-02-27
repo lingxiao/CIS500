@@ -1,7 +1,7 @@
 (** * Imp: Simple Imperative Programs *)
 
 (** In this chapter, we begin a new direction that will continue for
-    the rest of the course.  Up to now most of our attention has been
+
     focused on various aspects of Coq itself, while from now on we'll
     mostly be using Coq to formalize other things.  (We'll continue to
     pause from time to time to introduce a few additional aspects of
@@ -1391,7 +1391,7 @@ Qed.
 
 Definition pup_to_n : com :=
   Y ::= ANum 0;;
-  WHILE (BLe (ANum 0) (AId X)) DO
+  WHILE (BNot (BEq (AId X) (ANum 0))) DO
     Y ::= (APlus (AId Y) (AId X));;
     X ::= (AMinus (AId X) (ANum 1))
   END.  
@@ -1420,9 +1420,10 @@ Proof.
             * simpl. reflexivity.
             * apply E_Seq with (t_update (t_update (t_update (t_update
               (t_update empty_state X 2) Y 0) Y 2) X 1) Y 3).
-                { apply E_Ass. reflexivity.}
-                { apply E_Ass. reflexivity.}
-            * 
+                apply E_Ass. reflexivity.
+                apply E_Ass. reflexivity.
+            * apply E_WhileEnd. simpl. reflexivity.
+Qed.
 
 
 
