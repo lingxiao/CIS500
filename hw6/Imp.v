@@ -1637,11 +1637,23 @@ Proof.
 Qed.
         
 
-
 (** **** Exercise: 4 stars (no_whiles_terminating)  *)
 (** Imp programs that don't involve while loops always terminate.
     State and prove a theorem [no_whiles_terminating] that says this. *)
 (** (Use either [no_whiles] or [no_whilesR], as you prefer.) *)
+
+(* Definition state := total_map nat. *)
+(* Check (aeval). state -> aexp -> nat *)
+
+
+Theorem no_whiles_terminating : forall (c : com) (so : state),
+  no_whilesR c -> (exists sf, c / so \\ sf).
+Proof.
+  intros. induction H.
+    - exists so. constructor.
+    - exists (t_update so x (aeval so a)). constructor. reflexivity.
+    - 
+
 
 (* FILL IN HERE *)
 (** [] *)
