@@ -1573,19 +1573,69 @@ Fixpoint no_whiles (c : com) : bool :=
 
 Inductive no_whilesR: com -> Prop :=
   | nskip   :  no_whilesR SKIP
+  | nass    :  forall x a,     no_whilesR (x ::= a)
   | nchain  :  forall c1 c2  , no_whilesR c1 -> no_whilesR c2
                                -> no_whilesR (c1 ;; c2)
   | nif     :  forall c1 c2 b, no_whilesR c1 -> no_whilesR c2
                                -> no_whilesR (IFB b THEN c1 ELSE c2 FI).
                         
+Lemma nowhiles_chain : forall c1 c2,
+  no_whiles (c1;; c2) = true -> no_whiles c1 = true /\ no_whiles c2 = true.
+Proof.
+  intros. simpl in H. apply andb_true_iff in H as [H1 H2].
+  split.
+    - apply H1.
+    - apply H2.
+Qed.
+
+Lemma nowhiles_if : forall b c1 c2,
+  no_whiles (IFB b THEN c1 ELSE c2 FI) = true ->
+  no_whiles c1 = true /\ no_whiles c2 = true.
+Proof.
+  intros. simpl in H. apply andb_true_iff in H as [H1 H2]. split.
+    - apply H1.
+    - apply H2.
+Qed.
+  
+Lemma nowhilesR_chain : forall c1 c2,
+  no_whilesR (c1;; c2)  -> no_whilesR c1 /\ no_whilesR c2.
+Proof.
+  intros. inversion H. split.
+    - apply H2.
+    - apply H3.
+Qed.
+
+Lemma nowhilesR_if : forall b c1 c2,
+  no_whilesR (IFB b THEN c1 ELSE c2 FI) -> 
+  no_whilesR c1 /\ no_whilesR c2.
+Proof.
+  intros. inversion H. split.
+    - apply H2.
+    - apply H4.
+Qed.
 
 Theorem no_whiles_eqv:
    forall c, no_whiles c = true <-> no_whilesR c.
 Proof.
   intros. split.
   (* -> *)
-  + intros. induction c.
-      - 
+  + intros. induction c; intros.
+      - constructor.
+      - constructor.
+      - apply nowhiles_chain in H as [H1 H2]. apply IHc1 in H1. apply IHc2 in H2.
+        constructor. apply H1. apply H2.
+      - apply nowhiles_if in H as [H1 H2]. apply IHc1 in H1. apply IHc2 in H2.
+        constructor. apply H1. apply H2.
+      - simpl in H. inversion H.
+  (* <- *)
+  + intros. induction c; simpl; try reflexivity.
+      - apply nowhilesR_chain in H as [H1 H2]. apply IHc1 in H1. apply IHc2 in H2.
+        rewrite H1. rewrite H2. reflexivity.
+      - apply nowhilesR_if in H as [H1 H2]. apply IHc1 in H1. apply IHc2 in H2.
+        rewrite H1. rewrite H2. reflexivity.
+      - admit.
+Qed.
+        
 
 
 (** **** Exercise: 4 stars (no_whiles_terminating)  *)
