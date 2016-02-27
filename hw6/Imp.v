@@ -1403,8 +1403,8 @@ Theorem pup_to_2_ceval :
 Proof.
   apply E_Seq with ((t_update (t_update empty_state X 2) Y 0)).
     + apply E_Ass. reflexivity.
-    + 
-
+    + admit.    (* todo: proove the while loop *)
+Qed.
 
 (*
  foo (x) {
@@ -1419,8 +1419,6 @@ Proof.
 
 *)
   
-
-
 
 (* ####################################################### *)
 (** ** Determinism of Evaluation *)
