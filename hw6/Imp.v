@@ -1390,15 +1390,36 @@ Qed.
    (this latter part is trickier than you might expect). *)
 
 Definition pup_to_n : com :=
-  (* FILL IN HERE *) admit.
+  Y ::= ANum 0;;
+  WHILE (BLe (ANum 0) (AId X)) DO
+    Y ::= (APlus (AId Y) (AId X));;
+    X ::= (AMinus (AId X) (ANum 1))
+  END.  
 
 Theorem pup_to_2_ceval :
   pup_to_n / (t_update empty_state X 2) \\
     t_update (t_update (t_update (t_update (t_update (t_update empty_state
       X 2) Y 0) Y 2) X 1) Y 3) X 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  apply E_Seq with ((t_update (t_update empty_state X 2) Y 0)).
+    + apply E_Ass. reflexivity.
+    + 
+
+
+(*
+ foo (x) {
+     y := 0;
+     x := x;
+     while 0 < x
+       y := y + x;
+       x := x - 1;
+     end;
+     return x;
+} 
+
+*)
+  
+
 
 
 (* ####################################################### *)
