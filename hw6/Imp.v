@@ -1365,7 +1365,7 @@ Proof.
   - (* assignment command *)
     apply E_Ass. reflexivity.
   - (* if command *)
-    apply E_IfFalse.
+    apply E_IfFalse. 
       reflexivity.
       apply E_Ass. reflexivity.
 Qed.
@@ -1401,10 +1401,31 @@ Theorem pup_to_2_ceval :
     t_update (t_update (t_update (t_update (t_update (t_update empty_state
       X 2) Y 0) Y 2) X 1) Y 3) X 0.
 Proof.
+  (* show we assigned values to variables X := 2, Y := 0 *)
   apply E_Seq with ((t_update (t_update empty_state X 2) Y 0)).
     + apply E_Ass. reflexivity.
-    + admit.    (* todo: proove the while loop *)
-Qed.
+    (* show we advanced the state using the while loop, X := 1, Y := 2 *)
+    + apply E_WhileLoop with (t_update (t_update (t_update
+                             (t_update empty_state X 2) Y 0) Y 2) X 1).
+        (* show while loop conditional is as desired *)
+        - simpl. reflexivity.
+        (* show while loop command update the store as desired *)
+        - apply E_Seq with (t_update (t_update (t_update empty_state X 2) Y 0) Y 2).
+            * apply E_Ass. reflexivity.
+            * apply E_Ass. simpl. reflexivity.
+        (* show we advance the state using while loop, X := 0, Y := 3 *)
+        - apply E_WhileLoop with
+          (t_update (t_update (t_update (t_update (t_update (t_update empty_state
+          X 2) Y 0) Y 2) X 1) Y 3) X 0).
+            * simpl. reflexivity.
+            * apply E_Seq with (t_update (t_update (t_update (t_update
+              (t_update empty_state X 2) Y 0) Y 2) X 1) Y 3).
+                { apply E_Ass. reflexivity.}
+                { apply E_Ass. reflexivity.}
+            * 
+
+
+
 
 (*
  foo (x) {
