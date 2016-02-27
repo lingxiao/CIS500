@@ -1529,6 +1529,12 @@ Proof.
 Qed.  
 
 
+(*
+Definition loop : com :=
+  WHILE BTrue DO
+    SKIP
+  END.
+*)
 
 (** **** Exercise: 3 stars, recommended (loop_never_stops)  *)
 Theorem loop_never_stops : forall st st',
@@ -1540,8 +1546,12 @@ Proof.
      [loopdef] terminates.  Most of the cases are immediately
      contradictory (and so can be solved in one step with
      [inversion]). *)
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  (* FILL IN HERE *)
+  induction contra; inversion Heqloopdef.
+    + subst. simpl in H. inversion H.
+    + subst. apply IHcontra2. reflexivity.
+Qed.      
+  
 
 (** **** Exercise: 3 stars (no_whilesR)  *)
 (** Consider the definition of the [no_whiles] boolean predicate below: *)
