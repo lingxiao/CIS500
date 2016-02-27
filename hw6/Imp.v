@@ -1633,7 +1633,7 @@ Proof.
         rewrite H1. rewrite H2. reflexivity.
       - apply nowhilesR_if in H as [H1 H2]. apply IHc1 in H1. apply IHc2 in H2.
         rewrite H1. rewrite H2. reflexivity.
-      - admit.
+      - inversion H.
 Qed.
         
 
