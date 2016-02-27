@@ -1558,11 +1558,11 @@ Qed.
 
 Fixpoint no_whiles (c : com) : bool :=
   match c with
-  | SKIP       => true
-  | _ ::= _    => true
-  | c1 ;; c2  => andb (no_whiles c1) (no_whiles c2)
+  | SKIP                     => true
+  | _ ::= _                  => true
+  | c1 ;; c2                 => andb (no_whiles c1) (no_whiles c2)
   | IFB _ THEN ct ELSE cf FI => andb (no_whiles ct) (no_whiles cf)
-  | WHILE _ DO _ END  => false
+  | WHILE _ DO _ END         => false
   end.
 
 (** This predicate yields [true] just on programs that
@@ -1572,14 +1572,21 @@ Fixpoint no_whiles (c : com) : bool :=
     with [no_whiles]. *)
 
 Inductive no_whilesR: com -> Prop :=
- (* FILL IN HERE *)
-.
+  | nskip   :  no_whilesR SKIP
+  | nchain  :  forall c1 c2  , no_whilesR c1 -> no_whilesR c2
+                               -> no_whilesR (c1 ;; c2)
+  | nif     :  forall c1 c2 b, no_whilesR c1 -> no_whilesR c2
+                               -> no_whilesR (IFB b THEN c1 ELSE c2 FI).
+                        
 
 Theorem no_whiles_eqv:
    forall c, no_whiles c = true <-> no_whilesR c.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros. split.
+  (* -> *)
+  + intros. induction c.
+      - 
+
 
 (** **** Exercise: 4 stars (no_whiles_terminating)  *)
 (** Imp programs that don't involve while loops always terminate.
