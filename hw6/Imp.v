@@ -1389,6 +1389,15 @@ Qed.
    Prove that this program executes as intended for X = 2
    (this latter part is trickier than you might expect). *)
 
+(*
+ foo (x)
+     y := 0;
+     while x /= 0
+       y := y + x;
+       x := x - 1;
+     end;
+*)
+
 Definition pup_to_n : com :=
   Y ::= ANum 0;;
   WHILE (BNot (BEq (AId X) (ANum 0))) DO
@@ -1425,22 +1434,6 @@ Proof.
             * apply E_WhileEnd. simpl. reflexivity.
 Qed.
 
-
-
-
-(*
- foo (x) {
-     y := 0;
-     x := x;
-     while 0 < x
-       y := y + x;
-       x := x - 1;
-     end;
-     return x;
-} 
-
-*)
-  
 
 (* ####################################################### *)
 (** ** Determinism of Evaluation *)
@@ -1515,13 +1508,27 @@ Proof.
      that st' must be st extended with the new value of X,
      since plus2 is an assignment *)
   inversion Heval. subst. clear Heval. simpl.
-  apply t_update_eq.  Qed.
+  apply t_update_eq.
+Qed.
+
+(*
+Lemma t_update_eq : forall A (m: total_map A) x v, (t_update m x v) x = v.
+*)
 
 (** **** Exercise: 3 stars, recommended (XtimesYinZ_spec)  *)
 (** State and prove a specification of [XtimesYinZ]. *)
 
-(* FILL IN HERE *)
-(** [] *)
+Theorem XtimesYinZ_spec : forall st n m st',
+  st X = n -> st Y = m   ->
+  XtimesYinZ / st \\ st' ->
+  st' Z = n * m.
+Proof.
+  intros st n m st' Hx Hy Heval.
+  inversion Heval. subst. simpl.
+  apply t_update_eq.
+Qed.  
+
+
 
 (** **** Exercise: 3 stars, recommended (loop_never_stops)  *)
 Theorem loop_never_stops : forall st st',
