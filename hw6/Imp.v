@@ -1318,20 +1318,27 @@ Fixpoint ceval_fun_no_while (st : state) (c : com) : state :=
 Reserved Notation "c1 '/' st '\\' st'" (at level 40, st at level 39).
 
 Inductive ceval : com -> state -> state -> Prop :=
+
   | E_Skip : forall st,                      SKIP / st \\ st
+
   | E_Ass  : forall st a1 n x,               aeval st a1 = n ->
                                              (x ::= a1) / st \\ (t_update st x n)
-  | E_Seq : forall c1 c2 st st' st'',        c1 / st  \\ st' ->
+
+  | E_Seq  : forall c1 c2 st st' st'',       c1 / st  \\ st' ->
                                              c2 / st' \\ st'' ->
                                              (c1 ;; c2) / st \\ st''
-  | E_IfTrue : forall st st' b c1 c2,        beval st b = true ->
+
+  | E_IfTrue  : forall st st' b c1 c2,       beval st b = true ->
                                              c1 / st \\ st' ->
                                              (IFB b THEN c1 ELSE c2 FI) / st \\ st'
+
   | E_IfFalse : forall st st' b c1 c2,       beval st b = false ->
                                              c2 / st \\ st' ->
                                              (IFB b THEN c1 ELSE c2 FI) / st \\ st'
-  | E_WhileEnd : forall b st c,              beval st b = false ->
+
+  | E_WhileEnd  : forall b st c,             beval st b = false ->
                                              (WHILE b DO c END) / st \\ st
+
   | E_WhileLoop : forall st st' st'' b c,    beval st b = true ->
                                              c / st \\ st' ->
                                              (WHILE b DO c END) / st' \\ st'' ->
@@ -1345,7 +1352,7 @@ Inductive ceval : com -> state -> state -> Prop :=
     Coq's computation mechanism do it for us. *)
 
 Example ceval_example1:
-    (X ::= ANum 2;;
+    (X ::= ANum 2;;                 (* assign >> ifthen *)
      IFB BLe (AId X) (ANum 1)
        THEN Y ::= ANum 3
        ELSE Z ::= ANum 4
@@ -1360,15 +1367,21 @@ Proof.
   - (* if command *)
     apply E_IfFalse.
       reflexivity.
-      apply E_Ass. reflexivity.  Qed.
+      apply E_Ass. reflexivity.
+Qed.
 
 (** **** Exercise: 2 stars (ceval_example2)  *)
 Example ceval_example2:
     (X ::= ANum 0;; Y ::= ANum 1;; Z ::= ANum 2) / empty_state \\
     (t_update (t_update (t_update empty_state X 0) Y 1) Z 2).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  apply E_Seq with (t_update empty_state X 0).
+    + apply E_Ass. reflexivity.
+    + apply E_Seq with (t_update (t_update empty_state X 0) Y 1).
+        - apply E_Ass. reflexivity.
+        - apply E_Ass. reflexivity.
+Qed.
+  
 
 (** **** Exercise: 3 stars, advanced (pup_to_n)  *)
 (** Write an Imp program that sums the numbers from [1] to
