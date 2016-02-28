@@ -1817,24 +1817,30 @@ Compute (empty_state X).
                  
 Example s_execute1 :
      s_execute empty_state [] [SPush 5; SPush 3; SPush 1; SMinus] = [2; 5].
-Proof.
-  simpl. reflexivity.
-Qed.
+try reflexivity.
+
 
 Example s_execute2 :
      s_execute (t_update empty_state X 3) [3;4]
        [SPush 4; SLoad X; SMult; SPlus]
    = [15; 4].
-Proof.
-  simpl. reflexivity.
-Qed.
+try reflexivity.
 
 (** Next, write a function which compiles an [aexp] into a stack
     machine program. The effect of running the program should be the
     same as pushing the value of the expression on the stack. *)
 
-Fixpoint s_compile (e : aexp) : list sinstr :=
-(* FILL IN HERE *) admit.
+Definition go_compile (e1 e2 : aexp) (compile : aexp -> list sinstr) (s : sinstr) :=
+  compile e1 ++ compile e2 ++ [s].
+
+Fixpoint s_compile (e : aexp) : list sinstr := match e with
+  | ANum n       => [SPush n]
+  | AId x        => [SLoad x]                    
+  | APlus  e1 e2 => go_compile e1 e2 s_compile SPlus
+  | AMinus e1 e2 => go_compile e1 e2 s_compile SMinus
+  | AMult  e1 e2 => go_compile e1 e2 s_compile SMult
+  end.                
+
 
 (** After you've defined [s_compile], prove the following to test
     that it works. *)
@@ -1842,8 +1848,8 @@ Fixpoint s_compile (e : aexp) : list sinstr :=
 Example s_compile1 :
     s_compile (AMinus (AId X) (AMult (ANum 2) (AId Y)))
   = [SLoad X; SPush 2; SLoad Y; SMult; SMinus].
-(* FILL IN HERE *) Admitted.
-(** [] *)
+try reflexivity.
+  
 
 (** **** Exercise: 3 stars, advanced (stack_compiler_correct)  *)
 (** The task of this exercise is to prove the correctness of the
