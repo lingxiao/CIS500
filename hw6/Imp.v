@@ -1645,19 +1645,76 @@ Qed.
 (* Definition state := total_map nat. *)
 (* Check (aeval). state -> aexp -> nat *)
 
+(* proof by destructing this:
+
+Fixpoint beval (b : bexp) : bool :=
+  match b with
+  | BTrue       => true
+  | BFalse      => false
+  | BEq a1 a2   => beq_nat (aeval a1) (aeval a2)
+  | BLe a1 a2   => leb (aeval a1) (aeval a2)
+  | BNot b1     => negb (beval b1)
+  | BAnd b1 b2  => andb (beval b1) (beval b2)
+  end.
+
+*)
 
 Theorem no_whiles_terminating : forall (c : com) (so : state),
   no_whilesR c -> (exists sf, c / so \\ sf).
 Proof.
-  intros. induction H.
-    - exists so. constructor.
-    - exists (t_update so x (aeval so a)). constructor. reflexivity.
-    - 
+  (* proof by induction on commands *)
+  intros. generalize dependent so. induction c; intros.
+    + exists so. constructor.
+    + intros. exists (t_update so i (aeval so a)). constructor. reflexivity.
+    + inversion H. subst.
+      (* first we arrive at the intermediate state x after c1 executes*)
+      apply IHc1 with so in H2. inversion H2.
+      (* next we arrive at the final state after c2 runs *)
+      apply IHc2 with x in H3. inversion H3.
+      (* finally we prove the goal *)
+      exists x0. apply E_Seq with x. apply H0. apply H1.
+    + inversion H. subst. destruct b eqn: Hb. (* pattern match on bexp *)
 
+        (* case if BTrue *)
+        - apply IHc1 with so in H2. inversion H2.
+          exists x. apply E_IfTrue. reflexivity. apply H0.
 
-(* FILL IN HERE *)
-(** [] *)
+        (* case if BFalse *)
+        - apply IHc2 with so in H4. inversion H4.
+          exists x. apply E_IfFalse. reflexivity. apply H0.
 
+        (* case if BEq *)
+        - remember (beq_nat (aeval so a) (aeval so a0)) as He. destruct He.
+            * apply IHc1 with so in H2. inversion H2. exists x.
+              apply E_IfTrue. simpl. symmetry. apply HeqHe. apply H0.
+            * apply IHc2 with so in H4. inversion H4.
+              exists x. apply E_IfFalse. simpl. symmetry. apply HeqHe.  apply H0.
+      
+        (* case if BEq *)
+        - remember (leb (aeval so a) (aeval so a0)) as He. destruct He.
+            * apply IHc1 with so in H2. inversion H2. exists x.
+              apply E_IfTrue. simpl. symmetry. apply HeqHe. apply H0.
+            * apply IHc2 with so in H4. inversion H4.
+              exists x. apply E_IfFalse. simpl. symmetry. apply HeqHe.  apply H0.
+
+        (* case if BNot *)
+        - remember (negb (beval so b0)) as He. destruct He.
+            * apply IHc1 with so in H2. inversion H2. exists x.
+              apply E_IfTrue. simpl. symmetry. apply HeqHe. apply H0.
+            * apply IHc2 with so in H4. inversion H4.
+              exists x. apply E_IfFalse. simpl. symmetry. apply HeqHe.  apply H0.
+
+        (* case if BAnd *)
+        - remember (beval so b0_1 && beval so b0_2) as He. destruct He.
+            * apply IHc1 with so in H2. inversion H2. exists x.
+              apply E_IfTrue. simpl. symmetry. apply HeqHe. apply H0.
+            * apply IHc2 with so in H4. inversion H4.
+              exists x. apply E_IfFalse. simpl. symmetry. apply HeqHe.  apply H0.
+     + inversion H.
+Qed.
+      
+      
+        
 (* ####################################################### *)
 (** * Additional Exercises *)
 
@@ -1705,7 +1762,6 @@ Inductive sinstr : Type :=
 | SPlus : sinstr
 | SMinus : sinstr
 | SMult : sinstr.
-
 (** Write a function to evaluate programs in the stack language. It
     takes as input a state, a stack represented as a list of
     numbers (top stack item is the head of the list), and a program
