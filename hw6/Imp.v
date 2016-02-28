@@ -1744,6 +1744,10 @@ Qed.
   [12]          |
 >>
 
+  - note head of list is top of stack
+  - when an op of arity n is pushed to top of the stack,
+    it's applied to next n elems in stack
+
   The task of this exercise is to write a small compiler that
   translates [aexp]s into stack machine instructions.
 
@@ -1757,12 +1761,14 @@ Qed.
      - [SMinus]:  Similar, but subtract.
      - [SMult]:   Similar, but multiply. *)
 
+
 Inductive sinstr : Type :=
 | SPush  : nat -> sinstr
-| SLoad  : id -> sinstr
+| SLoad  : id  -> sinstr
 | SPlus  : sinstr
 | SMinus : sinstr
 | SMult  : sinstr.
+
 (** Write a function to evaluate programs in the stack language. It
     takes as input a state, a stack represented as a list of
     numbers (top stack item is the head of the list), and a program
@@ -1773,25 +1779,55 @@ Inductive sinstr : Type :=
     encountering an [SPlus], [SMinus], or [SMult] instruction if the
     stack contains less than two elements.  In a sense, it is
     immaterial what we do, since our compiler will never emit such a
-    malformed program. *)
+    malformed program.
 
-Fixpoint s_execute (st : state) (stack : list nat)
-                   (prog : list sinstr)
-                 : list nat :=
-(* FILL IN HERE *) admit.
+    recall:
+     Definition state               := total_map nat.
+     Definition empty_state : state := t_empty 0.
+*)
 
+(* todo: op semantics when there is no variable in state *)
+Fixpoint s_execute
+  (st : state) (stack : list nat) (prog : list sinstr) : list nat :=
+  match prog with
+  | []        => stack
+  | p::prog'  => match p with
+                | SPush n =>                   s_execute st (n::stack)      prog'
+                | SLoad x =>                   s_execute st (st x :: stack) prog'
+                | SPlus   => match stack with
+                             | n::m::stack' => s_execute st (n+m :: stack') prog'
+                             | _            => s_execute st stack           prog'
+                             end
+                | SMinus  => match stack with
+                             | n::m::stack' => s_execute st (m-n :: stack') prog'
+                             | _            => s_execute st stack prog'
+                             end    
+                | SMult   => match stack with
+                             | n::m::stack' => s_execute st (n*m :: stack') prog'
+                             | _            => s_execute st stack prog'
+                             end                                   
+                end
+  end.
 
+Definition st := t_update empty_state X 3.
+Compute (st X).
+Compute (st Y).
+Compute (empty_state X).
+
+                 
 Example s_execute1 :
-     s_execute empty_state []
-       [SPush 5; SPush 3; SPush 1; SMinus]
-   = [2; 5].
-(* FILL IN HERE *) Admitted.
+     s_execute empty_state [] [SPush 5; SPush 3; SPush 1; SMinus] = [2; 5].
+Proof.
+  simpl. reflexivity.
+Qed.
 
 Example s_execute2 :
      s_execute (t_update empty_state X 3) [3;4]
        [SPush 4; SLoad X; SMult; SPlus]
    = [15; 4].
-(* FILL IN HERE *) Admitted.
+Proof.
+  simpl. reflexivity.
+Qed.
 
 (** Next, write a function which compiles an [aexp] into a stack
     machine program. The effect of running the program should be the
