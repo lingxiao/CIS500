@@ -1645,7 +1645,7 @@ Qed.
 (* Definition state := total_map nat. *)
 (* Check (aeval). state -> aexp -> nat *)
 
-(* proof by destructing this:
+(* proof by induction on commands, and pattern match on bexp in the case of If else 
 
 Fixpoint beval (b : bexp) : bool :=
   match b with
@@ -1659,6 +1659,7 @@ Fixpoint beval (b : bexp) : bool :=
 
 *)
 
+(* todo: shorten this proof somehow?? *)
 Theorem no_whiles_terminating : forall (c : com) (so : state),
   no_whilesR c -> (exists sf, c / so \\ sf).
 Proof.
@@ -1757,11 +1758,11 @@ Qed.
      - [SMult]:   Similar, but multiply. *)
 
 Inductive sinstr : Type :=
-| SPush : nat -> sinstr
-| SLoad : id -> sinstr
-| SPlus : sinstr
+| SPush  : nat -> sinstr
+| SLoad  : id -> sinstr
+| SPlus  : sinstr
 | SMinus : sinstr
-| SMult : sinstr.
+| SMult  : sinstr.
 (** Write a function to evaluate programs in the stack language. It
     takes as input a state, a stack represented as a list of
     numbers (top stack item is the head of the list), and a program
