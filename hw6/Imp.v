@@ -1830,15 +1830,12 @@ try reflexivity.
     machine program. The effect of running the program should be the
     same as pushing the value of the expression on the stack. *)
 
-Definition go_compile (e1 e2 : aexp) (compile : aexp -> list sinstr) (s : sinstr) :=
-  compile e1 ++ compile e2 ++ [s].
-
 Fixpoint s_compile (e : aexp) : list sinstr := match e with
   | ANum n       => [SPush n]
   | AId x        => [SLoad x]                    
-  | APlus  e1 e2 => go_compile e1 e2 s_compile SPlus
-  | AMinus e1 e2 => go_compile e1 e2 s_compile SMinus
-  | AMult  e1 e2 => go_compile e1 e2 s_compile SMult
+  | APlus  e1 e2 => s_compile e1 ++ s_compile e2 ++ [SPlus]
+  | AMinus e1 e2 => s_compile e1 ++ s_compile e2 ++ [SMinus]
+  | AMult  e1 e2 => s_compile e1 ++ s_compile e2 ++ [SMult]
   end.                
 
 
@@ -1865,12 +1862,16 @@ try reflexivity.
     general lemma to get a usable induction hypothesis; the main
     theorem will then be a simple corollary of this lemma. *)
 
-
+(* aeval : state -> aexp -> nat *) 
 Theorem s_compile_correct : forall (st : state) (e : aexp),
   s_execute st [] (s_compile e) = [ aeval st e ].
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros st e. generalize dependent st.
+  induction e; intros; try reflexivity.
+    + simpl. admit.
+    + simpl. admit.
+    + simpl. admit.
+Qed. 
 
 (** **** Exercise: 5 stars, advanced (break_imp)  *)
 Module BreakImp.
@@ -1883,11 +1884,11 @@ Module BreakImp.
     additional case. *)
 
 Inductive com : Type :=
-  | CSkip : com
+  | CSkip  : com
   | CBreak : com
-  | CAss : id -> aexp -> com
-  | CSeq : com -> com -> com
-  | CIf : bexp -> com -> com -> com
+  | CAss   : id -> aexp -> com
+  | CSeq   : com -> com -> com
+  | CIf    : bexp -> com -> com -> com
   | CWhile : bexp -> com -> com.
 
 Notation "'SKIP'" :=
