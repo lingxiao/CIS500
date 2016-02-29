@@ -1878,14 +1878,16 @@ Proof.
 Qed.
 
 (* aeval : state -> aexp -> nat *) 
-Theorem s_compile_correct : forall (st : state) (e : aexp) (ns : list nat),
-  s_execute st ns (s_compile e) = [ aeval st e ].
+Theorem s_compile_correct : forall (st : state) (e : aexp), 
+  s_execute st [] (s_compile e) = [ aeval st e ].
 Proof.
   intros st e. generalize dependent st.
   induction e; intros;
     try reflexivity.
-    + simpl.
-    
+    + simpl. admit.
+    + simpl. admit.
+    + simpl. admit.
+Qed.    
 
 
 
