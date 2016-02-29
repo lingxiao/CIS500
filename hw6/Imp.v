@@ -1786,30 +1786,31 @@ Inductive sinstr : Type :=
      Definition empty_state : state := t_empty 0.
 *)
 
-(* todo: op semantics when there is no variable in state *)
+Definition go_execute (st : state) (stack : list nat) (p : sinstr) : list nat :=
+  match p with
+  | SPush n    => n    :: stack
+  | SLoad x    => st x :: stack
+  | SPlus      => match stack with
+                  | n :: m :: stack'  => n + m :: stack'
+                  | _                 => []
+                  end
+  | SMinus     => match stack with
+                  | n :: m :: stack'  => m - n :: stack'
+                  | _                 => []
+                  end                         
+  | SMult      => match stack with
+                  | n :: m :: stack'  => n * m :: stack'
+                  | _                 => []
+                  end
+  end.                    
+                      
+    
 Fixpoint s_execute
   (st : state) (stack : list nat) (prog : list sinstr) : list nat :=
   match prog with
   | []        => stack
-  | p::prog'  => match p with
-                | SPush n =>                   s_execute st (n::stack)      prog'
-                | SLoad x =>                   s_execute st (st x :: stack) prog'
-                | SPlus   => match stack with
-                             | n::m::stack' => s_execute st (n+m :: stack') prog'
-                             | _            => []                            
-                             end
-                | SMinus  => match stack with
-                             | n::m::stack' => s_execute st (m-n :: stack') prog'
-                             | _            => []                            
-                             end    
-                | SMult   => match stack with
-                             | n::m::stack' => s_execute st (n*m :: stack') prog'
-                             | _            => []                            
-                             (*| _::stack'    => s_execute st stack' prog'
-                             | _            => []       *)
-                             end                                   
-                end
-  end.
+  | p::prog'  => s_execute st (go_execute st stack p) prog'
+  end.                         
 
 (* note the types *)
 Definition st := t_update empty_state X 3.
@@ -1869,38 +1870,12 @@ Lemma s_execute_chain : forall (st : state) (ps1 ps2 : list sinstr) (stack : lis
   s_execute st stack (ps1 ++ ps2) = s_execute st (s_execute st stack ps1) ps2.
 Proof.
   intros st ps1.
-  induction ps1; intros ps2 stack; try reflexivity.
+  induction ps1 as [| p ps1']; intros ps2 stack;
+  (* base case *)
+    try reflexivity.
   (* inductive case *)
-  + destruct a; try apply IHps1.
-      - destruct ps1.
-          * 
-   
-
-
-      Theorem s_execute_concat_program :
-  forall (st : state) (prog1 prog2 : list sinstr) (l : list nat),
-    s_execute st l (prog1 ++ prog2) = s_execute st (s_execute st l prog1) prog2.
-Proof.
-  intros st.
-  induction prog1 as [| inst insts].
-  Case "prog1 = []".
-    simpl. reflexivity.
-  Case "prog1 = inst :: insts".
-    simpl.
-    intros.
-    destruct (s_eval st l inst);
-      apply IHinsts.
+    simpl. destruct (go_execute st stack p); try (apply IHps1').
 Qed.
-
-  
-  destruct a; try (simpl; apply IHps1).
-    + simpl. destruct stack.
-        - admit.
-        - 
-  
-  
-                                          
-
 
 (* aeval : state -> aexp -> nat *) 
 Theorem s_compile_correct : forall (st : state) (e : aexp),
