@@ -1871,22 +1871,24 @@ Lemma s_execute_chain : forall (st : state) (ps1 ps2 : list sinstr) (stack : lis
 Proof.
   intros st ps1.
   induction ps1 as [| p ps1']; intros ps2 stack;
-  (* base case *)
+    (* base case *)
     try reflexivity.
-  (* inductive case *)
+    (* inductive case *)
     simpl. destruct (go_execute st stack p); try (apply IHps1').
 Qed.
 
 (* aeval : state -> aexp -> nat *) 
-Theorem s_compile_correct : forall (st : state) (e : aexp),
-  s_execute st [] (s_compile e) = [ aeval st e ].
+Theorem s_compile_correct : forall (st : state) (e : aexp) (ns : list nat),
+  s_execute st ns (s_compile e) = [ aeval st e ].
 Proof.
   intros st e. generalize dependent st.
-  induction e; intros; try reflexivity.
-    + simpl.    
-    + simpl. admit.
-    + simpl. admit.
-Qed. 
+  induction e; intros;
+    try reflexivity.
+    + simpl.
+    
+
+
+
 
 (** **** Exercise: 5 stars, advanced (break_imp)  *)
 Module BreakImp.
