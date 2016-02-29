@@ -1796,19 +1796,23 @@ Fixpoint s_execute
                 | SLoad x =>                   s_execute st (st x :: stack) prog'
                 | SPlus   => match stack with
                              | n::m::stack' => s_execute st (n+m :: stack') prog'
-                             | _            => s_execute st stack           prog'
+                             | _::stack'    => s_execute st stack' prog'
+                             | _            => []                            
                              end
                 | SMinus  => match stack with
                              | n::m::stack' => s_execute st (m-n :: stack') prog'
-                             | _            => s_execute st stack prog'
+                             | _::stack'    => s_execute st stack' prog'
+                             | _            => []       
                              end    
                 | SMult   => match stack with
                              | n::m::stack' => s_execute st (n*m :: stack') prog'
-                             | _            => s_execute st stack prog'
+                             | _::stack'    => s_execute st stack' prog'
+                             | _            => []       
                              end                                   
                 end
   end.
 
+(* note the types *)
 Definition st := t_update empty_state X 3.
 Compute (st X).
 Compute (st Y).
@@ -1862,13 +1866,26 @@ try reflexivity.
     general lemma to get a usable induction hypothesis; the main
     theorem will then be a simple corollary of this lemma. *)
 
+Lemma s_execute_chain : forall (st : state) (ps1 ps2 : list sinstr) (stack : list nat),
+  s_execute st stack (ps1 ++ ps2) = s_execute st (s_execute st stack ps1) ps2.
+Proof.
+  intros st ps1.
+  induction ps1; intros ps2 stack; try reflexivity.
+  destruct a; try (simpl; apply IHps1).
+    + simpl. destruct stack.
+        - 
+  
+  
+                                          
+
+
 (* aeval : state -> aexp -> nat *) 
 Theorem s_compile_correct : forall (st : state) (e : aexp),
   s_execute st [] (s_compile e) = [ aeval st e ].
 Proof.
   intros st e. generalize dependent st.
   induction e; intros; try reflexivity.
-    + simpl.   
+    + simpl.    
     + simpl. admit.
     + simpl. admit.
 Qed. 
