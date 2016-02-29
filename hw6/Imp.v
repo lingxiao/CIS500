@@ -1868,7 +1868,7 @@ Theorem s_compile_correct : forall (st : state) (e : aexp),
 Proof.
   intros st e. generalize dependent st.
   induction e; intros; try reflexivity.
-    + simpl. admit.
+    + simpl.   
     + simpl. admit.
     + simpl. admit.
 Qed. 
