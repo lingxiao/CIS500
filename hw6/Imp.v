@@ -1796,18 +1796,17 @@ Fixpoint s_execute
                 | SLoad x =>                   s_execute st (st x :: stack) prog'
                 | SPlus   => match stack with
                              | n::m::stack' => s_execute st (n+m :: stack') prog'
-                             | _::stack'    => s_execute st stack' prog'
                              | _            => []                            
                              end
                 | SMinus  => match stack with
                              | n::m::stack' => s_execute st (m-n :: stack') prog'
-                             | _::stack'    => s_execute st stack' prog'
-                             | _            => []       
+                             | _            => []                            
                              end    
                 | SMult   => match stack with
                              | n::m::stack' => s_execute st (n*m :: stack') prog'
-                             | _::stack'    => s_execute st stack' prog'
-                             | _            => []       
+                             | _            => []                            
+                             (*| _::stack'    => s_execute st stack' prog'
+                             | _            => []       *)
                              end                                   
                 end
   end.
@@ -1871,8 +1870,32 @@ Lemma s_execute_chain : forall (st : state) (ps1 ps2 : list sinstr) (stack : lis
 Proof.
   intros st ps1.
   induction ps1; intros ps2 stack; try reflexivity.
+  (* inductive case *)
+  + destruct a; try apply IHps1.
+      - destruct ps1.
+          * 
+   
+
+
+      Theorem s_execute_concat_program :
+  forall (st : state) (prog1 prog2 : list sinstr) (l : list nat),
+    s_execute st l (prog1 ++ prog2) = s_execute st (s_execute st l prog1) prog2.
+Proof.
+  intros st.
+  induction prog1 as [| inst insts].
+  Case "prog1 = []".
+    simpl. reflexivity.
+  Case "prog1 = inst :: insts".
+    simpl.
+    intros.
+    destruct (s_eval st l inst);
+      apply IHinsts.
+Qed.
+
+  
   destruct a; try (simpl; apply IHps1).
     + simpl. destruct stack.
+        - admit.
         - 
   
   
