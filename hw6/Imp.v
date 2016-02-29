@@ -1881,11 +1881,10 @@ Lemma step_exec : forall (e : aexp) (st : state) (stack : list nat) (prog : list
   s_execute st stack (s_compile e ++ prog) = s_execute st ((aeval st e) :: stack) prog.
 Proof.
   induction e; intros st stack prog; try reflexivity.
-    + simpl. 
+    + simpl.
+Abort.        (* todo: finish this one!! *)
   
  
-
-
   
 (* aeval : state -> aexp -> nat *) 
 Theorem s_compile_correct : forall (st : state) (e : aexp), 
