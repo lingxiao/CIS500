@@ -1865,7 +1865,7 @@ try reflexivity.
     behaves correctly.  You will need to start by stating a more
     general lemma to get a usable induction hypothesis; the main
     theorem will then be a simple corollary of this lemma. *)
-
+(* dep *)
 Lemma s_execute_chain : forall (st : state) (ps1 ps2 : list sinstr) (stack : list nat),
   s_execute st stack (ps1 ++ ps2) = s_execute st (s_execute st stack ps1) ps2.
 Proof.
@@ -1877,16 +1877,22 @@ Proof.
     simpl. destruct (go_execute st stack p); try (apply IHps1').
 Qed.
 
+Lemma step_exec : forall (e : aexp) (st : state) (stack : list nat) (ps : list sinstr),
+  s_execute st stack (s_compile e ++ ps) = s_execute st ((aeval st e) :: stack) ps.
+Proof.
+  intros e st stack ps.
+
 (* aeval : state -> aexp -> nat *) 
 Theorem s_compile_correct : forall (st : state) (e : aexp), 
   s_execute st [] (s_compile e) = [ aeval st e ].
 Proof.
   intros st e. generalize dependent st.
   induction e; intros;
-    try reflexivity.
-    + simpl. admit.
-    + simpl. admit.
-    + simpl. admit.
+    try reflexivity;
+    try (simpl; repeat (rewrite step_exec); simpl).
+       + rewrite (plus_comm (aeval st0 e2) (aeval st0 e1)). reflexivity.
+       + reflexivity.
+       + rewrite (mult_comm (aeval st0 e2) (aeval st0 e1)). reflexivity.
 Qed.    
 
 
