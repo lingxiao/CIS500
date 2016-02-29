@@ -1877,11 +1877,16 @@ Proof.
     simpl. destruct (go_execute st stack p); try (apply IHps1').
 Qed.
 
-Lemma step_exec : forall (e : aexp) (st : state) (stack : list nat) (ps : list sinstr),
-  s_execute st stack (s_compile e ++ ps) = s_execute st ((aeval st e) :: stack) ps.
+Lemma step_exec : forall (e : aexp) (st : state) (stack : list nat) (prog : list sinstr),
+  s_execute st stack (s_compile e ++ prog) = s_execute st ((aeval st e) :: stack) prog.
 Proof.
-  intros e st stack ps.
+  induction e; intros st stack prog; try reflexivity.
+    + simpl. 
+  
+ 
 
+
+  
 (* aeval : state -> aexp -> nat *) 
 Theorem s_compile_correct : forall (st : state) (e : aexp), 
   s_execute st [] (s_compile e) = [ aeval st e ].
