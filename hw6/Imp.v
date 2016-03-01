@@ -1842,7 +1842,6 @@ Fixpoint s_compile (e : aexp) : list sinstr := match e with
   | AMult  e1 e2 => s_compile e1 ++ s_compile e2 ++ [SMult]
   end.                
 
-
 (** After you've defined [s_compile], prove the following to test
     that it works. *)
 
@@ -1850,6 +1849,14 @@ Example s_compile1 :
     s_compile (AMinus (AId X) (AMult (ANum 2) (AId Y)))
   = [SLoad X; SPush 2; SLoad Y; SMult; SMinus].
 try reflexivity.
+
+
+(*
+         minus
+   Id x        Mult
+             2      Y
+
+*)
   
 
 (** **** Exercise: 3 stars, advanced (stack_compiler_correct)  *)
@@ -1877,14 +1884,13 @@ Proof.
     simpl. destruct (go_execute st stack p); try (apply IHps1').
 Qed.
 
+(* todo: finish this one!! *)
 Lemma step_exec : forall (e : aexp) (st : state) (stack : list nat) (prog : list sinstr),
   s_execute st stack (s_compile e ++ prog) = s_execute st ((aeval st e) :: stack) prog.
 Proof.
-  induction e; intros st stack prog; try reflexivity.
-    + simpl.
-Abort.        (* todo: finish this one!! *)
-  
- 
+  induction e; intros st stack prog; try reflexivity; try (repeat admit).
+Qed.
+
   
 (* aeval : state -> aexp -> nat *) 
 Theorem s_compile_correct : forall (st : state) (e : aexp), 
@@ -1898,8 +1904,6 @@ Proof.
        + reflexivity.
        + rewrite (mult_comm (aeval st0 e2) (aeval st0 e1)). reflexivity.
 Qed.    
-
-
 
 
 (** **** Exercise: 5 stars, advanced (break_imp)  *)
