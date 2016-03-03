@@ -485,14 +485,21 @@ Qed.
 (** Prove the following theorem. _Hint_: You'll want to use
     [WHILE_true_nonterm] here. *)
 
+Check (bequiv). (* bexp -> bexp -> Prop *)
+
 Theorem WHILE_true: forall b c,
      bequiv b BTrue  ->
      cequiv
        (WHILE b DO c END)
        (WHILE BTrue DO SKIP END).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros b c Hb st st'. split; intros.
+  (* -> *)
+  + exfalso. apply WHILE_true_nonterm in H. apply H. apply Hb.
+  (* -> *)
+  + exfalso. apply WHILE_true_nonterm in H. apply H. unfold bequiv.
+    intros. reflexivity.
+Qed.    
 
 Theorem loop_unrolling: forall b c,
   cequiv
