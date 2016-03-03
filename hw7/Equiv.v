@@ -351,20 +351,29 @@ Theorem IFB_false: forall b c1 c2,
     (IFB b THEN c1 ELSE c2 FI)
     c2.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros b c1 c2 Hb. split; intros H.
+  (* -> *)
+  + inversion H. subst.
+    (* suppose eval b = true *)
+    - unfold bequiv in Hb. simpl in Hb. rewrite Hb in H5. inversion H5.
+    (* suppose eval b = false *)
+    - subst. apply H6.
+  (* <- *)
+  + apply E_IfFalse; try assumption.
+    unfold bequiv in Hb. simpl in Hb. rewrite Hb. reflexivity.
+Qed.    
 
+    
 (** **** Exercise: 3 stars (swap_if_branches)  *)
 (** Show that we can swap the branches of an IF by negating its
     condition *)
-
 Theorem swap_if_branches: forall b e1 e2,
   cequiv
     (IFB b THEN e1 ELSE e2 FI)
     (IFB BNot b THEN e2 ELSE e1 FI).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  
+
 
 (** For [WHILE] loops, we can give a similar pair of theorems.  A loop
     whose guard is equivalent to [BFalse] is equivalent to [SKIP],
