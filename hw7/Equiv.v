@@ -570,12 +570,13 @@ Theorem assign_aequiv : forall X e,
 Proof.
   intros X e Hx. unfold cequiv. intros. split; intros.
   (* -> *)
-  + inversion H. subst. unfold aequiv in Hx.
-Abort. (* todo: finish this one: missing some concepts ?? *)   
+  + inversion H. subst. unfold aequiv in Hx. admit.
+  (* <- *)
+  + unfold aequiv in Hx. 
+    (*assert (st = st'). admit. subst. apply E_Skip.*)
+Abort. (* todo: finish this one: missing some concepts, how do you use constructors? ?? *)   
     
     
-  
-
 (* ####################################################### *)
 (** * Properties of Behavioral Equivalence *)
 
