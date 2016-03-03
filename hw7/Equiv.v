@@ -571,6 +571,7 @@ Proof.
   intros X e Hx. unfold cequiv. intros. split; intros.
   (* -> *)
   + inversion H. subst. unfold aequiv in Hx.
+Abort. (* todo: finish this one: missing some concepts ?? *)   
     
     
   
