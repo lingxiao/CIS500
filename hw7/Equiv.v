@@ -536,7 +536,6 @@ Proof.
     where the functional-extensionality axiom introduced in the
     [Logic] chapter often comes in handy.  Here are an example and an
     exercise. *)
-
 Theorem identity_assignment : forall (X:id),
   cequiv
     (X ::= AId X)
@@ -558,13 +557,23 @@ Proof.
        constructor. reflexivity.
 Qed.
 
+Check (aequiv). (* aexp -> aexp -> Prop *)
+
 (** **** Exercise: 2 stars, recommended (assign_aequiv)  *)
+
+(* if calling a variable is equivalent to some express e,
+   then assigning some expression e to that variable is the same as SKIP
+*)
 Theorem assign_aequiv : forall X e,
   aequiv (AId X) e ->
   cequiv SKIP (X ::= e).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros X e Hx. unfold cequiv. intros. split; intros.
+  (* -> *)
+  + inversion H. subst. unfold aequiv in Hx.
+    
+    
+  
 
 (* ####################################################### *)
 (** * Properties of Behavioral Equivalence *)
