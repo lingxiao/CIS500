@@ -83,8 +83,6 @@ Definition cequiv (c1 c2 : com) : Prop :=
   forall (st st' : state),
     (c1 / st \\ st') <-> (c2 / st \\ st').
 
-
-
 (** **** Exercise: 2 stars (equiv_classes)  *)
 
 (** Given the following programs, group together those that are
@@ -99,11 +97,30 @@ Definition cequiv (c1 c2 : com) : Prop :=
 
     Write down your answer below in the definition of [equiv_classes]. *)
 
+(*
+  while ~ (x < 0) do
+     x = x + 1
+  end
+  * infinite loop forall values of x 
+*)
 Definition prog_a : com :=
   WHILE BNot (BLe (AId X) (ANum 0)) DO
     X ::= APlus (AId X) (ANum 1)
   END.
 
+(*
+  if x = 0 then
+      x = x + 1
+      y = 1
+  else
+     y = 0
+  end
+  x = x - y
+  y = 0
+
+  * case: x = 0 . x = 1; y = 1 ==>  x = 0    ; y = 0
+  * case: x /= 0.        y = 0 ==>  x = x - 1; y = 0           
+*)
 Definition prog_b : com :=
   IFB BEq (AId X) (ANum 0) THEN
     X ::= APlus (AId X) (ANum 1);;
@@ -114,38 +131,75 @@ Definition prog_b : com :=
   X ::= AMinus (AId X) (AId Y);;
   Y ::= ANum 0.
 
+(* no change in state *)
 Definition prog_c : com :=
   SKIP.
 
+(* while ~ (x = 0) do
+      x = 1 + x * y
+   end
+  * Case x = 0 . no change in state
+  * case x /= 0. infinite loop. since even if y is 0, we have x = 1.
+ *)
 Definition prog_d : com :=
   WHILE BNot (BEq (AId X) (ANum 0)) DO
     X ::= APlus (AMult (AId X) (AId Y)) (ANum 1)
   END.
 
+(*
+  * y = 0
+*)
 Definition prog_e : com :=
   Y ::= ANum 0.
 
+(*
+  y = x + 1;
+  while ~ (x = y) do
+     y = x + 1
+  end
+  infinite loop
+*)
 Definition prog_f : com :=
   Y ::= APlus (AId X) (ANum 1);;
   WHILE BNot (BEq (AId X) (AId Y)) DO
     Y ::= APlus (AId X) (ANum 1)
   END.
 
+(*
+   infinite loop but no change in state
+*)
 Definition prog_g : com :=
   WHILE BTrue DO
     SKIP
   END.
 
+(*
+  while ~ (x = x) do
+     x = x + 1
+  end
+  * terminate immedately. no change in state
+*)
 Definition prog_h : com :=
   WHILE BNot (BEq (AId X) (AId X)) DO
     X ::= APlus (AId X) (ANum 1)
   END.
+
+(*
+   while ~ (x = y) do
+      x = y + 1
+   end.
+
+   * case X = x; Y = x - 1  ==>  X = x. Y = x.
+   * case X = x; Y < x - 1  ==>  X = x. Y = x.
+   * case X = x; Y >= x     ==>  infinite loop    
+*)
 
 Definition prog_i : com :=
   WHILE BNot (BEq (AId X) (AId Y)) DO
     X ::= APlus (AId Y) (ANum 1)
   END.
 
+(* TODO: finish this!! *)
 Definition equiv_classes : list (list com) :=
 (* FILL IN HERE *) admit.
 (** [] *)
@@ -155,6 +209,7 @@ Definition equiv_classes : list (list com) :=
 
 (** Here are some simple examples of equivalences of arithmetic
     and boolean expressions. *)
+
 
 Theorem aequiv_example:
   aequiv (AMinus (AId X) (AId X)) (ANum 0).
@@ -199,8 +254,15 @@ Theorem skip_right: forall c,
     (c;; SKIP)
     c.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros c st st'. split.
+  (* -> *)
+  + intros H. inversion H. subst. 
+    inversion H5. subst. apply H2.
+  (* <- *) 
+  + intros H. apply E_Seq with st'. apply H.
+    apply E_Skip.
+Qed.
+
 
 (** Similarly, here is a simple transformations that simplifies [IFB]
     commands: *)
@@ -361,6 +423,11 @@ Proof.
         prove [(WHILE b DO c END) / st \\ st'], the other cases of
         the induction are immediately contradictory. [] *)
 
+(* note: instructive to go over this proof by yourself
+         to see how to apply tactics in certain situations
+          
+         use [remember] to specialize induction to while loops 
+*)
 Lemma WHILE_true_nonterm : forall b c st st',
      bequiv b BTrue ->
      ~( (WHILE b DO c END) / st \\ st' ).
@@ -379,7 +446,8 @@ Proof.
     (* [rewrite] is able to instantiate the quantifier in [st] *)
     rewrite Hb in H. inversion H.
   - (* E_WhileLoop *) (* immediate from the IH *)
-    apply IHceval2. reflexivity.  Qed.
+    apply IHceval2. reflexivity.
+Qed.
 
 (** **** Exercise: 2 stars, optional (WHILE_true_nonterm_informal)  *)
 (** Explain what the lemma [WHILE_true_nonterm] means in English.
