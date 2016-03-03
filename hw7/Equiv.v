@@ -577,6 +577,7 @@ Proof.
     apply E_Ass. reflexivity. rewrite <- H0. reflexivity.
   (* <- *)
   + unfold aequiv in Hx. simpl in Hx. inversion H. subst.
+    (* make Hx specific *)
     assert (st X = aeval st e). apply Hx.
     assert (st = t_update st X (aeval st e)). rewrite <- H0.
     rewrite t_update_same. reflexivity. rewrite <- H1. apply E_Skip.
@@ -782,8 +783,10 @@ Theorem CIf_congruence : forall b b' c1 c1' c2 c2',
   bequiv b b' -> cequiv c1 c1' -> cequiv c2 c2' ->
   cequiv (IFB b THEN c1 ELSE c2 FI) (IFB b' THEN c1' ELSE c2' FI).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros. unfold cequiv. intros; split; intros.
+  (* -> *)
+  + unfold bequiv in H. inversion H2. subst.
+
 
 (** For example, here are two equivalent programs and a proof of their
     equivalence... *)
