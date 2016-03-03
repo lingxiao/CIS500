@@ -372,8 +372,24 @@ Theorem swap_if_branches: forall b e1 e2,
     (IFB b THEN e1 ELSE e2 FI)
     (IFB BNot b THEN e2 ELSE e1 FI).
 Proof.
-  
+  intros b e1 e2 st st'. split; intros H.
+  (* -> *) 
+  + inversion H. subst.
+      (* case true *)
+      - apply E_IfFalse. simpl. rewrite H5. reflexivity. apply H6.
+      (* case false *)
+      - apply E_IfTrue. simpl. rewrite H5. reflexivity. apply H6.
+  (* <- *)
+  + inversion H. subst.
+      (* case true *)
+      - apply E_IfFalse. simpl in H5. apply negb_true_iff in H5.
+        apply H5. apply H6.
+      (* case false *)
+      - subst. apply E_IfTrue. simpl in H5. apply negb_false_iff in H5.
+        apply H5. apply H6.
+ Qed.
 
+     
 
 (** For [WHILE] loops, we can give a similar pair of theorems.  A loop
     whose guard is equivalent to [BFalse] is equivalent to [SKIP],
