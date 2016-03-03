@@ -560,22 +560,27 @@ Qed.
 Check (aequiv). (* aexp -> aexp -> Prop *)
 
 (** **** Exercise: 2 stars, recommended (assign_aequiv)  *)
-
-(* if calling a variable is equivalent to some express e,
-   then assigning some expression e to that variable is the same as SKIP
-*)
 Theorem assign_aequiv : forall X e,
   aequiv (AId X) e ->
   cequiv SKIP (X ::= e).
 Proof.
   intros X e Hx. unfold cequiv. intros. split; intros.
   (* -> *)
-  + inversion H. subst. unfold aequiv in Hx. admit.
+  + inversion H. subst. unfold aequiv in Hx. simpl in Hx.
+     (* assert into usable form and prove*)
+    assert (st' = t_update st' X (aeval st' e)).
+    apply functional_extensionality. intros.
+    rewrite <- Hx. rewrite t_update_same. reflexivity.
+     (* now prove the original lemma *)
+    replace ( (X ::= e) / st' \\ st')
+    with ((X ::= e) / st' \\ t_update st' X (aeval st' e)).
+    apply E_Ass. reflexivity. rewrite <- H0. reflexivity.
   (* <- *)
-  + unfold aequiv in Hx. 
-    (*assert (st = st'). admit. subst. apply E_Skip.*)
-Abort. (* todo: finish this one: missing some concepts, how do you use constructors? ?? *)   
-    
+  + unfold aequiv in Hx. simpl in Hx. inversion H. subst.
+    assert (st X = aeval st e). apply Hx.
+    assert (st = t_update st X (aeval st e)). rewrite <- H0.
+    rewrite t_update_same. reflexivity. rewrite <- H1. apply E_Skip.
+Qed.    
     
 (* ####################################################### *)
 (** * Properties of Behavioral Equivalence *)
@@ -654,6 +659,7 @@ Proof.
 (** Less obviously, behavioral equivalence is also a _congruence_.
     That is, the equivalence of two subprograms implies the
     equivalence of the larger programs in which they are embedded:
+
               aequiv a1 a1'
       -----------------------------
       cequiv (i ::= a1) (i ::= a1')
@@ -689,7 +695,8 @@ Proof.
     rewrite Heqv. reflexivity.
   - (* <- *)
     inversion Hceval. subst. apply E_Ass.
-    rewrite Heqv. reflexivity.  Qed.
+    rewrite Heqv. reflexivity.
+Qed.
 
 (** The congruence property for loops is a little more interesting,
     since it requires induction.
