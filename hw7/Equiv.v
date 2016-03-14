@@ -200,7 +200,7 @@ Definition prog_i : com :=
   END.
 
 (* TODO: finish this!! *)
-Definition equiv_classes : list (list com) := Abort.
+Definition equiv_classes : list (list com) := admit.
 
 (** [] *)
 
@@ -277,7 +277,8 @@ Proof.
   - (* -> *)
     inversion H; subst. assumption. inversion H5.
   - (* <- *)
-    apply E_IfTrue. reflexivity. assumption.  Qed.
+    apply E_IfTrue. reflexivity. assumption.
+Qed.
 
 
 (** Of course, few programmers would be tempted to write a conditional
@@ -414,7 +415,8 @@ Proof.
     inversion H; subst.
     apply E_WhileEnd.
     rewrite Hb.
-    reflexivity.  Qed.
+    reflexivity.
+Qed.
 
 (** **** Exercise: 2 stars, advanced, optional (WHILE_false_informal)  *)
 (** Write an informal proof of [WHILE_false].
@@ -523,7 +525,8 @@ Proof.
       apply E_WhileLoop with (st' := st'0).
       assumption. assumption. assumption.
     + (* loop doesn't run *)
-      inversion H5; subst. apply E_WhileEnd. assumption.  Qed.
+      inversion H5; subst. apply E_WhileEnd. assumption.
+Qed.
 
 (** **** Exercise: 2 stars, optional (seq_assoc)  *)
 Theorem seq_assoc : forall c1 c2 c3,
@@ -778,28 +781,42 @@ Proof.
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
+
 (** **** Exercise: 3 stars (CIf_congruence)  *)
 Theorem CIf_congruence : forall b b' c1 c1' c2 c2',
   bequiv b b' -> cequiv c1 c1' -> cequiv c2 c2' ->
   cequiv (IFB b THEN c1 ELSE c2 FI) (IFB b' THEN c1' ELSE c2' FI).
 Proof.
-  intros. unfold cequiv. intros; split; intros.
+  intros b b' c1 c1' c2 c2' Hbe Hc1e Hc2e st st'. split; intros Hc.
+
   (* -> *)
-  + unfold bequiv in H.
-    assert (Hb : beval st b = beval st b'). apply H. clear H.
+  + inversion Hc; subst.
+      - (* case beval st b = true *)
+        apply E_IfTrue.
+        unfold bequiv in Hbe. rewrite <- Hbe. apply H4.
+        unfold cequiv in Hc1e. destruct (Hc1e st st') as [Hc1e1 Hc1e2].
+        apply Hc1e1. apply H5.
+     - (* case beval st b = false *)
+       apply E_IfFalse.
+       unfold bequiv in Hbe. rewrite <- Hbe. apply H4.
+       unfold cequiv in Hc2e. destruct (Hc2e st st') as [Hc2e1 Hc2e2].
+       apply Hc2e1. apply H5.       
+  (* <- *)
+  + inversion Hc; subst.
+      - (* cse beval st b' = true *)
+        apply E_IfTrue.
+        unfold bequiv in Hbe. rewrite Hbe. apply H4.
+        unfold cequiv in Hc1e. destruct (Hc1e st st') as [_ Hc1e2]. clear Hc1e.
+        apply Hc1e2. apply H5.
+      - (* case beval st b' = false*)
+        apply E_IfFalse. unfold bequiv in Hbe. rewrite Hbe. apply H4.
+        unfold cequiv in Hc2e. destruct (Hc2e st st') as [Hc2e1 Hc2e2].
+        apply Hc2e2. apply H5.               
+Qed.
     
-    
-    
-
-
-Abort.    
-    
-    
-
 
 (** For example, here are two equivalent programs and a proof of their
     equivalence... *)
-
 Example congruence_example:
   cequiv
     (* Program 1: *)
