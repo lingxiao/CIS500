@@ -788,7 +788,6 @@ Theorem CIf_congruence : forall b b' c1 c1' c2 c2',
   cequiv (IFB b THEN c1 ELSE c2 FI) (IFB b' THEN c1' ELSE c2' FI).
 Proof.
   intros b b' c1 c1' c2 c2' Hbe Hc1e Hc2e st st'. split; intros Hc.
-
   (* -> *)
   + inversion Hc; subst.
       - (* case beval st b = true *)
@@ -930,26 +929,26 @@ Fixpoint fold_constants_bexp (b : bexp) : bexp :=
   | BEq a1 a2  =>
       match (fold_constants_aexp a1, fold_constants_aexp a2) with
       | (ANum n1, ANum n2) => if beq_nat n1 n2 then BTrue else BFalse
-      | (a1', a2') => BEq a1' a2'
+      | (a1', a2')         => BEq a1' a2'
       end
   | BLe a1 a2  =>
       match (fold_constants_aexp a1, fold_constants_aexp a2) with
       | (ANum n1, ANum n2) => if leb n1 n2 then BTrue else BFalse
-      | (a1', a2') => BLe a1' a2'
+      | (a1', a2')         => BLe a1' a2'
       end
   | BNot b1  =>
       match (fold_constants_bexp b1) with
-      | BTrue => BFalse
+      | BTrue  => BFalse
       | BFalse => BTrue
-      | b1' => BNot b1'
+      | b1'    => BNot b1'
       end
   | BAnd b1 b2  =>
       match (fold_constants_bexp b1, fold_constants_bexp b2) with
-      | (BTrue, BTrue) => BTrue
-      | (BTrue, BFalse) => BFalse
-      | (BFalse, BTrue) => BFalse
+      | (BTrue, BTrue)   => BTrue
+      | (BTrue, BFalse)  => BFalse
+      | (BFalse, BTrue)  => BFalse
       | (BFalse, BFalse) => BFalse
-      | (b1', b2') => BAnd b1' b2'
+      | (b1', b2')       => BAnd b1' b2'
       end
   end.
 
@@ -971,24 +970,21 @@ Proof. reflexivity. Qed.
 
 Fixpoint fold_constants_com (c : com) : com :=
   match c with
-  | SKIP      =>
-      SKIP
-  | i ::= a  =>
-      CAss i (fold_constants_aexp a)
-  | c1 ;; c2  =>
-      (fold_constants_com c1) ;; (fold_constants_com c2)
+  | SKIP                     =>  SKIP
+  | i ::= a                  =>  CAss i (fold_constants_aexp a)
+  | c1 ;; c2                 =>  (fold_constants_com c1) ;; (fold_constants_com c2)
   | IFB b THEN c1 ELSE c2 FI =>
       match fold_constants_bexp b with
-      | BTrue => fold_constants_com c1
+      | BTrue  => fold_constants_com c1
       | BFalse => fold_constants_com c2
-      | b' => IFB b' THEN fold_constants_com c1
+      | b'     => IFB b' THEN fold_constants_com c1
                      ELSE fold_constants_com c2 FI
       end
-  | WHILE b DO c END =>
+  | WHILE b DO c END         =>
       match fold_constants_bexp b with
-      | BTrue => WHILE BTrue DO SKIP END
+      | BTrue  => WHILE BTrue DO SKIP END
       | BFalse => SKIP
-      | b' => WHILE b' DO (fold_constants_com c) END
+      | b'     => WHILE b' DO (fold_constants_com c) END
       end
   end.
 
