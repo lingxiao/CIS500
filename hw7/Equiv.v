@@ -200,8 +200,8 @@ Definition prog_i : com :=
   END.
 
 (* TODO: finish this!! *)
-Definition equiv_classes : list (list com) :=
-(* FILL IN HERE *) admit.
+Definition equiv_classes : list (list com) := Abort.
+
 (** [] *)
 
 (* ####################################################### *)
@@ -785,7 +785,16 @@ Theorem CIf_congruence : forall b b' c1 c1' c2 c2',
 Proof.
   intros. unfold cequiv. intros; split; intros.
   (* -> *)
-  + unfold bequiv in H. inversion H2. subst.
+  + unfold bequiv in H.
+    assert (Hb : beval st b = beval st b'). apply H. clear H.
+    
+    
+    
+
+
+Abort.    
+    
+    
 
 
 (** For example, here are two equivalent programs and a proof of their
