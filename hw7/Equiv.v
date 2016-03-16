@@ -118,8 +118,8 @@ Definition prog_a : com :=
   x = x - y
   y = 0
 
-  * case: x = 0 . x = 1; y = 1 ==>  x = 0    ; y = 0
-  * case: x /= 0.        y = 0 ==>  x = x - 1; y = 0           
+  * case: x = 0 . x = 1; y = 1 ==>  X = 0  ; Y = 0
+  * case: x /= 0.        y = 0 ==>  X = x  ; Y = 0           
 *)
 Definition prog_b : com :=
   IFB BEq (AId X) (ANum 0) THEN
@@ -199,10 +199,13 @@ Definition prog_i : com :=
     X ::= APlus (AId Y) (ANum 1)
   END.
 
-(* TODO: finish this!! *)
-Definition equiv_classes : list (list com) := admit.
+(* TODO: check this!!
+   - so inf loop with skip is different than inf loop with nonskip?
+   - if we have y = 0 in both final states but nothing about x, what does that mean?
+ *)
+Definition equiv_classes : list (list com) :=
+  [[prog_a; prog_d]; [prog_f; prog_g]; [prog_b; prog_e]; [prog_c; prog_h]; [prog_i]].
 
-(** [] *)
 
 (* ####################################################### *)
 (** ** Examples *)
@@ -1377,8 +1380,6 @@ Proof.
 
 (** Using [var_not_used_in_aexp], formalize and prove a correct verson
     of [subst_equiv_property].
-   todo: do this one!!
-
 *)
 
 (* FILL IN HERE *)
@@ -1529,37 +1530,16 @@ Definition pXY :=
 Definition pYX :=
   HAVOC Y;; HAVOC X.
 
-(*
-  todo: check this one
-
-  No. Without loss of generality, suppose we start at the [st = empty_state]
-  in both [pXY] and [pYX]. [HAVOC Y] then assigns some random number [m] to
-  [Y], so finally the program state is
-     st' = [ X := n, Y := m].
-
-  In [pYX], [Havoc Y] assigns some [m'] to [Y] so that we are at
-  where [m = m'] or [m <> m'], then [HAVOC X] assigns some [n'] to [X]
-  where [n = n] or [n <> n']. so the final state is:
-     st'' = [ X := n', Y := m'].
-  But since it's possible to have [n <> n'] and/or [m <> m'], we could have:
-     st' <> st''
-  violating [cequiv], therefore pXY not equivalent pYX.
-
-Lemma update_permute:
-  forall (X : Type) (v1 v2 : X) (x1 x2 : id) (m : partial_map X),
-  x2 <> x1 -> update (update m x2 v2) x1 v1 = update (update m x1 v1) x2 v2.
-Proof. Admitted.
-
- *)
-
 Check (@update).
+Check (@t_update).
 
 Lemma updateXY_swap: forall st (n1 : id) n2,
   update (update st X n1) Y n2 = update (update st Y n2) X n1.
-Proof. Admitted.
-(*
-  intros. apply functional_extensionality. intros.
-  apply update_permute. unfold not. intros contra. inversion contra.  Qed.*)
+Proof.
+  intros. apply functional_extensionality; intros.
+  unfold update. rewrite t_update_permute. reflexivity.
+  admit.
+Qed.  
 
 
 (** If you think they are equivalent, prove it. If you think they are
@@ -1569,7 +1549,7 @@ Theorem pXY_cequiv_pYX :
 Proof.
   left. unfold pXY, pYX, cequiv. split; intros.
   (* -> *)
-  + inversion H; subst. inversion H2; subst. inversion H5; subst.
+  + inversion H; inversion H2; inversion H5; subst.
     apply (E_Seq (HAVOC Y) (HAVOC X) st st'0 st').
       constructor. 
 Abort.  	 (* todo: finish this one!!!! *)
