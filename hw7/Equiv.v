@@ -1545,14 +1545,35 @@ Definition pYX :=
      st' <> st''
   violating [cequiv], therefore pXY not equivalent pYX.
 
-*)
+Lemma update_permute:
+  forall (X : Type) (v1 v2 : X) (x1 x2 : id) (m : partial_map X),
+  x2 <> x1 -> update (update m x2 v2) x1 v1 = update (update m x1 v1) x2 v2.
+Proof. Admitted.
+
+ *)
+
+Check (@update).
+
+Lemma updateXY_swap: forall st (n1 : id) n2,
+  update (update st X n1) Y n2 = update (update st Y n2) X n1.
+Proof. Admitted.
+(*
+  intros. apply functional_extensionality. intros.
+  apply update_permute. unfold not. intros contra. inversion contra.  Qed.*)
+
 
 (** If you think they are equivalent, prove it. If you think they are
     not, prove that. *)
 Theorem pXY_cequiv_pYX :
   cequiv pXY pYX \/ ~cequiv pXY pYX.
-Proof. (* FILL IN HERE *) Admitted.
-(** [] *)
+Proof.
+  left. unfold pXY, pYX, cequiv. split; intros.
+  (* -> *)
+  + inversion H; subst. inversion H2; subst. inversion H5; subst.
+    apply (E_Seq (HAVOC Y) (HAVOC X) st st'0 st').
+      constructor. 
+Abort.  	 (* todo: finish this one!!!! *)
+
 
 (** **** Exercise: 4 stars, optional (havoc_copy)  *)
 (** Are the following two programs equivalent? *)
