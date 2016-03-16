@@ -1156,7 +1156,11 @@ Proof.
 (** [] *)
 
 (** **** Exercise: 3 stars (fold_constants_com_sound)  *)
-(** Complete the [WHILE] case of the following proof. *)
+(** Complete the [WHILE] case of the following proof.
+
+Theorem CWhile_congruence : forall b1 b1’ c1 c1’,
+       bequiv b1 b1’ -> cequiv c1 c1’ -> cequiv (WHILE b1 DO c1 END) (WHILE b1’ DO c1’ END).
+*)
 
 Theorem fold_constants_com_sound :
   ctrans_sound fold_constants_com.
@@ -1180,8 +1184,11 @@ Proof.
       apply trans_cequiv with c2; try assumption.
       apply IFB_false; assumption.
   - (* WHILE *)
-    (* FILL IN HERE *) Admitted.
-(** [] *)
+    (* make the matching case easier *)
+    assert (bequiv b (fold_constants_bexp b)). { apply fold_constants_bexp_sound. }
+    remember (fold_constants_bexp b) as b'. destruct b'.
+      + apply CWhile_congruence. apply H.         
+Abort.  (* todo: finish this one!! *)
 
 (* ########################################################## *)
 (** *** Soundness of (0 + n) Elimination, Redux *)
@@ -1251,11 +1258,15 @@ Fixpoint subst_aexp (i : id) (u : aexp) (a : aexp) : aexp :=
   match a with
   | ANum n       => ANum n
   | AId i'       => if beq_id i i' then u else AId i'
-  | APlus a1 a2  => APlus (subst_aexp i u a1) (subst_aexp i u a2)
+  | APlus a1 a2  => APlus  (subst_aexp i u a1) (subst_aexp i u a2)
   | AMinus a1 a2 => AMinus (subst_aexp i u a1) (subst_aexp i u a2)
-  | AMult a1 a2  => AMult (subst_aexp i u a1) (subst_aexp i u a2)
+  | AMult a1 a2  => AMult  (subst_aexp i u a1) (subst_aexp i u a2)
   end.
 
+(*
+  subst_aexp X (42 + 53) (Y + X) = Y + (42 + 53)
+  that is we let x = 42 + 53
+*)
 Example subst_aexp_ex :
   subst_aexp X (APlus (ANum 42) (ANum 53)) (APlus (AId Y) (AId X)) =
   (APlus (AId Y) (APlus (ANum 42) (ANum 53))).
@@ -1264,7 +1275,6 @@ Proof. reflexivity.  Qed.
 (** And here is the property we are interested in, expressing the
     claim that commands [c1] and [c2] as described above are
     always equivalent.  *)
-
 Definition subst_equiv_property := forall i1 i2 a1 a2,
   cequiv (i1 ::= a1;; i2 ::= a2)
          (i1 ::= a1;; i2 ::= subst_aexp i1 a1 a2).
@@ -1366,7 +1376,10 @@ Proof.
   (* FILL IN HERE *) Admitted.
 
 (** Using [var_not_used_in_aexp], formalize and prove a correct verson
-    of [subst_equiv_property]. *)
+    of [subst_equiv_property].
+   todo: do this one!!
+
+*)
 
 (* FILL IN HERE *)
 (** [] *)
@@ -1451,43 +1464,46 @@ Notation "'HAVOC' l" := (CHavoc l) (at level 60).
    semantics. What rule(s) must be added to the definition of [ceval]
    to formalize the behavior of the [HAVOC] command? *)
 
+Check (CHavoc).
+
 Reserved Notation "c1 '/' st '\\' st'" (at level 40, st at level 39).
 
 Inductive ceval : com -> state -> state -> Prop :=
-  | E_Skip : forall st : state, SKIP / st \\ st
-  | E_Ass : forall (st : state) (a1 : aexp) (n : nat) (X : id),
-            aeval st a1 = n -> (X ::= a1) / st \\ t_update st X n
-  | E_Seq : forall (c1 c2 : com) (st st' st'' : state),
-            c1 / st \\ st' -> c2 / st' \\ st'' -> (c1 ;; c2) / st \\ st''
-  | E_IfTrue : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
-               beval st b1 = true ->
-               c1 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
-  | E_IfFalse : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
-                beval st b1 = false ->
-                c2 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
-  | E_WhileEnd : forall (b1 : bexp) (st : state) (c1 : com),
-                 beval st b1 = false -> (WHILE b1 DO c1 END) / st \\ st
+  | E_Skip      : forall st : state, SKIP / st \\ st
+  | E_Ass       : forall (st : state) (a1 : aexp) (n : nat) (X : id),
+                  aeval st a1 = n -> (X ::= a1) / st \\ t_update st X n
+  | E_Seq       : forall (c1 c2 : com) (st st' st'' : state),
+                  c1 / st \\ st' -> c2 / st' \\ st'' -> (c1 ;; c2) / st \\ st''
+  | E_IfTrue    : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
+                  beval st b1 = true ->
+                  c1 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
+  | E_IfFalse   : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
+                  beval st b1 = false ->
+                  c2 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
+  | E_WhileEnd  : forall (b1 : bexp) (st : state) (c1 : com),
+                  beval st b1 = false -> (WHILE b1 DO c1 END) / st \\ st
   | E_WhileLoop : forall (st st' st'' : state) (b1 : bexp) (c1 : com),
                   beval st b1 = true ->
                   c1 / st \\ st' ->
                   (WHILE b1 DO c1 END) / st' \\ st'' ->
                   (WHILE b1 DO c1 END) / st \\ st''
-(* FILL IN HERE *)
-
+  | E_Havoc     : forall (st st' : state) (X : id),
+                  CHavoc X / st \\ st'
   where "c1 '/' st '\\' st'" := (ceval c1 st st').
 
 (** As a sanity check, the following claims should be provable for
     your definition: *)
 
 Example havoc_example1 : (HAVOC X) / empty_state \\ t_update empty_state X 0.
-Proof.
-(* FILL IN HERE *) Admitted.
+Proof. apply E_Havoc. Qed.
 
 Example havoc_example2 :
   (SKIP;; HAVOC Z) / empty_state \\ t_update empty_state Z 42.
 Proof.
-(* FILL IN HERE *) Admitted.
-(** [] *)
+  apply (E_Seq SKIP (HAVOC Z) empty_state empty_state (t_update empty_state Z 42)).
+    - apply E_Skip.
+    - apply E_Havoc.
+Qed.
 
 (** Finally, we repeat the definition of command equivalence from above: *)
 
