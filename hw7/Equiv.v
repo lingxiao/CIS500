@@ -1529,10 +1529,26 @@ Definition pXY :=
 Definition pYX :=
   HAVOC Y;; HAVOC X.
 
+(*
+  todo: check this one
+
+  No. Without loss of generality, suppose we start at the [st = empty_state]
+  in both [pXY] and [pYX]. [HAVOC Y] then assigns some random number [m] to
+  [Y], so finally the program state is
+     st' = [ X := n, Y := m].
+
+  In [pYX], [Havoc Y] assigns some [m'] to [Y] so that we are at
+  where [m = m'] or [m <> m'], then [HAVOC X] assigns some [n'] to [X]
+  where [n = n] or [n <> n']. so the final state is:
+     st'' = [ X := n', Y := m'].
+  But since it's possible to have [n <> n'] and/or [m <> m'], we could have:
+     st' <> st''
+  violating [cequiv], therefore pXY not equivalent pYX.
+
+*)
+
 (** If you think they are equivalent, prove it. If you think they are
     not, prove that. *)
-
-
 Theorem pXY_cequiv_pYX :
   cequiv pXY pYX \/ ~cequiv pXY pYX.
 Proof. (* FILL IN HERE *) Admitted.
