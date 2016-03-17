@@ -199,12 +199,16 @@ Definition prog_i : com :=
     X ::= APlus (AId Y) (ANum 1)
   END.
 
-(* TODO: check this!!
+(* 
    - so inf loop with skip is different than inf loop with nonskip?
    - if we have y = 0 in both final states but nothing about x, what does that mean?
  *)
 Definition equiv_classes : list (list com) :=
-  [[prog_a; prog_d]; [prog_f; prog_g]; [prog_b; prog_e]; [prog_c; prog_h]; [prog_i]].
+  [[prog_a; prog_d];   (* never terminate on all inputs except x = 0  *)
+   [prog_f; prog_g];   (* never terminate on all inputs *)
+   [prog_b; prog_e];   (* x never changes, y = 0 *)
+   [prog_c; prog_h];   (* skip on all cases *)
+   [prog_i]].
 
 
 (* ####################################################### *)
@@ -1189,9 +1193,11 @@ Proof.
   - (* WHILE *)
     (* make the matching case easier *)
     assert (bequiv b (fold_constants_bexp b)). { apply fold_constants_bexp_sound. }
-    remember (fold_constants_bexp b) as b'. destruct b'.
-      + apply CWhile_congruence. apply H.         
-Abort.  (* todo: finish this one!! *)
+    destruct (fold_constants_bexp b) eqn:Hfold; try (apply CWhile_congruence; assumption).
+      + apply WHILE_true. apply H.
+      + apply WHILE_false. apply H.
+Qed.
+
 
 (* ########################################################## *)
 (** *** Soundness of (0 + n) Elimination, Redux *)
@@ -1549,11 +1555,12 @@ Theorem pXY_cequiv_pYX :
 Proof.
   left. unfold pXY, pYX, cequiv. split; intros.
   (* -> *)
-  + inversion H; inversion H2; inversion H5; subst.
-    apply (E_Seq (HAVOC Y) (HAVOC X) st st'0 st').
-      constructor. 
-Abort.  	 (* todo: finish this one!!!! *)
-
+   + inversion H; subst. apply (E_Seq (HAVOC Y) (HAVOC X) st st'0 st').
+     apply E_Havoc. apply E_Havoc.
+   (* <- *)
+   + inversion H; subst. apply (E_Seq (HAVOC X) (HAVOC Y) st st'0 st').
+     apply E_Havoc. apply E_Havoc.
+Qed.
 
 (** **** Exercise: 4 stars, optional (havoc_copy)  *)
 (** Are the following two programs equivalent? *)
