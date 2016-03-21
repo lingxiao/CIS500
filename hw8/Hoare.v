@@ -298,6 +298,8 @@ Proof.
   intros st st' Heval HP.
   apply H.  Qed.
 
+
+(* ta ask: what is this saying? *)
 Theorem hoare_pre_false : forall (P Q : Assertion) c,
   (forall st, ~(P st)) ->
   {{P}} c {{Q}}.
@@ -382,7 +384,7 @@ Proof.
     "edit" its text.  Instead, we can achieve the effect we want by
     evaluating [P] in an updated state: *)
 
-Definition assn_sub X a P : Assertion :=
+Definition assn_sub (X : id)  (a : aexp)  (P : Assertion) : Assertion :=
   fun (st : state) =>
     P (t_update st X (aeval st a)).
 
@@ -462,6 +464,14 @@ Proof.
        {{ 0 <= X /\ X <= 5 }}
    ...into formal statements (use the names [assn_sub_ex1] 
    and [assn_sub_ex2]) and use [hoare_asgn] to prove them. *)
+
+
+Theorem assn_sub_ex1 :
+  {{ (fun st => st X <= 5) [ X |-> (X + 1)] }}
+    (X ::= X + 1) {{ X <= 5 }}.
+Proof.
+  apply hoare_asgn.
+
 
 (* FILL IN HERE *)
 (** [] *)
