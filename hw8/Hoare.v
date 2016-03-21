@@ -495,7 +495,14 @@ Qed.
     [a], and your counterexample needs to exhibit an [a] for which 
     the rule doesn't work.) *)
 
-(* FILL IN HERE *)
+(*
+   todo: finish this one! 
+
+   We pick some a so that the assignment rule above is incorrect.
+   pick a so we have 
+
+
+*)
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (hoare_asgn_fwd)  *)
@@ -598,7 +605,8 @@ Theorem hoare_consequence_pre : forall (P P' Q : Assertion) c,
 Proof.
   intros P P' Q c Hhoare Himp.
   intros st st' Hc HP. apply (Hhoare st st').
-  assumption. apply Himp. assumption. Qed.
+  assumption. apply Himp. assumption.
+Qed.
 
 Theorem hoare_consequence_post : forall (P Q Q' : Assertion) c,
   {{P}} c {{Q'}} ->
