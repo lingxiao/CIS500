@@ -467,13 +467,19 @@ Proof.
 
 
 Theorem assn_sub_ex1 :
-  {{ (fun st => st X <= 5) [ X |-> (X + 1)] }}
-    (X ::= X + 1) {{ X <= 5 }}.
+  {{ (fun st => st X <= 5) [ X |-> APlus (AId X) (ANum 1)] }}
+    (X ::= APlus (AId X) (ANum 1)) {{ fun st => st X <= 5 }}.
 Proof.
   apply hoare_asgn.
+Qed.
 
+Theorem assn_sub_ex2 :
+  {{ (fun st => 0 <= st X /\ st X <= 5) [X |-> ANum 3 ] }} (X ::= ANum 3)
+  {{  fun st => 0 <= st X /\ st X <= 5 }}. 
+Proof.
+  apply hoare_asgn.
+Qed.  
 
-(* FILL IN HERE *)
 (** [] *)
 
 (** **** Exercise: 2 stars (hoare_asgn_wrong)  *)
