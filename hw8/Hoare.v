@@ -125,7 +125,6 @@ Definition as6 : Assertion := fun st => False.
   
    as6 : the current state of program is false
 
-
 *)
 
 (* FILL IN HERE *)
@@ -142,9 +141,12 @@ End ExAssertions.
     simplifying conventions: we'll drop the initial [fun st =>], and
     we'll write just [X] to mean [st X].  Thus, instead of writing *)
 (**
-      fun st => (st Z) * (st Z) <= m /\
+
+    fun st => (st Z) * (st Z) <= m /\
                 ~ ((S (st Z)) * (S (st Z)) <= m)
-    we'll write just
+
+      we'll write just
+
       Z * Z <= m /\ ~((S Z) * (S Z) <= m).
 *)
 
@@ -224,15 +226,25 @@ Notation "{{ P }}  c  {{ Q }}" :=
    6) {{True}}
       c
       {{(Z * Z) <= m /\ ~ (((S Z) * (S Z)) <= m)}}
-]] 
+]]
+
+
+   1) given a True precondition, executing c assigns value 5 to variable X
+
+   2) given X = m, exeuting c incrs X by 5
+
+   3) given X <= Y, executing c reverses the inequality
+   
+   4) given a True precondition, executing c results in a False post condition
+
+   5) skipped
+   
+   6) given a true precondition, executing c results in a final state where
+
+     Z^2 <= m and (Z+1)^2 > m
 *)
 
-
 (** [] *)
-
-
-
-
 
 
 
@@ -262,6 +274,10 @@ Notation "{{ P }}  c  {{ Q }}" :=
    9) {{X = 1}}
       WHILE X <> 0 DO X ::= X + 1 END
       {{X = 100}}
+
+   valid:  1, 2, 3, 6, 8
+
+  toask: what happens when [c] diverges?
 
 *)
 (** [] *)
