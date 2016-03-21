@@ -107,6 +107,27 @@ Definition as4 : Assertion :=
 Definition as5 : Assertion := fun st => True.
 Definition as6 : Assertion := fun st => False.
 
+(*
+   as1 : in the current state, there is a variable X in memory
+         and its value is 3
+
+   as2 : in the current state, there are variables X and Y 
+         in memory and value of X <= value of Y
+
+   as3 : in current state, we have X and Y in memory,
+         the value of X is 3, and X <= Y
+  
+   as4 : in current state, the value of Z^2 <= X and
+         not ((Z+1)^2 <= X), or in other words:
+                (Z+1)^2 > X
+   
+   as5 : the current state of program is True
+  
+   as6 : the current state of program is false
+
+
+*)
+
 (* FILL IN HERE *)
 
 End ExAssertions.
