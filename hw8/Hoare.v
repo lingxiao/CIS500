@@ -802,7 +802,6 @@ Proof.
 Qed.
 
 
-
 (** [] *)
 
 (* ####################################################### *)
@@ -897,8 +896,9 @@ Example hoare_asgn_example4 :
   {{fun st => True}} (X ::= (ANum 1);; Y ::= (ANum 2))
   {{fun st => st X = 1 /\ st Y = 2}}.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+admit.  
+
+  
 
 (** **** Exercise: 3 stars (swap_exercise)  *)
 (** Write an Imp program [c] that swaps the values of [X] and [Y] and
