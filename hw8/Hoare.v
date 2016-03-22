@@ -290,7 +290,7 @@ Notation "{{ P }}  c  {{ Q }}" :=
 (** To get us warmed up for what's coming, here are two simple
     facts about Hoare triples. *)
 
-Theorem hoare_post_true : forall (P Q : Assertion) c,
+Theorem hoare_post_true : forall (P Q : Assertion) (c : com),
   (forall st, Q st) ->
   {{P}} c {{Q}}.
 Proof.
@@ -684,7 +684,8 @@ Example hoare_asgn_example1' :
 Proof.
   eapply hoare_consequence_pre.
   apply hoare_asgn.
-  intros st H.  reflexivity.  Qed.
+  intros st H.  reflexivity.
+Qed.
 
 (** In general, [eapply H] tactic works just like [apply H] except
     that, instead of failing if unifying the goal with the conclusion
@@ -715,8 +716,9 @@ Proof.
     the way we've put some aside to be done later, and we have not
     finished those.)  Trying to close the proof with [Qed] gives an
     error. *)
-
 Abort.
+
+
 
 (** An additional constraint is that existential variables cannot be
     instantiated with terms containing ordinary variables that did not
@@ -774,8 +776,33 @@ Qed.
    ...into formal statements (name them [assn_sub_ex1'] and 
    [assn_sub_ex2']) and use [hoare_asgn] and [hoare_consequence_pre] 
    to prove them. *)
+Check (X ::= ANum 1).  (* com *) 
+Check (X). (* id *)
 
-(* FILL IN HERE *)
+(* Assertion := state -> Prop *)
+Example assn_sub_ex1' :
+  {{ fun st => st X + 1 <= 5 }}
+    (X ::= APlus (AId X) (ANum 1))
+  {{ fun st => st X <= 5 }}.
+Proof.
+  eapply hoare_consequence_pre.
+  apply hoare_asgn.
+  intros st H. apply H.
+Qed.  
+
+Example assn_sub_ex2' :
+  {{ fun st => 0 <= 3 /\ 3 <= 5 }}
+    (X ::= (ANum 3))
+  {{ fun st => 0 <= st X /\ st X <= 5 }}.
+Proof.
+  eapply hoare_consequence_pre.
+  apply hoare_asgn.
+  intros st H.
+  apply H.
+Qed.
+
+
+
 (** [] *)
 
 (* ####################################################### *)
