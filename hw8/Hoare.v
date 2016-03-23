@@ -1143,12 +1143,12 @@ Qed.
 Module If1.
 
 Inductive com : Type :=
-  | CSkip : com
-  | CAss : id -> aexp -> com
-  | CSeq : com -> com -> com
-  | CIf : bexp -> com -> com -> com
+  | CSkip  : com
+  | CAss   : id -> aexp -> com
+  | CSeq   : com -> com -> com
+  | CIf    : bexp -> com -> com -> com
   | CWhile : bexp -> com -> com
-  | CIf1 : bexp -> com -> com.
+  | CIf1   : bexp -> com -> com.
 
 Notation "'SKIP'" :=
   CSkip.
@@ -1170,19 +1170,19 @@ Notation "'IF1' b 'THEN' c 'FI'" :=
 Reserved Notation "c1 '/' st '\\' st'" (at level 40, st at level 39).
 
 Inductive ceval : com -> state -> state -> Prop :=
-  | E_Skip : forall st : state, SKIP / st \\ st
-  | E_Ass : forall (st : state) (a1 : aexp) (n : nat) (X : id),
-            aeval st a1 = n -> (X ::= a1) / st \\ t_update st X n
-  | E_Seq : forall (c1 c2 : com) (st st' st'' : state),
-            c1 / st \\ st' -> c2 / st' \\ st'' -> (c1 ;; c2) / st \\ st''
-  | E_IfTrue : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
-               beval st b1 = true ->
-               c1 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
-  | E_IfFalse : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
-                beval st b1 = false ->
-                c2 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
-  | E_WhileEnd : forall (b1 : bexp) (st : state) (c1 : com),
-                 beval st b1 = false -> (WHILE b1 DO c1 END) / st \\ st
+  | E_Skip      : forall st : state, SKIP / st \\ st
+  | E_Ass       : forall (st : state) (a1 : aexp) (n : nat) (X : id),
+                   aeval st a1 = n -> (X ::= a1) / st \\ t_update st X n
+  | E_Seq       : forall (c1 c2 : com) (st st' st'' : state),
+                  c1 / st \\ st' -> c2 / st' \\ st'' -> (c1 ;; c2) / st \\ st''
+  | E_IfTrue    : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
+                  beval st b1 = true ->
+                  c1 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
+  | E_IfFalse   : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
+                  beval st b1 = false ->
+                  c2 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
+  | E_WhileEnd  : forall (b1 : bexp) (st : state) (c1 : com),
+                  beval st b1 = false -> (WHILE b1 DO c1 END) / st \\ st
   | E_WhileLoop : forall (st st' st'' : state) (b1 : bexp) (c1 : com),
                   beval st b1 = true ->
                   c1 / st \\ st' ->
@@ -1209,7 +1209,13 @@ Notation "{{ P }}  c  {{ Q }}" := (hoare_triple P c Q)
     for one-sided conditionals. Try to come up with a rule that is
     both sound and as precise as possible. *)
 
-(* FILL IN HERE *)
+Theorem hoare_if1 : forall P Q b c,
+  {{ fun st => P st /\ bassn b st }}     c    {{ Q }} ->
+  {{ fun st => P st /\ ~ (bassn b st) }} SKIP {{ Q }} -> 
+  {{ P }} IF1 b THEN c FI {{ Q }}.
+Proof.
+  
+
 
 (** For full credit, prove formally [hoare_if1_good] that your rule is
     precise enough to show the following valid Hoare triple:
