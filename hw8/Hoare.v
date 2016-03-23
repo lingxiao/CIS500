@@ -1410,6 +1410,7 @@ The basic structure is given by _Hoare triples_ of the form:
                {{P /\ b}} c {{P}}
         -----------------------------------  (hoare_while)
         {{P}} WHILE b DO c END {{P /\ ~b}}
+
     The proposition [P] is called an _invariant_ of the loop.
 *)
 
@@ -1467,8 +1468,6 @@ Proof.
     exfalso. apply Hb; reflexivity.
     apply leb_iff_conv in Heqle. omega.
 Qed.
-
-
 
 
 
@@ -1637,12 +1636,12 @@ End RepeatExercise.
              ------------------------------ (hoare_asgn)
              {{Q [X |-> a]}} X::=a {{Q}}
 
-             --------------------  (hoare_skip)
+             --------------------           (hoare_skip)
              {{ P }} SKIP {{ P }}
 
                {{ P }} c1 {{ Q }}
                {{ Q }} c2 {{ R }}
-              ---------------------  (hoare_seq)
+              ---------------------         (hoare_seq)
               {{ P }} c1;;c2 {{ R }}
 
               {{P /\  b}} c1 {{Q}}
@@ -1657,7 +1656,7 @@ End RepeatExercise.
                 {{P'}} c {{Q'}}
                    P ->> P'
                    Q' ->> Q
-         -----------------------------   (hoare_consequence)
+         -----------------------------       (hoare_consequence)
                 {{P}} c {{Q}}
     In the next chapter, we'll see how these rules are used to prove
     that programs satisfy specifications of their behavior.
@@ -1677,10 +1676,10 @@ End RepeatExercise.
 Module Himp.
 
 Inductive com : Type :=
-  | CSkip : com
-  | CAsgn : id -> aexp -> com
-  | CSeq : com -> com -> com
-  | CIf : bexp -> com -> com -> com
+  | CSkip  : com
+  | CAsgn  : id -> aexp -> com
+  | CSeq   : com -> com -> com
+  | CIf    : bexp -> com -> com -> com
   | CWhile : bexp -> com -> com
   | CHavoc : id -> com.
 
@@ -1699,26 +1698,26 @@ Notation "'HAVOC' X" := (CHavoc X) (at level 60).
 Reserved Notation "c1 '/' st '\\' st'" (at level 40, st at level 39).
 
 Inductive ceval : com -> state -> state -> Prop :=
-  | E_Skip : forall st : state, SKIP / st \\ st
-  | E_Ass : forall (st : state) (a1 : aexp) (n : nat) (X : id),
-            aeval st a1 = n -> (X ::= a1) / st \\ t_update st X n
-  | E_Seq : forall (c1 c2 : com) (st st' st'' : state),
-            c1 / st \\ st' -> c2 / st' \\ st'' -> (c1 ;; c2) / st \\ st''
-  | E_IfTrue : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
-               beval st b1 = true ->
-               c1 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
-  | E_IfFalse : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
-                beval st b1 = false ->
-                c2 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
-  | E_WhileEnd : forall (b1 : bexp) (st : state) (c1 : com),
-                 beval st b1 = false -> (WHILE b1 DO c1 END) / st \\ st
+  | E_Skip      : forall st : state, SKIP / st \\ st
+  | E_Ass       : forall (st : state) (a1 : aexp) (n : nat) (X : id),
+                  aeval st a1 = n -> (X ::= a1) / st \\ t_update st X n
+  | E_Seq       : forall (c1 c2 : com) (st st' st'' : state),
+                  c1 / st \\ st' -> c2 / st' \\ st'' -> (c1 ;; c2) / st \\ st''
+  | E_IfTrue    : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
+                  beval st b1 = true ->
+                  c1 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
+  | E_IfFalse   : forall (st st' : state) (b1 : bexp) (c1 c2 : com),
+                  beval st b1 = false ->
+                  c2 / st \\ st' -> (IFB b1 THEN c1 ELSE c2 FI) / st \\ st'
+  | E_WhileEnd  : forall (b1 : bexp) (st : state) (c1 : com),
+                  beval st b1 = false -> (WHILE b1 DO c1 END) / st \\ st
   | E_WhileLoop : forall (st st' st'' : state) (b1 : bexp) (c1 : com),
                   beval st b1 = true ->
                   c1 / st \\ st' ->
                   (WHILE b1 DO c1 END) / st' \\ st'' ->
                   (WHILE b1 DO c1 END) / st \\ st''
-  | E_Havoc : forall (st : state) (X : id) (n : nat),
-              (HAVOC X) / st \\ t_update st X n
+  | E_Havoc     : forall (st : state) (X : id) (n : nat),
+                  (HAVOC X) / st \\ t_update st X n
 
   where "c1 '/' st '\\' st'" := (ceval c1 st st').
 
