@@ -1282,8 +1282,23 @@ Lemma hoare_if1_good :
   {{ fun st => st X = st Z }}.
 Proof.
   apply hoare_if1.
-  + 
+  + eapply hoare_consequence_pre.
+      - apply hoare_asgn.
+      - unfold bassn, assn_sub, assert_implies, t_update; simpl.
+        intros st [H1 H2]. apply H1.
+  + eapply hoare_consequence_pre.
+      - apply hoare_skip.
+      - unfold bassn, assn_sub, assert_implies, t_update; simpl.
+        intros st [H1 H2]. unfold negb in H2.
+        destruct (st Y).
+          * rewrite <- H1. omega.
+          * simpl in H2. destruct H2. reflexivity.
+Qed.
+        
 
+        
+
+    
 End If1.
 (** [] *)
 
