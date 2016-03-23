@@ -890,13 +890,28 @@ Qed.
                    {{ X = 1 /\ 2 = 2 }}
     Y ::= 2
                    {{ X = 1 /\ Y = 2 }}
-*)
+
+    in class exercise: 
+
+    { X = m }
+    Z := 0
+   
+
+ *)
 
 Example hoare_asgn_example4 :
   {{fun st => True}} (X ::= (ANum 1);; Y ::= (ANum 2))
   {{fun st => st X = 1 /\ st Y = 2}}.
 Proof.
-admit.  
+  eapply hoare_seq.
+  (* Y ::= 2 *)
+  - apply hoare_asgn.
+  (* X ::= 3 *)
+  - eapply hoare_consequence_pre. apply hoare_asgn.
+    intros st H. unfold assn_sub; simpl. split.
+      * reflexivity.
+      * reflexivity.
+Qed.
 
   
 
