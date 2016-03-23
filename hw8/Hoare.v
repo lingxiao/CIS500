@@ -975,7 +975,7 @@ Proof.
   + eapply hoare_consequence_pre.
       - apply hoare_asgn.
       - intros st H. unfold assn_sub; simpl.
-Abort.
+Abort. (* not provable by construction *)
 
 
 (** [] *)
@@ -1102,7 +1102,23 @@ Theorem if_minus_plus :
   FI
   {{fun st => st Y = st X + st Z}}.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply hoare_if.
+  (* then *)
+  + eapply hoare_consequence_pre.
+      - apply hoare_asgn.
+      - unfold bassn, assn_sub, t_update, assert_implies; simpl.
+        (* Lemma le_plus_minus_r n m : n <= m -> n + (m - n) = m. *)
+        intros st [H1 H2]. apply le_plus_minus. apply leb_iff in H2.
+        apply H2.
+  (* else *)
+  + eapply hoare_consequence_pre.
+      - apply hoare_asgn.
+      - unfold bassn, assn_sub, t_update, assert_implies; simpl.
+        intros. reflexivity.
+Qed.
+  
+  
+
 
 (* ####################################################### *)
 (** *** Exercise: One-sided conditionals *)
