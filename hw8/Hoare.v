@@ -1204,18 +1204,38 @@ Notation "{{ P }}  c  {{ Q }}" := (hoare_triple P c Q)
                                   (at level 90, c at next level)
                                   : hoare_spec_scope.
 
+Definition bassn b : Assertion :=
+  fun st => (beval st b = true).
+
+(** A couple of useful facts about [bassn]: *)
+
+Lemma bexp_eval_true : forall b st,
+  beval st b = true -> (bassn b) st.
+Proof.
+  intros b st Hbe.
+  unfold bassn. assumption.  Qed.
+
+Lemma bexp_eval_false : forall b st,
+  beval st b = false -> ~ ((bassn b) st).
+Proof.
+  intros b st Hbe contra.
+  unfold bassn in contra.
+  rewrite -> contra in Hbe. inversion Hbe.  Qed.
+
+
 (** Finally, we (i.e., you) need to state and prove a theorem,
     [hoare_if1], that expresses an appropriate Hoare logic proof rule
     for one-sided conditionals. Try to come up with a rule that is
     both sound and as precise as possible. *)
 
 Theorem hoare_if1 : forall P Q b c,
-  {{ fun st => P st /\ bassn b st }}     c    {{ Q }} ->
-  {{ fun st => P st /\ ~ (bassn b st) }} SKIP {{ Q }} -> 
+  {{ fun st => P st /\ bassn b st }}     c   {{ Q }} ->
+  {{ fun st => P st /\ ~ bassn b st }} SKIP  {{ Q }} -> 
   {{ P }} IF1 b THEN c FI {{ Q }}.
-Proof.
-  
-
+Proof. 
+  intros P Q b c Ht Hf st st' Hexp Hp.
+  inversion Hexp.
+Qed.
 
 (** For full credit, prove formally [hoare_if1_good] that your rule is
     precise enough to show the following valid Hoare triple:
@@ -1226,18 +1246,43 @@ Proof.
   {{ X = Z }}
 *)
 
+(* pasted from other modules *)
+Theorem hoare_asgn : forall Q X a,
+  {{Q [X |-> a]}} (X ::= a) {{Q}}.
+Proof.
+  unfold hoare_triple.
+  intros Q X a st st' HE HQ.
+  inversion HE. subst.
+  unfold assn_sub in HQ. assumption.  Qed.
+
+Theorem hoare_consequence_pre : forall (P P' Q : Assertion) c,
+  {{P'}} c {{Q}} ->
+  P ->> P' ->
+  {{P}} c {{Q}}.
+Proof.
+  intros P P' Q c Hhoare Himp.
+  intros st st' Hc HP. apply (Hhoare st st'). 
+  assumption. apply Himp. assumption. Qed.
+
+
+Theorem hoare_skip : forall P,
+     {{P}} SKIP {{P}}.
+Proof.
+  intros P st st' H HP. inversion H. subst.
+  assumption.  Qed.
+
 (** Hint: Your proof of this triple may need to use the other proof
     rules also. Because we're working in a separate module, you'll
     need to copy here the rules you find necessary. *)
-
-
 Lemma hoare_if1_good :
   {{ fun st => st X + st Y = st Z }}
   IF1 BNot (BEq (AId Y) (ANum 0)) THEN
     X ::= APlus (AId X) (AId Y)
   FI
   {{ fun st => st X = st Z }}.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  apply hoare_if1.
+  + 
 
 End If1.
 (** [] *)
