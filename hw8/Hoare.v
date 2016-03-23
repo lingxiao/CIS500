@@ -953,14 +953,31 @@ Qed.
 *)
 
 (*
+  executing the program leads to this state:
 
-   
+    (t_update (t_update st X 3) Y (aeval (t_update st X 3) a)) Y = n
 
-
-
-
-
+  Suppose a was the expression [AId X], then
+  [ aeval (update st X 3) a ] evaluates down to [ANum 3].
+  the running the code [update (...) Y (ANum 3))] updates Y to 3,
+  which may not equal n for all n.  
 *)
+
+Check (@t_update).
+
+Theorem hoarestat1 : forall (a : aexp) (n : nat),
+  {{fun st => aeval st a = n}}
+    (X ::= (ANum 3);; Y ::= a)
+  {{fun st => st Y = n}}.
+Proof.  
+  intros. eapply hoare_seq.
+  + apply hoare_asgn.
+  + eapply hoare_consequence_pre.
+      - apply hoare_asgn.
+      - intros st H. unfold assn_sub; simpl.
+Abort.
+
+
 (** [] *)
 
 (* ####################################################### *)
