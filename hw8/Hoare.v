@@ -1,5 +1,6 @@
 (** * Hoare: Hoare Logic, Part I *)
 
+
 Require Import Coq.Bool.Bool.
 Require Import Coq.Arith.Arith.
 Require Import Coq.Arith.EqNat.
@@ -899,6 +900,7 @@ Qed.
 
  *)
 
+(* Note: P [ X |-> a ] := (assn_sub X a P) (at level 10). *)
 Example hoare_asgn_example4 :
   {{fun st => True}} (X ::= (ANum 1);; Y ::= (ANum 2))
   {{fun st => st X = 1 /\ st Y = 2}}.
@@ -914,7 +916,6 @@ Proof.
 Qed.
 
   
-
 (** **** Exercise: 3 stars (swap_exercise)  *)
 (** Write an Imp program [c] that swaps the values of [X] and [Y] and
     show that it satisfies the following specification:
@@ -922,15 +923,26 @@ Qed.
 *)
 
 Definition swap_program : com :=
-  (* FILL IN HERE *) admit.
+  Z ::= (AId X) ;; X ::= (AId Y) ;; Y ::= (AId Z).
+
 
 Theorem swap_exercise :
   {{fun st => st X <= st Y}}
   swap_program
   {{fun st => st Y <= st X}}.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  eapply hoare_seq.
+  (* consider ( X ::= Y ; Y ::= Z) *)
+  + eapply hoare_seq.
+      (* consider (Y ::= Z) *)
+      - apply hoare_asgn.
+      (* consider (X ::= Y) *)
+      - apply hoare_asgn.
+  + eapply hoare_consequence_pre.
+      - apply hoare_asgn.
+      - intros st H. unfold assn_sub; simpl.
+        unfold t_update; simpl. apply H.
+Qed.      
 
 (** **** Exercise: 3 stars (hoarestate1)  *)
 (** Explain why the following proposition can't be proven:
@@ -940,7 +952,15 @@ Proof.
          {{fun st => st Y = n}}.
 *)
 
-(* FILL IN HERE *)
+(*
+
+   
+
+
+
+
+
+*)
 (** [] *)
 
 (* ####################################################### *)
