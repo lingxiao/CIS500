@@ -10,8 +10,6 @@ Require Import Maps.
 Require Import Imp.
 Require Import Hoare.
 
-
-
 (* ####################################################### *)
 (** * Decorated Programs *)
 
@@ -28,7 +26,7 @@ Require Import Hoare.
       {{ True }} ->>
       {{ m = m }}
     X ::= m;;
-      {{ X = m }} ->>
+      {{ X = m }} ->>6
       {{ X = m /\ p = p }}
     Z ::= p;
       {{ X = m /\ Z = p }} ->>

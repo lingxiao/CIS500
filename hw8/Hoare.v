@@ -443,16 +443,17 @@ Proof.
   unfold hoare_triple.
   intros Q X a st st' HE HQ.
   inversion HE. subst.
-  unfold assn_sub in HQ. assumption.  Qed.
+  unfold assn_sub in HQ. assumption.
+Qed.
 
 (** Here's a first formal proof using this rule. *)
-
 Example assn_sub_example :
   {{(fun st => st X = 3) [X |-> ANum 3]}}
   (X ::= (ANum 3))
   {{fun st => st X = 3}}.
 Proof.
-  apply hoare_asgn.  Qed.
+  apply hoare_asgn.
+Qed.
 
 (** **** Exercise: 2 stars (hoare_asgn_examples)  *)
 (** Translate these informal Hoare triples...
@@ -467,14 +468,14 @@ Proof.
    and [assn_sub_ex2]) and use [hoare_asgn] to prove them. *)
 
 
-Theorem assn_sub_ex1 :
+Example assn_sub_ex1 :
   {{ (fun st => st X <= 5) [ X |-> APlus (AId X) (ANum 1)] }}
     (X ::= APlus (AId X) (ANum 1)) {{ fun st => st X <= 5 }}.
 Proof.
   apply hoare_asgn.
 Qed.
 
-Theorem assn_sub_ex2 :
+Example assn_sub_ex2 :
   {{ (fun st => 0 <= st X /\ st X <= 5) [X |-> ANum 3 ] }} (X ::= ANum 3)
   {{  fun st => 0 <= st X /\ st X <= 5 }}. 
 Proof.
@@ -496,12 +497,20 @@ Qed.
     [a], and your counterexample needs to exhibit an [a] for which 
     the rule doesn't work.) *)
 
+Example hoare_asgn_wrong : forall a,
+  {{ fun st => True }}
+    (X ::= APlus (AId X) (ANum 1))
+  {{ fun st => st X = a }}.
+Proof. Abort. (* cannot be proven *)
+  
+    
 (*
-   todo: finish this one! 
+   hoare_asgn_wrong is an example, informally, we pick [a =  X + 1] so we have:
 
-   We pick some a so that the assignment rule above is incorrect.
-   pick a so we have 
-
+       {{ True }} X ::= X + 1 {{ X = a }}
+   
+  Note this expression can be written down but cannot be proven,
+  since clearly the post condition is false since X cannot equal X + 1.
 
 *)
 (** [] *)
@@ -1052,8 +1061,8 @@ Theorem hoare_if : forall P Q b c1 c2,
   {{fun st => P st /\ ~(bassn b st)}} c2 {{Q}} ->
   {{P}} (IFB b THEN c1 ELSE c2 FI) {{Q}}.
 Proof.
-  intros P Q b c1 c2 HTrue HFalse st st' HE HP.
-  inversion HE; subst.
+  intros P Q b c1 c2 HTrue HFalse st st' Hexp HP.
+  inversion Hexp; subst.
   - (* b is true *)
     apply (HTrue st st').
       assumption.
@@ -1188,6 +1197,15 @@ Inductive ceval : com -> state -> state -> Prop :=
                   c1 / st \\ st' ->
                   (WHILE b1 DO c1 END) / st' \\ st'' ->
                   (WHILE b1 DO c1 END) / st \\ st''
+
+  | E_IfTrue1   : forall (st st' : state) (b : bexp) (c : com),
+                  beval st b = true ->
+                  c / st \\ st'     -> (IF1 b THEN c FI) / st \\ st'
+      
+  | E_IfFalse1  : forall (st : state) (b : bexp) (c : com),
+                  beval st b = false ->
+                  c / st \\ st       -> (IF1 b THEN c FI) / st \\ st              
+      
 (* FILL IN HERE *)
 
   where "c1 '/' st '\\' st'" := (ceval c1 st st').
@@ -1204,24 +1222,6 @@ Notation "{{ P }}  c  {{ Q }}" := (hoare_triple P c Q)
                                   (at level 90, c at next level)
                                   : hoare_spec_scope.
 
-Definition bassn b : Assertion :=
-  fun st => (beval st b = true).
-
-(** A couple of useful facts about [bassn]: *)
-
-Lemma bexp_eval_true : forall b st,
-  beval st b = true -> (bassn b) st.
-Proof.
-  intros b st Hbe.
-  unfold bassn. assumption.  Qed.
-
-Lemma bexp_eval_false : forall b st,
-  beval st b = false -> ~ ((bassn b) st).
-Proof.
-  intros b st Hbe contra.
-  unfold bassn in contra.
-  rewrite -> contra in Hbe. inversion Hbe.  Qed.
-
 
 (** Finally, we (i.e., you) need to state and prove a theorem,
     [hoare_if1], that expresses an appropriate Hoare logic proof rule
@@ -1234,8 +1234,20 @@ Theorem hoare_if1 : forall P Q b c,
   {{ P }} IF1 b THEN c FI {{ Q }}.
 Proof. 
   intros P Q b c Ht Hf st st' Hexp Hp.
-  inversion Hexp.
-Qed.
+  inversion Hexp; subst.
+    (* b is true *)
+    + apply (Ht st st').
+        - assumption.
+        - split. assumption. assumption.
+    (* b is false *)
+    + apply (Hf st' st').
+        - apply E_Skip.
+        - split. assumption. apply bexp_eval_false. assumption.
+Qed. 
+
+
+
+(** *** Example *)
 
 (** For full credit, prove formally [hoare_if1_good] that your rule is
     precise enough to show the following valid Hoare triple:
@@ -1262,7 +1274,8 @@ Theorem hoare_consequence_pre : forall (P P' Q : Assertion) c,
 Proof.
   intros P P' Q c Hhoare Himp.
   intros st st' Hc HP. apply (Hhoare st st'). 
-  assumption. apply Himp. assumption. Qed.
+  assumption. apply Himp. assumption.
+Qed.
 
 
 Theorem hoare_skip : forall P,
