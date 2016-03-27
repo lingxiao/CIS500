@@ -310,7 +310,8 @@ Proof.
     rewrite negb_false_iff in GuardFalse.
     SearchAbout [beq_nat true].
     apply beq_nat_true in GuardFalse.
-    apply GuardFalse. Qed.
+    apply GuardFalse.
+Qed.
 
 (* ####################################################### *)
 (** ** Example: Division *)
@@ -535,7 +536,34 @@ Proof.
     Write an informal decorated program showing that this procedure 
     is correct. *)
 
-(* FILL IN HERE *)
+(*
+
+      {{ X = m }}  ->> {{ X + Y = m }}          
+
+    Y ::= 0;;
+
+      {{ X + Y = m }}
+
+    WHILE X <> 0 DO
+
+      {{ X + Y = m /\ X <> 0 }} -> 
+      {{ X - 1 + Y + 1 = m }}
+
+      X ::= X - 1;;
+
+      {{ X + (Y + 1) = m }}
+
+      Y ::= Y + 1
+
+      {{ X + Y = m }}
+
+    END
+
+      {{ X + Y = m /\ ~( X <> 0) }}  ->> {{ Y = m }}
+
+
+
+*)
 (** [] *)
 
 (* ####################################################### *)
@@ -560,7 +588,6 @@ Proof.
 
 (* ####################################################### *)
 (** ** Example: Parity *)
-
 
 (** Here is a cute little program for computing the parity of the
     value initially stored in [X] (due to Daniel Cristofani).
