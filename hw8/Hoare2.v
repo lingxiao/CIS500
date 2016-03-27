@@ -869,32 +869,66 @@ Proof.
 (** Fill in valid decorations for the following program.
   For the [=>] steps in your annotations, you may rely (silently) 
   on the following facts about min
+
   Lemma lemma1 : forall x y,
     (x=0 \/ y=0) -> min x y = 0.
+
   Lemma lemma2 : forall x y,
     min (x-1) (y-1) = (min x y) - 1.
+
   plus standard high-school algebra, as always.
 
-  {{ True }} ->>
-  {{                    }}
+  {{ True }} ->>						(a)
+
+  {{  a + 0 = a /\ b + 0 = b                           }}                   
+
   X ::= a;;
-  {{                       }}
+
+  {{  X + 0 = a /\ b + 0 = b                           }}
+
   Y ::= b;;
-  {{                       }}
+
+  {{  X + 0 = a /\ Y + 0 = b                           }}
   Z ::= 0;;
-  {{                       }}
+
+  {{  X + Z = a /\ Y + Z = b                           }}
+
   WHILE (X <> 0 /\ Y <> 0) DO
-  {{                                     }} ->>
-  {{                                }}
+
+  {{  X + Z = a /\ Y + Z = b  /\ (X <> 0 /\ Y <> 0)    }} ->>   (b)
+
+  {{ X - 1 + Z + 1 = a /\ Y - 1 + Z + 1 = b            }}
+
   X := X - 1;;
-  {{                            }}
+
+  {{ X + Z + 1 = a /\ Y - 1 + Z + 1 = b                }}
+
   Y := Y - 1;;
-  {{                        }}
+
+  {{ X + Z + 1 = a /\ Y + Z + 1 = b                    }}
+
   Z := Z + 1
-  {{                       }}
+
+  {{ X + Z = a /\ Y + Z = b                            }}
+
   END
-  {{                            }} ->>
+
+  {{ (X + Z = a /\ Y + Z = b) /\ (x = 0 \/ y = 0)      }} ->>  (c)
   {{ Z = min a b }}
+
+   (a) is clearly true.
+
+   (b) Note X - 1 + Z + 1 = a /\ Y - 1 + Z + 1 = b reduces to
+       X + Z = a /\ Y + Z = b
+       which is implied by the loop invariant.
+
+  (c) Suppose we have X + Z = a /\ Y + Z = b and say we pick X = 0, then
+      we know
+            0 + Z = a /\ Y + Z = b
+       
+
+     todo: finish this one!!
+
 *)
 
 
@@ -914,38 +948,73 @@ Proof.
     Z ::= Z + 1
   END
 
+   goal: compute Z = a + b + c
+
+  todo: finish this one. what's the approach?
+
     Show that it does what it should by filling in the blanks in the
     following decorated program.
 
     {{ True }} ->>
+
     {{                                        }}
+
   X ::= 0;;
+
     {{                                        }}
+
   Y ::= 0;;
+
     {{                                        }}
+
   Z ::= c;;
+
     {{                                        }}
+
   WHILE X <> a DO
+
       {{                                        }} ->>
+
       {{                                        }}
+
     X ::= X + 1;;
+
       {{                                        }}
+
     Z ::= Z + 1
+
       {{                                        }}
+
   END;;
+
+
     {{                                        }} ->>
+
     {{                                        }}
-  WHILE Y <> b DO
+
+
+
+ WHILE Y <> b DO
+
       {{                                        }} ->>
+
       {{                                        }}
+
     Y ::= Y + 1;;
+
       {{                                        }}
+
     Z ::= Z + 1
+
       {{                                        }}
+
   END
-    {{                                        }} ->>
+
+    {{                                 /\ Y = b }} ->>
+
     {{ Z = a + b + c }}
-*)
+
+ *)
 
 (** [] *)
 
