@@ -538,7 +538,7 @@ Qed.
 
 (*
 
-      {{ X = m }}  ->> {{ X + Y = m }}          
+      {{ X = m }}  ->> {{ X + 0 = m }}                 (a)
 
     Y ::= 0;;
 
@@ -546,7 +546,7 @@ Qed.
 
     WHILE X <> 0 DO
 
-      {{ X + Y = m /\ X <> 0 }} -> 
+      {{ X + Y = m /\ X <> 0 }} ->>                      (b)
       {{ X - 1 + Y + 1 = m }}
 
       X ::= X - 1;;
@@ -559,8 +559,16 @@ Qed.
 
     END
 
-      {{ X + Y = m /\ ~( X <> 0) }}  ->> {{ Y = m }}
+      {{ X + Y = m /\ ~( X <> 0) }}  ->> {{ Y = m }}     (c)
 
+
+      (c) is satisfied because
+           X + Y = m /\ X = 0  ->>  0 + Y = m  ->> Y = m
+
+      (b) is satisfied because  {{ X + Y = m /\ X <> 0 } does imply
+            X - 1 + Y + 1 = m  ->> X + Y = m
+
+      (a) is clearly satisfied.
 
 
 *)
@@ -661,7 +669,7 @@ Theorem parity_correct : forall m,
   END
     {{ fun st => st X = parity m }}.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  (* FILL IN HERE *) Admitted. (* optional *)
 (** [] *)
 
 (* ####################################################### *)
@@ -818,19 +826,36 @@ Proof.
 
     Fill in the blanks in following decorated program:
     {{ X = m }} ->>
-    {{                                      }}
+    {{ 1 * X ! = m!                           }}          (a)
   Y ::= 1;;
-    {{                                      }}
-  WHILE X <> 0
-  DO   {{                                      }} ->>
-       {{                                      }}
+    {{ Y * X! = m!                            }}
+
+  WHILE X <> 0 DO
+
+       {{ Y * X ! = m! /\ X <> 0            }} ->>      (b)
+
+       {{ Y * X * (X - 1)! = m!             }}
+
      Y ::= Y * X;;
-       {{                                      }}
+
+       {{ Y * (X - 1) ! = m !               }}
+
      X ::= X - 1
-       {{                                      }}
+
+       {{ Y * X ! = m!                      }}
+
   END
-    {{                                      }} ->>
+    {{ Y * X ! = m!  ^ ~ ( X <> 0 )         }} ->>      (c)
     {{ Y = m! }}
+
+    (a) is clearly true
+
+    (b) Y * X ! = m ! /\ X <> 0  ->> Y * X * (X - 1)! = m!
+        is true by defintion of factorial
+
+    (c)  Y * X! = m! /\ x = 0   ->> Y * 0! = m!  ->> Y * 1 = m! ->> Y = m!
+    
+      
 *)
 
 
