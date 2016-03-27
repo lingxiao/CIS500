@@ -502,6 +502,14 @@ Example hoare_asgn_wrong : forall a,
     (X ::= APlus (AId X) (ANum 1))
   {{ fun st => st X = a }}.
 Proof. Abort. (* cannot be proven *)
+
+
+Example hoare_asgn_wrong_1 : forall a,
+  {{ (fun st => st X = a) [ X |-> APlus (AId X) (ANum 1)] }}
+    (X ::= APlus (AId X) (ANum 1))
+  {{ fun st => st X = a }}.
+Proof. Abort. (* cannot be proven *)
+  
   
     
 (*
@@ -509,12 +517,19 @@ Proof. Abort. (* cannot be proven *)
 
        {{ True }} X ::= X + 1 {{ X = a }}
    
-  Note this expression can be written down but cannot be proven,
+  Note this expression cannot be proven,
   since clearly the post condition is false since X cannot equal X + 1.
 
-*)
-(** [] *)
+  why is this wrong though???
 
+       {{ Q [ X |-> a] }} X ::= a {{ Q }}
+  
+       {{ (X = a) [ X |-> X + 1 ] }} X ::= a {{ X = a }}
+
+
+*)
+
+(** [] *)
 (** **** Exercise: 3 stars, advanced (hoare_asgn_fwd)  *)
 (** However, by using an auxiliary variable [m] to remember the 
     original value of [X] we can define a Hoare rule for assignment 

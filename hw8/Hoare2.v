@@ -48,7 +48,8 @@ Require Import Hoare.
     two assertions separated by an implication).  To check that a
     decorated program represents a valid proof, we check that each
     individual command is _locally consistent_ with its nearby
-    assertions in the following sense: *)
+    assertions in the following sense:
+*)
 
 (**
     - [SKIP] is locally consistent if its precondition and
