@@ -880,54 +880,55 @@ Proof.
 
   {{ True }} ->>						(a)
 
-  {{  a + 0 = a /\ b + 0 = b                           }}                   
+  {{ min a b = min a b }}
 
   X ::= a;;
 
-  {{  X + 0 = a /\ b + 0 = b                           }}
+
+  {{ 0 + min X b = min a b }}
 
   Y ::= b;;
 
-  {{  X + 0 = a /\ Y + 0 = b                           }}
+  {{ 0 + min X Y = min a b }}
+
   Z ::= 0;;
 
-  {{  X + Z = a /\ Y + Z = b                           }}
+  {{ Z + min X Y = min a b }}
 
   WHILE (X <> 0 /\ Y <> 0) DO
 
-  {{  X + Z = a /\ Y + Z = b  /\ (X <> 0 /\ Y <> 0)    }} ->>   (b)
+  {{ Z + min X Y = min a b /\ (X <> 0 /\ Y <> 0) }} ->>             (b)	
 
-  {{ X - 1 + Z + 1 = a /\ Y - 1 + Z + 1 = b            }}
+  {{ Z + 1 + min (X - 1) (Y - 1) = min a b }}
 
   X := X - 1;;
 
-  {{ X + Z + 1 = a /\ Y - 1 + Z + 1 = b                }}
-
+  {{ Z + 1 + min X (Y - 1) = min a b }}
+  
   Y := Y - 1;;
 
-  {{ X + Z + 1 = a /\ Y + Z + 1 = b                    }}
+   {{ Z + 1 + min X Y = min a b  }}
 
   Z := Z + 1
 
-  {{ X + Z = a /\ Y + Z = b                            }}
+   {{ Z + min X Y = min a b  }} 
 
   END
 
-  {{ (X + Z = a /\ Y + Z = b) /\ (x = 0 \/ y = 0)      }} ->>  (c)
+  {{ Z + min X Y = min a b /\ ( X = 0 \/ Y = 0 )      }} ->>       (c)
   {{ Z = min a b }}
 
-   (a) is clearly true.
+  (a) is clearly true.
 
-   (b) Note X - 1 + Z + 1 = a /\ Y - 1 + Z + 1 = b reduces to
-       X + Z = a /\ Y + Z = b
-       which is implied by the loop invariant.
-
-  (c) Suppose we have X + Z = a /\ Y + Z = b and say we pick X = 0, then
-      we know
-            0 + Z = a /\ Y + Z = b
-       
-
-     todo: finish this one!!
+  (b) is true because by lemma2
+       Z + 1 + min (X - 1) (Y - 1) = Z + 1 + (min X Y - 1) = Z + min X Y,
+       by assumption it equals min a b therefore the RHS of the implication holds
+  
+   (c) by lemma1 we know min X Y = 0 if X = 0 or Y = 0, ergo
+                  Z + min X Y = min a b
+       reduces to
+                 Z = min a b
+       which implies Z = min a b as desired.
 
 *)
 
@@ -950,67 +951,65 @@ Proof.
 
    goal: compute Z = a + b + c
 
-  todo: finish this one. what's the approach?
-
     Show that it does what it should by filling in the blanks in the
     following decorated program.
 
     {{ True }} ->>
 
-    {{                                        }}
+    {{ c = 0 + 0 + c                            }}
 
   X ::= 0;;
 
-    {{                                        }}
+    {{ c = X + 0 + c                            }}
 
   Y ::= 0;;
 
-    {{                                        }}
+    {{ c = X + Y + c                            }}
 
   Z ::= c;;
 
-    {{                                        }}
+    {{  Z = X + Y + c                           }}
 
   WHILE X <> a DO
 
-      {{                                        }} ->>
+      {{ Z = X + Y + c  /\ X <> a               }} ->>
 
-      {{                                        }}
+      {{ Z + 1 = X + 1 + Y + c                  }}
 
     X ::= X + 1;;
 
-      {{                                        }}
+      {{ Z + 1 = X + Y + c                      }}
 
     Z ::= Z + 1
 
-      {{                                        }}
+      {{  Z = X + Y + c                         }}
 
   END;;
 
 
-    {{                                        }} ->>
+    {{  Z = X + Y + c  /\ X = a                }} ->>
 
-    {{                                        }}
+    {{  Z = a + Y + c                          }}
 
 
 
  WHILE Y <> b DO
 
-      {{                                        }} ->>
+      {{ Z = a + Y + c  /\ Y <> b              }} ->>
 
-      {{                                        }}
+      {{ Z + 1 = a + Y + 1 + c                  }}
 
     Y ::= Y + 1;;
 
-      {{                                        }}
+      {{  Z + 1 = a + Y + c                     }}
 
     Z ::= Z + 1
 
-      {{                                        }}
+      {{  Z = a + Y + c                         }}
 
   END
 
-    {{                                 /\ Y = b }} ->>
+    {{ Z = a + Y + c                   /\ Y = b }} ->>
 
     {{ Z = a + b + c }}
 
@@ -1077,11 +1076,11 @@ Definition is_wp P c Q :=
 (** **** Exercise: 1 star, optional (wp)  *)
 (** What are the weakest preconditions of the following commands
    for the following postconditions?
-  1) {{ ? }}  SKIP  {{ X = 5 }}
+  1) {{ ? }}  SKIP  {{ X = 5 }}                    X = 5
 
-  2) {{ ? }}  X ::= Y + Z {{ X = 5 }}
+  2) {{ ? }}  X ::= Y + Z {{ X = 5 }}              X = 5
 
-  3) {{ ? }}  X ::= Y  {{ X = Y }}
+  3) {{ ? }}  X ::= Y  {{ X = Y }}                 True   (?)
 
   4) {{ ? }}
      IFB X == 0 THEN Y ::= Z + 1 ELSE Y ::= W + 2 FI
@@ -1153,14 +1152,14 @@ End Himp2.
     commands _decorated commands_, or [dcom]s. *)
 
 Inductive dcom : Type :=
-  | DCSkip :  Assertion -> dcom
-  | DCSeq : dcom -> dcom -> dcom
-  | DCAsgn : id -> aexp ->  Assertion -> dcom
-  | DCIf : bexp ->  Assertion -> dcom ->  Assertion -> dcom
-           -> Assertion-> dcom
+  | DCSkip  : Assertion -> dcom
+  | DCSeq   : dcom -> dcom -> dcom
+  | DCAsgn  : id -> aexp ->  Assertion -> dcom
+  | DCIf    : bexp ->  Assertion -> dcom ->  Assertion -> dcom
+             -> Assertion-> dcom
   | DCWhile : bexp -> Assertion -> dcom -> Assertion -> dcom
-  | DCPre : Assertion -> dcom -> dcom
-  | DCPost : dcom -> Assertion -> dcom.
+  | DCPre   : Assertion -> dcom -> dcom
+  | DCPost  : dcom -> Assertion -> dcom.
 
 Notation "'SKIP' {{ P }}"
       := (DCSkip P)

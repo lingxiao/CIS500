@@ -520,6 +520,8 @@ Proof. Abort. (* cannot be proven *)
   Note this expression cannot be proven,
   since clearly the post condition is false since X cannot equal X + 1.
 
+
+  self notes, do not grade:
   to ask: why is this wrong though???
 
        {{ Q [ X |-> a] }} X ::= a {{ Q }}
