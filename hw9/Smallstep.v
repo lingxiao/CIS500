@@ -722,7 +722,19 @@ Inductive value : tm -> Prop :=
 
 Reserved Notation " t '==>' t' " (at level 40).
 
-Inductive ste : tm -> tm -> Prop :=
+(*
+     -----------------------------------      ( ST_IfTrue )
+          tif ttrue t2 t2  ==> t1
+    
+     -----------------------------------      ( ST_False  )
+           tif tfalse t2 t2  ==> t2
+
+                 t1  ==> t1'
+     -----------------------------------      ( ST_If     )
+        tif t1 t2 t3 ==> tif t1' t2 t3
+
+ *)
+Inductive step : tm -> tm -> Prop :=
   | ST_IfTrue  : forall t1 t2,
       tif ttrue t1 t2 ==> t1
   | ST_IfFalse : forall t1 t2,
@@ -744,7 +756,7 @@ Inductive ste : tm -> tm -> Prop :=
 Definition bool_step_prop1 :=
   tfalse ==> tfalse.
 (*
-  
+  not provable, tfalse is a value and cannot step further
 *)
 
 Definition bool_step_prop2 :=
@@ -754,8 +766,9 @@ Definition bool_step_prop2 :=
        (tif tfalse tfalse tfalse)
   ==>
      ttrue.
-
-(* FILL IN HERE *)
+(*
+  provable. apply ST_True twice 
+*)
 
 Definition bool_step_prop3 :=
      tif
@@ -768,10 +781,16 @@ Definition bool_step_prop3 :=
        (tif ttrue ttrue ttrue)
        tfalse.
 
-(* FILL IN HERE *)
+(*
+   provable because first guard reduces to ttrue by ST_True and whole
+   expression may reduce by  appling ST_If.
+*)
 (** [] *)
 
 (** **** Exercise: 3 stars, optional (progress_bool)  *)
+
+(* maydo: come back and finish these *)
+
 (** Just as we proved a progress theorem for plus expressions, we can
     do so for boolean expressions, as well. *)
 
@@ -812,15 +831,15 @@ Module Temp5.
 Reserved Notation " t '==>' t' " (at level 40).
 
 Inductive step : tm -> tm -> Prop :=
-  | ST_IfTrue : forall t1 t2,
+  | ST_IfTrue  : forall t1 t2,
       tif ttrue t1 t2 ==> t1
   | ST_IfFalse : forall t1 t2,
       tif tfalse t1 t2 ==> t2
-  | ST_If : forall t1 t1' t2 t3,
+  | ST_If      : forall t1 t1' t2 t3,
       t1 ==> t1' ->
       tif t1 t2 t3 ==> tif t1' t2 t3
-  (* FILL IN HERE *)
-
+  | ST_short   : forall t1 t2,
+      tif t1 t2 t2 ==> t2          
   where " t '==>' t' " := (step t t').
 
 Definition bool_step_prop4 :=
@@ -834,9 +853,10 @@ Definition bool_step_prop4 :=
 Example bool_step_prop4_holds :
   bool_step_prop4.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
+  apply ST_short.
+Qed.  
+   
+  
 (** **** Exercise: 3 stars, optional (properties_of_altered_step)  *)
 (** It can be shown that the determinism and strong progress theorems
     for the step relation in the lecture notes also hold for the
