@@ -920,8 +920,8 @@ End Temp4.
 
 Inductive multi {X:Type} (R: relation X) : relation X :=
   | multi_refl  : forall (x : X), multi R x x
-  | multi_step : forall (x y z : X),
-                    R x y ->
+  | multi_step  : forall (x y z : X),
+                    R x y       ->
                     multi R y z ->
                     multi R x z.
 
@@ -963,7 +963,8 @@ Theorem multi_R : forall (X:Type) (R:relation X) (x y : X),
        R x y -> (multi R) x y.
 Proof.
   intros X R x y H.
-  apply multi_step with y. apply H. apply multi_refl.   Qed.
+  apply multi_step with y. apply H. apply multi_refl.
+Qed.
 
 (** Third, [multi R] is _transitive_. *)
 
@@ -1029,8 +1030,8 @@ Proof.
 Lemma test_multistep_2:
   C 3 ==>* C 3.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  apply multi_refl.
+Qed.
 
 (** **** Exercise: 1 star, optional (test_multistep_3)  *)
 Lemma test_multistep_3:
@@ -1038,23 +1039,23 @@ Lemma test_multistep_3:
    ==>*
       P (C 0) (C 3).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  apply multi_refl.
+Qed.
 
 (** **** Exercise: 2 stars (test_multistep_4)  *)
 Lemma test_multistep_4:
-      P
-        (C 0)
-        (P
-          (C 2)
-          (P (C 0) (C 3)))
+      P (C 0)  (P  (C 2)  (P (C 0) (C 3) ))
   ==>*
-      P
-        (C 0)
-        (C (2 + (0 + 3))).
+      P (C 0)  (C (2 + (0 + 3))).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  eapply multi_step.
+    + apply ST_Plus2.
+        - apply v_const.
+        - apply ST_Plus2. apply v_const. apply ST_PlusConstConst.
+    + eapply multi_step.
+        - apply ST_Plus2. apply v_const. apply ST_PlusConstConst.
+        - apply multi_refl.
+Qed.
 
 (* ########################################################### *)
 (** ** Normal Forms Again *)
