@@ -49,11 +49,11 @@ Require Import Imp.
 
     Now, however, we encounter a serious deficiency.  In this
     language, a command might fail to map a given starting state to
-    any ending state for _two quite different reasons_: either because
-    the execution gets into an infinite loop or because, at some
-    point, the program tries to do an operation that makes no sense,
-    such as adding a number to a list, so that none of the evaluation
-    rules can be applied.
+    any ending state for _two quite different reasons_:
+         either because the execution gets into an infinite loop or
+         because, at some point, the program tries to do an operation
+         that makes no sense, such as adding a number to a list,
+         so that none of the evaluation rules can be applied.
 
     These two outcomes -- nontermination vs. getting stuck in an
     erroneous configuration -- are quite different.  In particular, we
@@ -111,8 +111,7 @@ Fixpoint evalF (t : tm) : nat :=
 Reserved Notation " t '\\' n " (at level 50, left associativity).
 
 Inductive eval : tm -> nat -> Prop :=
-  | E_Const : forall n,
-      C n \\ n
+  | E_Const : forall n,  C n \\ n
   | E_Plus : forall t1 t2 n1 n2,
       t1 \\ n1 ->
       t2 \\ n2 ->
@@ -201,7 +200,9 @@ Example test_step_2 :
           (C 2)
           (C (0 + 3))).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply ST_Plus2. apply ST_Plus2. apply ST_PlusConstConst.
+Qed.
+
 (** [] *)
 
 
@@ -225,6 +226,7 @@ End SimpleArith1.
     library is awkward in places. 
  *)
 Definition relation (X: Type) := X->X->Prop.
+
 
 (** Our main examples of such relations in this chapter will be
     the single-step reduction relation, [==>], and its multi-step
@@ -362,6 +364,20 @@ End SimpleArith2.
 Inductive value : tm -> Prop :=
   v_const : forall n, value (C n).
 
+Check (v_const).
+
+
+(*
+Inductive foo : nat -> Prop :=
+  foo1  : forall (n : nat), foo n.
+
+Inductive bar (n : nat) : Prop :=
+  bar1 : bar n.
+Check (foo1).
+Check (bar1).
+
+*)
+
 (** Having introduced the idea of values, we can use it in the
     definition of the [==>] relation to write [ST_Plus2] rule in a
     slightly more elegant way: *)
@@ -379,6 +395,7 @@ Inductive value : tm -> Prop :=
                          --------------------                        (ST_Plus2)
                          P v1 t2 ==> P v1 t2'
 *)
+
 (** Again, the variable names here carry important information:
     by convention, [v1] ranges only over values, while [t1] and [t2]
     range over arbitrary terms.  (Given this convention, the explicit
@@ -432,11 +449,25 @@ Inductive step : tm -> tm -> Prop :=
     formal version from scratch and just use the earlier one if you
     get stuck. *)
 
+(* todo: why is this one giving you so much trouble ??? *)
 Theorem step_deterministic :
   deterministic step.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  unfold deterministic; intros x y1 y2 H1 H2. generalize dependent y2.
+  induction H1; intros.
+    (* P (C n1) (C n2) => C (n1 + n2) *)
+    + inversion H2; subst.
+        - reflexivity.
+        - inversion H3.
+        - inversion H4.
+    + inversion H2; subst.
+        - inversion H1.
+        - rewrite (IHstep t1'0). reflexivity. assumption.
+        - 
+Abort.  (* todo: finish this one !!!*)                                                     
+
+
+     
 
 (* ########################################################### *)
 (** ** Strong Progress and Normal Forms *)
@@ -503,6 +534,7 @@ Proof.
 
 Definition normal_form {X:Type} (R:relation X) (t:X) : Prop :=
   ~ exists t', R t t'.
+
 
 (** Note that this definition specifies what it is to be a normal form
     for an _arbitrary_ relation [R] over an arbitrary set [X], not
@@ -575,7 +607,12 @@ Inductive step : tm -> tm -> Prop :=
   where " t '==>' t' " := (step t t').
 
 
+(*
+ todo: check this example
 
+  let [v := forall n m k : nat, P (P (C n) (C m)) (C k))]
+
+*)
 Lemma value_not_same_as_normal_form :
   exists v, value v /\ ~ normal_form step v.
 Proof.
@@ -610,7 +647,12 @@ Inductive step : tm -> tm -> Prop :=
 
   where " t '==>' t' " := (step t t').
 
+(*
+  todo: check this one:
 
+  let v :- any arbitrary C n.
+
+*)
 Lemma value_not_same_as_normal_form :
   exists v, value v /\ ~ normal_form step v.
 Proof.
@@ -646,6 +688,12 @@ Inductive step : tm -> tm -> Prop :=
 
 (** (Note that [ST_Plus2] is missing.) *)
 
+(*
+  todo: check this one.
+
+  let t = P (C n) (P (C m) (C k)), for some n m k : nat.
+
+*)
 Lemma value_not_same_as_normal_form :
   exists t, ~ value t /\ normal_form step t.
 Proof.
@@ -664,36 +712,40 @@ Module Temp4.
     and false and a conditional expression... *)
 
 Inductive tm : Type :=
-  | ttrue : tm
+  | ttrue  : tm
   | tfalse : tm
-  | tif : tm -> tm -> tm -> tm.
+  | tif    : tm -> tm -> tm -> tm.
 
 Inductive value : tm -> Prop :=
-  | v_true : value ttrue
+  | v_true  : value ttrue
   | v_false : value tfalse.
 
 Reserved Notation " t '==>' t' " (at level 40).
 
-Inductive step : tm -> tm -> Prop :=
-  | ST_IfTrue : forall t1 t2,
+Inductive ste : tm -> tm -> Prop :=
+  | ST_IfTrue  : forall t1 t2,
       tif ttrue t1 t2 ==> t1
   | ST_IfFalse : forall t1 t2,
       tif tfalse t1 t2 ==> t2
-  | ST_If : forall t1 t1' t2 t3,
+  | ST_If      : forall t1 t1' t2 t3,
       t1 ==> t1' ->
       tif t1 t2 t3 ==> tif t1' t2 t3
 
   where " t '==>' t' " := (step t t').
 
 (** **** Exercise: 1 star (smallstep_bools)  *)
+(*
+  todo: check this one
+*)
 (** Which of the following propositions are provable?  (This is just a
     thought exercise, but for an extra challenge feel free to prove
     your answers in Coq.) *)
 
 Definition bool_step_prop1 :=
   tfalse ==> tfalse.
-
-(* FILL IN HERE *)
+(*
+  
+*)
 
 Definition bool_step_prop2 :=
      tif
