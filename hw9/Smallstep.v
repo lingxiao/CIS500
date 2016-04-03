@@ -1098,6 +1098,8 @@ Definition normalizing {X:Type} (R:relation X) :=
   forall t, exists t',
     (multi R) t t' /\ normal_form R t'.
 
+Check (@normalizing).
+
 (** To prove that [step] is normalizing, we need a couple of lemmas.
 
     First, we observe that, if [t] reduces to [t'] in many steps, then
@@ -1114,7 +1116,8 @@ Proof.
     - (* multi_refl *) apply multi_refl.
     - (* multi_step *) apply multi_step with (P y t2).
         apply ST_Plus1. apply H.
-        apply IHmulti.  Qed.
+        apply IHmulti.
+Qed.
 
 (** **** Exercise: 2 stars (multistep_congr_2)  *)
 Lemma multistep_congr_2 : forall t1 t2 t2',
@@ -1122,7 +1125,13 @@ Lemma multistep_congr_2 : forall t1 t2 t2',
      t2 ==>* t2' ->
      P t1 t2 ==>* P t1 t2'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros t1 t2 t2' Hv H. induction H.
+    - apply multi_refl.
+    - apply multi_step with (P t1 y).
+        + apply ST_Plus2. assumption. assumption.
+        + assumption.
+Qed.
+
 (** [] *)
 
 (** With these lemmas in hand, the main proof is a straightforward
@@ -1226,7 +1235,10 @@ Theorem eval__multistep : forall t n,
     includes [==>]. *)
 
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. inversion H; subst.
+    + 
+
+
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (eval__multistep_inf)  *)
