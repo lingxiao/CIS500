@@ -649,7 +649,7 @@ Inductive step : tm -> tm -> Prop :=
   where " t '==>' t' " := (step t t').
 
 (*
-  todo: check this one:
+  toask: check this one:
 
   let v :- any arbitrary C n.
 
@@ -690,7 +690,7 @@ Inductive step : tm -> tm -> Prop :=
 (** (Note that [ST_Plus2] is missing.) *)
 
 (*
-  todo: check this one.
+  toask: check this one.
 
   let t = P (C n) (P (C m) (C k)), for some n m k : nat.
 
