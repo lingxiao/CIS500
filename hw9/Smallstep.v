@@ -1235,11 +1235,19 @@ Theorem eval__multistep : forall t n,
     includes [==>]. *)
 
 Proof.
-  intros. inversion H; subst.
-    + 
-
-
-(** [] *)
+  intros t n Hb. induction Hb.
+    (* C n \\ n *)
+    + apply multi_refl.
+    (* t1 \\ n1 /\ t2 // n2 -> P t1 t2 // n1 + n2  *)
+    + apply multi_trans with (P (C n1) t2).
+        - apply multistep_congr_1. assumption.
+        - apply multi_trans with (P (C n1) (C n2)).
+            (* P (C n1) t2 ==>* P (C n1) (C n2) *)
+            * apply multistep_congr_2.
+              apply v_const. assumption.
+            (* P (C n1) (C n2) ==>* C (n1 + n2) *)
+            * apply multi_R. apply ST_PlusConstConst.
+Qed.
 
 (** **** Exercise: 3 stars, advanced (eval__multistep_inf)  *)
 (** Write a detailed informal version of the proof of [eval__multistep].
