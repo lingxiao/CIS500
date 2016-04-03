@@ -286,7 +286,8 @@ Proof.
       + (* ST_Plus1 *)
         rewrite <- (IHHy1 t1'0).
         reflexivity. assumption.
-      + (* ST_Plus2 *) rewrite <- H in Hy1. inversion Hy1.
+      + (* subst. inversion Hy1. *)
+        (* ST_Plus2 *) rewrite <- H in Hy1. inversion Hy1.
     - (* ST_Plus2 *) inversion Hy2.
       + (* ST_PlusConstConst *) rewrite <- H1 in Hy1. inversion Hy1.
       + (* ST_Plus1 *) inversion H2.
@@ -1329,6 +1330,7 @@ Proof.
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
+
 (** **** Exercise: 4 stars (combined_properties)  *)
 (** We've considered arithmetic and conditional expressions
     separately.  This exercise explores how the two interact. *)
@@ -1336,34 +1338,40 @@ Proof.
 Module Combined.
 
 Inductive tm : Type :=
-  | C : nat -> tm
-  | P : tm -> tm -> tm
-  | ttrue : tm
+  | C      : nat -> tm
+  | P      : tm -> tm -> tm
+  | ttrue  : tm
   | tfalse : tm
-  | tif : tm -> tm -> tm -> tm.
+  | tif    : tm -> tm -> tm -> tm.
 
 Inductive value : tm -> Prop :=
-  | v_const : forall n, value (C n)
-  | v_true : value ttrue
-  | v_false : value tfalse.
+  | v_const  : forall n, value (C n)
+  | v_true   : value ttrue
+  | v_false  : value tfalse.
 
 Reserved Notation " t '==>' t' " (at level 40).
 
 Inductive step : tm -> tm -> Prop :=
+  
   | ST_PlusConstConst : forall n1 n2,
       P (C n1) (C n2) ==> C (n1 + n2)
-  | ST_Plus1 : forall t1 t1' t2,
+
+  | ST_Plus1          : forall t1 t1' t2,
       t1 ==> t1' ->
       P t1 t2 ==> P t1' t2
-  | ST_Plus2 : forall v1 t2 t2',
-      value v1 ->
+
+  | ST_Plus2          : forall v1 t2 t2',
+      value v1   ->
       t2 ==> t2' ->
       P v1 t2 ==> P v1 t2'
-  | ST_IfTrue : forall t1 t2,
+
+  | ST_IfTrue         : forall t1 t2,
       tif ttrue t1 t2 ==> t1
+
   | ST_IfFalse : forall t1 t2,
       tif tfalse t1 t2 ==> t2
-  | ST_If : forall t1 t1' t2 t3,
+
+  | ST_If      : forall t1 t1' t2 t3,
       t1 ==> t1' ->
       tif t1 t2 t3 ==> tif t1' t2 t3
 
@@ -1376,9 +1384,38 @@ Inductive step : tm -> tm -> Prop :=
     - a strong progress lemma, stating that every term is either a
       value or can take a step.
 
-    Prove or disprove these two properties for the combined language. *)
+    Prove or disprove these two properties for the combined language.
 
-(* FILL IN HERE *)
+     deterministic (X : Type) (R : relation X) :=
+             forall x y1 y2 : R x y1 -> R x y2 -> y1 = y2 
+
+*)
+
+Theorem step_deterministic : deterministic step.
+Proof.
+  unfold deterministic. intros x y1 y2 H1 H2. generalize dependent y2.
+  induction H1; intros.
+     (* ST_PlusConstConst *)
+    + inversion H2; subst.
+        * reflexivity.
+        * inversion H3.
+        * inversion H4.
+     (* ST_Plus1 *)          
+    + inversion H2; subst.
+        * inversion H1.
+        * rewrite <- (IHstep t1'0). reflexivity. assumption.
+        * admit. (* todo: finish this one !! *)
+     (* ST_Plus2 *)
+    + inversion H2; subst.
+        * inversion H1.
+        * rewrite <- (IHstep t2).
+Abort.  (* todo: finish this one, will need to write it out to know what's going on *)
+
+  
+Theorem strong_progress  : forall t, value t \/ (exists t', t ==> t').
+Proof. Admitted. (* todo: finish this one *)
+
+
 (** [] *)
 
 End Combined.
@@ -1401,7 +1438,7 @@ Inductive aval : aexp -> Prop :=
 
 (** We are not actually going to bother to define boolean
     values, since they aren't needed in the definition of [==>b]
-    below (why?), though they might be if our language were a bit
+
     larger (why?). *)
 
 Reserved Notation " t '/' st '==>a' t' " (at level 40, st at level 39).
