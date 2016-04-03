@@ -1254,7 +1254,10 @@ Qed.
 
 (* FILL IN HERE *)
 []
-*)
+
+todo: consider doing this one to really understand the proof.
+
+ *)
 
 (** For the other direction, we need one lemma, which establishes a
     relation between single-step reduction and big-step evaluation. *)
@@ -1266,9 +1269,22 @@ Lemma step__eval : forall t t' n,
      t \\ n.
 Proof.
   intros t t' n Hs. generalize dependent n.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
+  induction Hs; intros.
+    (* ST_PlusConstConst *)
+    + inversion H; subst. apply E_Plus.
+        * apply E_Const.
+        * apply E_Const.
+    (* ST_Plus1 *)
+    + inversion H; subst. apply E_Plus.
+        * apply IHHs. assumption.
+        * assumption.
+    (* ST_Plus2 *)
+    + inversion H; subst. inversion H0; subst. apply E_Plus.
+         * assumption.
+         * apply IHHs. assumption.
+Qed.           
+    
+  
 (** The fact that small-step reduction implies big-step is now
     straightforward to prove, once it is stated correctly.
 
@@ -1281,8 +1297,21 @@ Proof.
 Theorem multistep__eval : forall t t',
   normal_form_of t t' -> exists n, t' = C n /\ t \\ n.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros. 
+  unfold normal_form_of in H.
+  inversion H as [H1 H2]. clear H. unfold step_normal_form in H2.
+  induction H1.
+    + apply nf_is_value in H2. inversion H2. exists n. split.
+        * reflexivity.
+        * apply E_Const.
+    + apply IHmulti in H2. inversion H2 as [n [H21 H22]]; clear H2.
+      exists n. split.
+        * assumption.
+        * eapply step__eval. apply H. apply H22.
+Qed.          
+      
+
+
 
 (* ########################################################### *)
 (** ** Additional Exercises *)
