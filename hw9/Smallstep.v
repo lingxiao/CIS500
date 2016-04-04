@@ -271,7 +271,7 @@ Definition deterministic {X: Type} (R: relation X) :=
 Module SimpleArith2.
 Import SimpleArith1.
 
-Theorem step_deterministic:
+Theorem step_detrministic:
   deterministic step.
 Proof.
   unfold deterministic. intros x y1 y2 Hy1 Hy2.
@@ -450,22 +450,31 @@ Inductive step : tm -> tm -> Prop :=
     formal version from scratch and just use the earlier one if you
     get stuck. *)
 
-(* todo: why is this one giving you so much trouble ??? *)
 Theorem step_deterministic :
   deterministic step.
 Proof.
   unfold deterministic; intros x y1 y2 H1 H2. generalize dependent y2.
   induction H1; intros.
-    (* P (C n1) (C n2) => C (n1 + n2) *)
+    (* ST_PlusConstConst *)
     + inversion H2; subst.
         - reflexivity.
         - inversion H3.
         - inversion H4.
+    (* ST_Plus1 *)       
     + inversion H2; subst.
         - inversion H1.
         - rewrite (IHstep t1'0). reflexivity. assumption.
-        - 
-Abort.  (* todo: finish this one !!!*)                                                     
+        - inversion H3; subst.
+            * inversion H1.
+    (* ST_Plus2 *)       
+    + inversion H; subst. inversion H2; subst.
+        - inversion H1.
+        - inversion H5.
+        - rewrite (IHstep t2'0). reflexivity. assumption.
+Qed.
+
+
+       
 
 
      
@@ -1434,10 +1443,29 @@ Proof.
          rewrite H. reflexivity.
 Qed.         
            
-
-Theorem strong_progress  : forall t, value t \/ (exists t', t ==> t').
+(* some of this stuff should be type error and it's not well defined?? *)
+Theorem strong_progress  : forall t,
+  value t \/ (exists t', t ==> t').
 Proof.
-  
+  induction t.
+    (* C *)
+    + left. apply v_const.
+    (* P *)
+    + inversion IHt1; subst.
+        - inversion IHt2; subst.
+            * inversion H; inversion H0; subst.
+                right. exists (C (n + n0)). apply ST_PlusConstConst.
+                admit.
+                admit.
+                admit.
+                admit.
+                admit.
+                admit.
+                admit.
+                admit.
+            * 
+Abort. (* todo: finish this one, what bout type erros?? *)
+
 
 
 (** [] *)
