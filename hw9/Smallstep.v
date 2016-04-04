@@ -1390,30 +1390,54 @@ Inductive step : tm -> tm -> Prop :=
              forall x y1 y2 : R x y1 -> R x y2 -> y1 = y2 
 
 *)
-
 Theorem step_deterministic : deterministic step.
 Proof.
-  unfold deterministic. intros x y1 y2 H1 H2. generalize dependent y2.
-  induction H1; intros.
+  unfold deterministic. intros x y1 y2 Hy1 Hy2. generalize dependent y2.
+  induction Hy1; intros.
      (* ST_PlusConstConst *)
-    + inversion H2; subst.
+    + inversion Hy2; subst.
         * reflexivity.
+        * inversion H2.
         * inversion H3.
-        * inversion H4.
      (* ST_Plus1 *)          
-    + inversion H2; subst.
-        * inversion H1.
-        * rewrite <- (IHstep t1'0). reflexivity. assumption.
-        * admit. (* todo: finish this one !! *)
+    + inversion Hy2; subst.
+        * inversion Hy1.
+        * rewrite <- (IHHy1 t1'0). reflexivity. assumption.
+        * inversion H1; subst.
+            - inversion Hy1.
+            - inversion Hy1.
+            - inversion Hy1.
      (* ST_Plus2 *)
-    + inversion H2; subst.
-        * inversion H1.
-        * rewrite <- (IHstep t2).
-Abort.  (* todo: finish this one, will need to write it out to know what's going on *)
+    + inversion Hy2; subst.
+        * inversion Hy1.
+        * inversion H; subst.
+            - inversion H3.
+            - inversion H3.
+            - inversion H3.
+        * inversion H; subst.
+            - rewrite <- (IHHy1 t2'0).  reflexivity. assumption.
+            - rewrite <- (IHHy1 t2'0). reflexivity. assumption.
+            - rewrite <- (IHHy1 t2'0). reflexivity. assumption.
+    (* ST_IfTrue  *)
+   + inversion Hy2; subst.
+       * reflexivity.
+       * inversion H3.
+    (* ST_IfFalse *)    
+   + inversion Hy2; subst.
+       * reflexivity.
+       * inversion H3.
+   (* ST_If *)
+   + inversion Hy2; auto; subst.
+       * inversion Hy1.
+       * inversion Hy1.
+       * assert (H : t1' = t1'0).  apply IHHy1. assumption.
+         rewrite H. reflexivity.
+Qed.         
+           
 
-  
 Theorem strong_progress  : forall t, value t \/ (exists t', t ==> t').
-Proof. Admitted. (* todo: finish this one *)
+Proof.
+  
 
 
 (** [] *)
