@@ -1443,28 +1443,16 @@ Proof.
          rewrite H. reflexivity.
 Qed.         
            
-(* some of this stuff should be type error and it's not well defined?? *)
-Theorem strong_progress  : forall t,
-  value t \/ (exists t', t ==> t').
+
+Theorem not_strong_progress  : exists t,
+  ~ (value t \/ (exists t', t ==> t')).
 Proof.
-  induction t.
-    (* C *)
-    + left. apply v_const.
-    (* P *)
-    + inversion IHt1; subst.
-        - inversion IHt2; subst.
-            * inversion H; inversion H0; subst.
-                right. exists (C (n + n0)). apply ST_PlusConstConst.
-                admit.
-                admit.
-                admit.
-                admit.
-                admit.
-                admit.
-                admit.
-                admit.
-            * 
-Abort. (* todo: finish this one, what bout type erros?? *)
+  exists (P (C 0) ttrue). unfold not. intros. inversion H.
+    + inversion H0.
+    + inversion H0. inversion H1; subst.
+        * inversion H5.
+        * inversion H6.
+Qed.      
 
 
 
