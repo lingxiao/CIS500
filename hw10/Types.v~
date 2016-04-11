@@ -183,15 +183,8 @@ Hint Unfold stuck.
 Example some_term_is_stuck :
   exists t, stuck t.
 Proof.
-  exists (tsucc (ttrue)). unfold stuck, normal_form, value. split.
-    + unfold not; intros. destruct H. inversion H; subst. inversion H1.
-    + unfold not; intros [H1 | H2].
-        - inversion H1.
-        - inversion H2; subst. inversion H0.
-Qed.      
-
-
-      
+  (* FILL IN HERE *) Admitted.
+(** [] *)
 
 (** However, although values and normal forms are not the same in this
     language, the set of values is included in the set of normal
