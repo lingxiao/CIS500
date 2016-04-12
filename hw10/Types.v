@@ -498,81 +498,17 @@ Proof with auto.
       + (* ST_IfFalse *) assumption.
       + (* ST_If *) apply T_If; try assumption.
         apply IHHT1; assumption.
+    (* succ *)
     - inversion HE; subst ...
-    - admit. (* todo: finish this case *)
+    (* pred *)
+    - inversion HE; subst.
+        + apply T_Zero.
+        + inversion HT. assumption.
+        + apply T_Pred. apply IHHT. assumption.
+    (* zero *)       
     - inversion HE; subst ...
 Qed.      
 
-
-
-
-(** 
-                           ----------------                            (T_True)
-                           |- true \in Bool
-
-                          -----------------                           (T_False)
-                          |- false \in Bool
-
-             |- t1 \in Bool    |- t2 \in T    |- t3 \in T
-             --------------------------------------------                (T_If)
-                    |- if t1 then t2 else t3 \in T
-
-                             ------------                              (T_Zero)
-                             |- 0 \in Nat
-
-                            |- t1 \in Nat
-                          ------------------                           (T_Succ)
-                          |- succ t1 \in Nat
-
-                            |- t1 \in Nat
-                          ------------------                           (T_Pred)
-                          |- pred t1 \in Nat
-
-                            |- t1 \in Nat
-                        ---------------------                        (T_IsZero)
-                        |- iszero t1 \in Bool
-*)
-
-Proof.
-  intros t t' T HT HE. generalize dependent t'.
-  induction HT; intros t' HE.
-    (* true *) 
-    + inversion HE.
-    (* false *)
-    + inversion HE.
-    (* if then else *)      
-    + inversion HE; subst; clear HE.
-        (* if true ... *)
-        - assumption.
-        (* if false ... *)
-        - assumption.
-        (* if expression ... *)
-        - apply T_If; try assumption; apply IHHT1; assumption.
-   (* zero *)       
-   + inversion HE.
-   (* succ *)
-   + apply IHHT. inversion HE; clear HE. inversion H0; subst.
-Abort.
-
-
-
-
-Proof with auto.
-  intros t t' T HT HE.
-  generalize dependent t'.
-  induction HT;
-         (* every case needs to introduce a couple of things *)
-         intros t' HE;
-         (* and we can deal with several impossible
-            cases all at once *)
-         try (solve by inversion).
-    - (* T_If *) inversion HE; subst; clear HE.
-      + (* ST_IFTrue *) assumption.
-      + (* ST_IfFalse *) assumption.
-      + (* ST_If *) apply T_If; try assumption.
-        apply IHHT1; assumption.
-    (* FILL IN HERE *) Admitted.
-(** [] *)
 
 (** **** Exercise: 3 stars, advanced (finish_preservation_informal)  *)
 (** Complete the following proof: *)
