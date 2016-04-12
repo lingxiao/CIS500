@@ -716,7 +716,19 @@ Proof.
     not, give a counter-example.  (You do not need to prove your
     counter-example in Coq, but feel free to do so if you like.)
 
-    (* FILL IN HERE *)
+
+    Solution:
+    false. Since:
+
+        t1 = [if true then 1 else false]
+
+     steps to
+        
+        t1' = [1]
+     
+     which is in Nat and is well typed, but t1 is not well typed.
+
+
 [] *)
 
 
