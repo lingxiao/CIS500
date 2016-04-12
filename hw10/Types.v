@@ -552,9 +552,27 @@ Theorem preservation' : forall t t' T,
   |- t \in T ->
   t ==> t' ->
   |- t' \in T.
-Proof with eauto.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+(*Proof with eauto.*)
+Proof.
+  intros t t' T HT HE. generalize dependent T. induction HE; intros.
+    + inversion HT; subst. assumption.
+    + inversion HT; subst. assumption.
+    + inversion HT; subst. apply T_If.
+        - apply IHHE. assumption.
+        - assumption.
+        - assumption.
+    + inversion HT; subst. apply T_Succ. apply IHHE.  assumption.
+    + inversion HT; subst. assumption.
+    + inversion HT; subst. inversion H; subst.
+        - apply T_Zero.
+        - apply succ_hastype_nat__hastype_nat. assumption.
+    + inversion HT; subst. apply T_Pred. apply IHHE. assumption.
+    + inversion HT; subst. apply T_True.
+    + inversion HT; subst. apply T_False.
+    + inversion HT; subst. apply T_Iszero. apply IHHE in H0. assumption.
+Qed.
+      
+
 
 (* ###################################################################### *)
 (** ** Type Soundness *)
