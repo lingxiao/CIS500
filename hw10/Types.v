@@ -191,8 +191,6 @@ Proof.
 Qed.      
 
 
-      
-
 (** However, although values and normal forms are not the same in this
     language, the set of values is included in the set of normal
     forms.  This is important because it shows we did not accidentally
@@ -210,9 +208,9 @@ Qed.
 Lemma value_is_nf : forall t,
   value t -> step_normal_form t.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  (* FILL IN HERE *) Admitted. (* maybedo: interesting question, come back and do this *)
 
+(** [] *)
 
 (** **** Exercise: 3 stars, optional (step_deterministic)  *)
 (** Use [value_is_nf] to show that the [step] relation is also
@@ -221,7 +219,7 @@ Proof.
 Theorem step_deterministic:
   deterministic step.
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  (* FILL IN HERE *) Admitted. (* optional *)
 (** [] *)
 
 
@@ -331,7 +329,7 @@ Example succ_hastype_nat__hastype_nat : forall t,
   |- tsucc t \in TNat ->
   |- t \in TNat.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  (* FILL IN HERE *) Admitted. (* optional *)
 (** [] *)
 
 (* ###################################################################### *)
@@ -374,14 +372,13 @@ Theorem progress : forall t T,
 (** Complete the formal proof of the [progress] property.  (Make sure
     you understand the informal proof fragment in the following
     exercise before starting -- this will save you a lot of time.) *)
-
 Proof with auto.
   intros t T HT.
   induction HT...
   (* The cases that were obviously values, like T_True and
      T_False, were eliminated immediately by auto *)
-  - (* T_If *)
-    right. inversion IHHT1; clear IHHT1.
+  (* T_If *)
+  - right. inversion IHHT1; clear IHHT1.
     + (* t1 is a value *)
     apply (bool_canonical t1 HT1) in H.
     inversion H; subst; clear H.
@@ -390,8 +387,32 @@ Proof with auto.
     + (* t1 can take a step *)
       inversion H as [t1' H1].
       exists (tif t1' t2 t3)...
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  (* succ *)
+  - inversion IHHT.
+      + left. unfold value; right. inversion H.
+          * inversion H0; subst. solve by inversion. solve by inversion.
+          * constructor. assumption.
+      + right. inversion H; subst. exists (tsucc x). auto.
+ (* pred *)
+  - inversion IHHT.
+      (* pred t where t is a value *)
+      + right. inversion H; inversion H0; subst.
+          * solve by inversion.
+          * solve by inversion.
+          * exists tzero. constructor.
+          * exists t...
+      (* pred t where t is an expression *)
+      + right. inversion H. exists (tpred x)...
+  (* izzero *)
+  - inversion IHHT.
+      + right. inversion H; inversion H0; subst.
+          * solve by inversion.
+          * solve by inversion.
+          * exists ttrue. constructor.
+          * exists tfalse. constructor. assumption.
+      + right. inversion H. exists (tiszero x)...
+Qed.        
+
 
 (** **** Exercise: 3 stars, advanced (finish_progress_informal)  *)
 (** Complete the corresponding informal proof: *)
@@ -425,17 +446,20 @@ Proof with auto.
     values.  Here, a term can be stuck, but only if it is ill
     typed. *)
 
-(** **** Exercise: 1 star (step_review)  *)
+(** **** Exercise: 1 star (step_review)  *)  (* todo: check this *)
 (** Quick review.  Answer _true_ or _false_.  In this language...
       - Every well-typed normal form is a value.
+          true. 
 
       - Every value is a normal form.
+          true
 
       - The single-step evaluation relation is
         a partial function (i.e., it is deterministic).
+          true
 
       - The single-step evaluation relation is a _total_ function.
-
+          false. if the term [t] is illtyped there is no [t'] it can step to.
 *)
 (** [] *)
 
@@ -460,6 +484,78 @@ Theorem preservation : forall t t' T,
 (** Complete the formal proof of the [preservation] property.  (Again,
     make sure you understand the informal proof fragment in the
     following exercise first.) *)
+Proof with auto.
+  intros t t' T HT HE.
+  generalize dependent t'.
+  induction HT;
+         (* every case needs to introduce a couple of things *)
+         intros t' HE;
+         (* and we can deal with several impossible
+            cases all at once *)
+         try (solve by inversion).
+    - (* T_If *) inversion HE; subst; clear HE.
+      + (* ST_IFTrue *) assumption.
+      + (* ST_IfFalse *) assumption.
+      + (* ST_If *) apply T_If; try assumption.
+        apply IHHT1; assumption.
+    - inversion HE; subst ...
+    - admit. (* todo: finish this case *)
+    - inversion HE; subst ...
+Qed.      
+
+
+
+
+(** 
+                           ----------------                            (T_True)
+                           |- true \in Bool
+
+                          -----------------                           (T_False)
+                          |- false \in Bool
+
+             |- t1 \in Bool    |- t2 \in T    |- t3 \in T
+             --------------------------------------------                (T_If)
+                    |- if t1 then t2 else t3 \in T
+
+                             ------------                              (T_Zero)
+                             |- 0 \in Nat
+
+                            |- t1 \in Nat
+                          ------------------                           (T_Succ)
+                          |- succ t1 \in Nat
+
+                            |- t1 \in Nat
+                          ------------------                           (T_Pred)
+                          |- pred t1 \in Nat
+
+                            |- t1 \in Nat
+                        ---------------------                        (T_IsZero)
+                        |- iszero t1 \in Bool
+*)
+
+Proof.
+  intros t t' T HT HE. generalize dependent t'.
+  induction HT; intros t' HE.
+    (* true *) 
+    + inversion HE.
+    (* false *)
+    + inversion HE.
+    (* if then else *)      
+    + inversion HE; subst; clear HE.
+        (* if true ... *)
+        - assumption.
+        (* if false ... *)
+        - assumption.
+        (* if expression ... *)
+        - apply T_If; try assumption; apply IHHT1; assumption.
+   (* zero *)       
+   + inversion HE.
+   (* succ *)
+   + apply IHHT. inversion HE; clear HE. inversion H0; subst.
+Abort.
+
+
+
 
 Proof with auto.
   intros t t' T HT HE.
