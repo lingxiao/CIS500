@@ -716,8 +716,8 @@ Proof.
     not, give a counter-example.  (You do not need to prove your
     counter-example in Coq, but feel free to do so if you like.)
 
-
     Solution:
+
     false. Since:
 
         t1 = [if true then 1 else false]
@@ -732,7 +732,20 @@ Proof.
 [] *)
 
 
+(* todo: check these. *)
 
+(*
+
+Theorem preservation : ∀t t' T,
+  ⊢ t ∈ T →
+  t ⇒ t' →
+  ⊢ t' ∈ T.
+
+Theorem progress : ∀t T,
+  ⊢ t ∈ T →
+  value t ∨ ∃t', t ⇒ t'.
+
+*)
 
 (** **** Exercise: 2 stars (variation1)  *)
 (** Suppose, that we add this new rule to the typing relation:
@@ -744,11 +757,18 @@ Proof.
    else "becomes false." If a property becomes false, give a
    counterexample.
       - Determinism of [step]
+                remains true.
 
       - Progress
+               no. [t = tsucc false].
+        by definition of [=>] t cannot step to another value.
+        by by def of [value] t is not a value.
 
       - Preservation
+               not true. ie  [t = tsucc ttrue].
+               
 
+ 
 [] *)
 
 (** **** Exercise: 2 stars (variation2)  *)
@@ -757,6 +777,16 @@ Proof.
            (tif ttrue t2 t3) ==> t3
    Which of the above properties become false in the presence of
    this rule?  For each one that does, give a counter-example.
+
+      - Determinism of [step]
+           No longer true. since (tif true t2 t3) can step to
+           t3 by [ST_Funny1] and step to [t2] by [ST_IfTrue].
+
+      - Progress
+           remains true.
+
+      - Preservation
+           remains true. 
 
 [] *)
 
@@ -815,7 +845,12 @@ Proof.
     achieve this simply by removing the rule from the definition of
     [step]?  Would doing so create any problems elsewhere?
 
-(* FILL IN HERE *)
+     No. Now given term [pred 0] we would not be able to
+     step it into any other value under (=>), so it is a normal form.
+     however it is not a value by definition of [nvalue]. Thus
+     we have a term [pred 0] that is well typed but is also stuck.
+
+
 [] *)
 
 (** **** Exercise: 4 stars, advanced (prog_pres_bigstep)  *)
