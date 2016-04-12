@@ -621,6 +621,7 @@ Proof.
   apply multi_refl.
 Qed.
 
+
 (** We repeatedly apply [multi_step] until we get to a normal
     form. The proofs for the intermediate steps are simple enough that
     [auto], with appropriate hints, can solve them. *)
@@ -663,6 +664,8 @@ Qed.
     what the normal form of a term is, by proving a goal with an
     existential variable in it. *)
 
+Print ex_intro.
+
 Example astep_example1''' : exists e',
   (APlus (ANum 3) (AMult (ANum 3) (ANum 4))) / empty_state
   ==>a* e'.
@@ -685,7 +688,9 @@ Theorem normalize_ex : exists e',
   (AMult (ANum 3) (AMult (ANum 2) (ANum 1))) / empty_state
   ==>a* e'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  eapply ex_intro. normalize.
+Qed.  
+
 
 (** [] *)
 
