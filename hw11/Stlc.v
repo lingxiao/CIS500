@@ -448,12 +448,36 @@ Proof.
 
         
   (* <- *)
-  * induction t.
-      + (* variable *) intros. 
+  * generalize dependent t'. induction t. intros t'.
+     + (* variable *) intros. inversion H; subst. unfold subst.
+          - (* x = y *) destruct (beq_id i i) eqn: Hi. reflexivity.
+                        exfalso. apply beq_id_false_iff in Hi.
+                        unfold not in Hi. apply Hi. reflexivity.
+          - (* x <> y *) unfold subst. destruct (beq_id x i) eqn: Hi.
+                         unfold not in H1. exfalso. apply H1.
+                         apply beq_id_true_iff in Hi. apply Hi. reflexivity.
+     + (* application *) intros. inversion H; subst; clear H.
+                          replace ([x := s]tapp t1 t2)
+                           with (tapp ([x := s]t1) ([x := s]t2)) by reflexivity.
+                          apply IHt1 in H2. apply IHt2 in H4. rewrite H2. rewrite H4.
+                          reflexivity.
+     + (* abstraction *) intros. inversion H; subst.
+                         - unfold subst. destruct (beq_id i i) eqn: Hi.
+                            reflexivity. exfalso. apply beq_id_false_iff in Hi.
+                              apply Hi. reflexivity.
+                         - unfold subst. destruct (beq_id x i) eqn: Hi.
+                           rewrite beq_id_true_iff in Hi; subst. exfalso.
+                           apply H4. reflexivity.
+                           fold subst. apply IHt in H5. rewrite H5. reflexivity.
+    + (* true *) intros. unfold subst. inversion H.  reflexivity.                    
+    + (* false *) intros. unfold subst. inversion H. reflexivity.
+    + (* if *) intros. inversion H; subst. replace  ([x := s]tif t1 t2 t3) with
+               (tif ([x := s] t1) ([x := s] t2)  ([x := s] t3)) by reflexivity.
+               apply IHt1 in H3. apply IHt2 in H5. apply IHt3 in H6.
+               rewrite H3; rewrite H5; rewrite H6. reflexivity.
+Qed.               
+               
 
-
-
-Abort.        
 (* ################################### *)
 (** *** Reduction *)
 
@@ -482,6 +506,7 @@ Abort.
                            v1 t2 ==> v1 t2'
 *)
 (** ... plus the usual rules for booleans:
+
                     --------------------------------                (ST_IfTrue)
                     (if true then t1 else t2) ==> t1
 
@@ -522,7 +547,6 @@ Notation multistep := (multi step).
 Notation "t1 '==>*' t2" := (multistep t1 t2) (at level 40).
 
 (* ##################################### *)
-
 
 
 
@@ -631,10 +655,8 @@ Proof. normalize.  Qed.
 Lemma step_example5 :
        (tapp (tapp idBBBB idBB) idB)
   ==>* idB.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. normalize. Qed.
 
-(* FILL IN HERE *)
 (** [] *)
 
 (* ###################################################################### *)
