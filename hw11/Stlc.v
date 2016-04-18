@@ -787,9 +787,14 @@ Example typing_example_2_full :
        (tabs y (TArrow TBool TBool)
           (tapp (tvar y) (tapp (tvar y) (tvar x))))) \in
     (TArrow TBool (TArrow (TArrow TBool TBool) TBool)).
-Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+Proof with auto using update_eq.
+  apply T_Abs.
+  apply T_Abs.
+  eapply T_App. apply T_Var ...
+  eapply T_App. apply T_Var ...
+  apply T_Var...
+Qed.  
+
 
 (** **** Exercise: 2 stars (typing_example_3)  *)
 (** Formally prove the following typing derivation holds: *)
@@ -807,9 +812,16 @@ Example typing_example_3 :
             (tabs z TBool
                (tapp (tvar y) (tapp (tvar x) (tvar z)))))) \in
       T.
-Proof with auto.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+Proof with auto using update_eq.
+  exists (TArrow (TArrow TBool TBool) (TArrow (TArrow TBool TBool) (TArrow TBool TBool))).
+  apply T_Abs.
+  apply T_Abs.
+  apply T_Abs.
+  eapply T_App.
+Abort.   (* todo: finish this!!! *)
+  
+  
+  
 
 (** We can also show that terms are _not_ typable.  For example, let's
     formally check that there is no typing derivation assigning a type
