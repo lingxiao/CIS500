@@ -419,13 +419,41 @@ Hint Constructors substi.
 Theorem substi_correct : forall s x t t',
   [x:=s]t = t' <-> substi s x t t'.
 Proof.
-  intros s x t. split. generalize dependent t'.
+  intros s x t t'. split. generalize dependent t'.
+
   (* -> *)
-  + intros. 
-  
-  
+  * induction t.
+      (* variable *)
+      + intros. unfold subst in H. destruct (beq_id x i) eqn: H2; subst.
+          - apply beq_id_true_iff in H2. rewrite H2. apply s_var1.
+          - apply beq_id_false_iff in H2. apply s_var2.  apply H2.
+      (* application *)
+      + intros. replace ([x := s] tapp t1 t2)
+        with (tapp ([x := s] t1) ([x := s] t2)) in H by reflexivity.
+        rewrite <- H. apply s_app. apply IHt1. reflexivity. apply IHt2. reflexivity.
+      (* lambda abstraction *)
+      + intros. unfold subst in H. destruct (beq_id x i) eqn: Hx. 
+          - subst. apply beq_id_true_iff in Hx; subst. apply s_abs1.
+          - fold subst in H. apply beq_id_false_iff in Hx; subst.
+            apply s_abs2. apply Hx. apply IHt. reflexivity.
+      (* true *)
+      + intros. unfold subst in H; subst. apply s_true.
+      (* false *)
+      + intros. unfold subst in H; subst. apply s_false.
+      (* if *)
+      + intros. rewrite <- H. replace ([x := s]tif t1 t2 t3)
+        with (tif ([x := s]t1) ([x := s]t2) ([x := s]t3)) by reflexivity.
+        apply s_if.
+        apply IHt1. reflexivity. apply IHt2. reflexivity. apply IHt3. reflexivity.
+
+        
+  (* <- *)
+  * induction t.
+      + (* variable *) intros. 
 
 
+
+Abort.        
 (* ################################### *)
 (** *** Reduction *)
 
