@@ -252,6 +252,9 @@ Notation notB := (tabs x TBool (tif (tvar x) tfalse ttrue)).
     function is actually applied to an argument.  We also make the
     second choice here. *)
 
+Compute (fun x : bool => fun y : bool => 4 + 6 ).
+
+
 Inductive value : tm -> Prop :=
   | v_abs : forall x T t,
       value (tabs x T t)
@@ -381,16 +384,47 @@ where "'[' x ':=' s ']' t" := (subst x s t).
 Inductive substi (s:tm) (x:id) : tm -> tm -> Prop :=
   | s_var1 :
       substi s x (tvar x) s
-  (* FILL IN HERE *)
-.
+
+  | s_var2 : forall y : id,
+      x <> y -> substi s x (tvar y) (tvar y)
+
+  | s_abs1 : forall (t : tm) (T : ty),
+      substi s x (tabs x T t) (tabs x T t)
+
+  | s_abs2 : forall (y : id) (t t' : tm) (T : ty),
+      x <> y          ->
+      substi s x t t' -> 
+      substi s x (tabs y T t) (tabs y T t')
+
+ | s_app  : forall (t1 t2 t1' t2' : tm),
+      substi s x t1 t1' ->
+      substi s x t2 t2' ->
+      substi s x (tapp t1 t2) (tapp t1' t2')
+
+ | s_true :
+     substi s x ttrue ttrue
+
+ | s_false:
+     substi s x tfalse tfalse
+
+ | s_if   : forall (t1 t2 t3 t1' t2' t3' : tm),
+     substi s x t1 t1' ->              
+     substi s x t2 t2' ->              
+     substi s x t3 t3' ->
+     substi s x (tif t1 t2 t3) (tif t1' t2' t3')
+.             
 
 Hint Constructors substi.
 
 Theorem substi_correct : forall s x t t',
   [x:=s]t = t' <-> substi s x t t'.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros s x t. split. generalize dependent t'.
+  (* -> *)
+  + intros. 
+  
+  
+
 
 (* ################################### *)
 (** *** Reduction *)
