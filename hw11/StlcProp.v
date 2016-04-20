@@ -720,7 +720,6 @@ Qed.
       - Preservation
            preserved. 
           
-
       todo: check this
 
 []
@@ -848,7 +847,7 @@ Inductive tm : Type :=
       the original STLC to deal with the new syntactic forms.  Make
       sure Coq accepts the whole file. *)
 
-(* FILL IN HERE *)
+(* todo: FILL IN HERE *)
 (** [] *)
 
 End STLCArith.
