@@ -602,14 +602,13 @@ Proof.
   intros Gamma t T1 T2 H1. generalize dependent T2.
   induction H1; intros T2 H2.
     (* var *)
-    + inversion H2; subst.  admit. (* todo: finish this Some *)
+    + inversion H2; subst; clear H2.  admit. (* todo: finish this Some *)
     + inversion H2; subst. apply IHhas_type in H6. subst. reflexivity.
-    +  admit. (* trivial on paper but not here ?? *)
+    + admit. (* trivial on paper but not here ?? *)
     + inversion H2; subst. reflexivity.
     + inversion H2; subst. reflexivity.
     + inversion H2; subst. apply IHhas_type2 in H6. assumption.
 Qed.
-
 
 
 (** [] *)
@@ -619,7 +618,20 @@ Qed.
 
 (** **** Exercise: 1 star (progress_preservation_statement)  *)
 (** Without peeking, write down the progress and preservation
-    theorems for the simply typed lambda-calculus. *)
+    theorems for the simply typed lambda-calculus.
+
+    progress:      forall t t',
+                      Empty |- t \in T ->
+                      value t \/ exists t', t ==> t'
+
+    preservation:  forall t t' T 
+                       Empty |- t \in T -> t ==> t' -> Empty |- t' \in T.
+
+
+ *)
+
+
+
 (** [] *)
 
 
