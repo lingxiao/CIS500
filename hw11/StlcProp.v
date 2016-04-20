@@ -549,9 +549,20 @@ Qed.
     then [empty |- t \in T]?  If so, prove it.  If not, give a
     counter-example not involving conditionals.
 
-(* FILL IN HERE *)
-[]
+   (* todo: why is this??? *)
+
 *)
+
+(* we show it formally *)
+Lemma subj_expansion_false : exists t t' T,
+  empty |- t' \in T  ->
+  t ==> t'           ->
+  ~(empty |- t \in T).
+Proof.
+  exists (tapp (tabs x (TArrow TBool TBool) ttrue) ttrue); exists ttrue; exists TBool.
+  intros H1 H2. clear H1 H2.
+  unfold not. intros H. inversion H; subst. inversion H3; subst. inversion H5.
+Qed.  
 
 
 (* ###################################################################### *)
@@ -579,12 +590,28 @@ Proof.
 (** * Uniqueness of Types *)
 
 (** **** Exercise: 3 stars (types_unique)  *)
-(** Another pleasant property of the STLC is that types are
+(** Another pleasant property of the STLC is that types aer
     unique: a given term (in a given context) has at most one
     type. *)
 (** Formalize this statement and prove it. *)
+Theorem types_unique : forall Gamma t T1 T2,
+  Gamma |- t \in T1  ->
+  Gamma |- t \in T2 ->
+  T1 = T2.
+Proof.
+  intros Gamma t T1 T2 H1. generalize dependent T2.
+  induction H1; intros T2 H2.
+    (* var *)
+    + inversion H2; subst.  admit. (* todo: finish this Some *)
+    + inversion H2; subst. apply IHhas_type in H6. subst. reflexivity.
+    +  admit. (* trivial on paper but not here ?? *)
+    + inversion H2; subst. reflexivity.
+    + inversion H2; subst. reflexivity.
+    + inversion H2; subst. apply IHhas_type2 in H6. assumption.
+Qed.
 
-(* FILL IN HERE *)
+
+
 (** [] *)
 
 (* ###################################################################### *)
