@@ -639,20 +639,30 @@ Qed.
 (** Suppose we add a new term [zap] with the following reduction rule:
                          ---------                  (ST_Zap)
                          t ==> zap
-and the following typing rule:
+    and the following typing rule:
                       ----------------               (T_Zap)
                       Gamma |- zap : T
+
     Which of the following properties of the STLC remain true in
     the presence of this rule?  For each one, write either
     "remains true" or else "becomes false." If a property becomes
     false, give a counterexample.
 
       - Determinism of [step]
+         Broken. Since some term t can either step to some t'/= zap or zap.
+         ie, let [t = if true then true else false], steps to true and zap.
 
       - Progress
+         Broken. Since zap does cannot step to any other term under [==>]
+         but by definition, zap is not a [value].
 
       - Preservation
+         Broken. The t from example above belongs in [Bool] but steps
+         to zap under (ST_Zap), which is not necessarily in [Bool].
 
+
+       todo: check this
+         
 []
 *)
 
@@ -669,12 +679,22 @@ and the following typing rule:
     false, give a counterexample.
 
       - Determinism of [step]
+           remains true. since any non applied lambda abstraction can only step to [true].
 
       - Progress
 
+          Preserved. Since lambda abstractions now step to foo,
+          which by [ST_Foo2] can step to true, by definition a value.
+          
+
       - Preservation
+          Broken. Note the lambda abstraction above [t = (\x:A. x)] need not be type
+          [Bool], but [t] can eventually step to true which is in Bool.
 
 []
+
+       todo: check this
+
 *)
 
 (** **** Exercise: 2 stars (stlc_variation3)  *)
@@ -685,10 +705,23 @@ and the following typing rule:
     false, give a counterexample.
 
       - Determinism of [step]
-
+          Preserved. 
+          
       - Progress
+         Broken. Since we can now construct
+                 t1 t2 :=  ((\x : Bool -> Bool. x) (\x : Bool. true))   (false)
+
+         which does not step to any term but is also not a value. 
+
+         Note [t1 t2] would step to 
+                  (\x : Bool. true) false
+         under [ST_App1] and then step to false under [ST_AppAbs].
 
       - Preservation
+           preserved. 
+          
+
+      todo: check this
 
 []
 *)
