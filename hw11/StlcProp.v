@@ -854,19 +854,21 @@ Inductive value : tm -> Prop :=
   | v_nat  : forall n,
       value (tnat n).
 
+Reserved Notation "'[' x ':=' s ']' t" (at level 20).
 
 (* substitution  as fixpoint [ x := s] t *)
 Fixpoint subst (x : id) (s t : tm) : tm :=
   match t with
   | tvar x'         => if beq_id x x' then s else t
-  | tapp t1 t2      => tapp (subst x s t1) (subst x s t2)
+  | tapp t1 t2      => tapp ([x := s] t1) ([x:= s] t2)
   | tabs x' T t'    => tabs x' T (if beq_id x x' then t' else subst x s t')
   | tnat _          => t
   | tsucc t'        => tsucc (subst x s t')
   | tpred t'        => tpred (subst x s t')
   | tmult t1 t2     => tmult (subst x s t1) (subst x s t2)
   | tif0 t1 t2 t3   => tif0 (subst x s t1) (subst x s t2) (subst x s t3)
-  end.
+  end
+where "'[' x ':=' s ']' t" := (subst x s t).    
 
 
 (* substitution as relation [x := s ] t *)
@@ -908,6 +910,8 @@ Inductive substi (s : tm) (x : id) : tm -> tm -> Prop :=
      substi s x t2 t2'    ->
      substi s x t3 t3'    ->
      substi s x (tif0 t1 t2 t3) (tif0 t1' t2' t3').
+
+Hint Constructors substi.
                  
 (* reduction under step *)
 Inductive step : tm -> tm -> Prop :=
@@ -924,31 +928,49 @@ Inductive step : tm -> tm -> Prop :=
      value v ->
      tapp v t  ==> tapp v t'
 
-  | ST_Succ : forall t t',
+  | ST_Succ1 : forall t t',
      t ==> t' ->                
      tsucc t ==> tsucc t'
 
-  | ST_Pred : forall t t',
+  | ST_Succ2 : forall t n,
+     t = (tnat n) ->
+     tsucc t ==> tnat (S n)
+
+  | ST_Pred1 : forall t t',
      t ==> t' ->                
      tpred t ==> tpred t'
 
-  | ST_Mult : forall t1 t1' t2 t2',
+  | ST_Pred2 : forall t,
+     t = (tnat 0) ->
+     tpred t  ==> tnat 0
+
+  | ST_Pred3 : forall t n,
+     t = (tnat (S n))  ->
+     tpred t  ==> tnat n                 
+
+  | S_Mult1 : forall t1 t2 n m,
+     t1 = (tnat n) ->
+     t2 = (tnat m) ->
+     tmult t1 t2 ==> tnat (n * m)
+
+  | ST_Mult2 : forall t1 t1' t2,
      t1 ==> t1'   ->
+     tmult t1 t2 ==> tmult t1' t2
+
+  | ST_Mult3 : forall t1 t2 t2' n,
+     t1 = (tnat n) ->                 
      t2 ==> t2'   ->
-     tmult t1 t2 ==> tmult t1' t2' 
+     tmult t1 t2 ==> tmult t1 t2'
 
   | ST_IfZero : forall t1 t2,
      tif0 (tnat 0) t1 t2 ==> t1
 
   | ST_IfNot : forall n t1 t2,
-     n <> 0  ->
-     tif0 (tnat n) t1 t2  ==> t2
+     tif0 (tnat (S n)) t1 t2  ==> t2
 
-  | ST_If : forall t1 t2 t3 t1' t2' t3',
+  | ST_If : forall t1 t1' t2 t3
      t1 ==> t1' ->              
-     t2 ==> t2' ->              
-     t3 ==> t3' ->
-     tif0 t1 t2 t3 ==> tif0 t1' t2' t3'
+     tif0 t1 t2 t3 ==> tif0 t1 t2 t3
                      
   where "t1 '==>' t2" := (step t1 t2).                            
 
@@ -1001,7 +1023,16 @@ where "Gamma '|-' t '\in' T" := (has_type Gamma t T).
 
 
 
-
+(* Progress *)
+Theorem Progress : forall t T,
+   empty |- t \in T ->
+   value t \/ exists t', t ==> t'.
+Proof with eauto.
+  intros t. induction t; intros T Ht; auto.
+    (* abstraction *) 
+    + left. inversion Ht; subst. inversion H1.
+    (* application *)  
+    + right. 
 
 
 
