@@ -600,10 +600,7 @@ Proof.
     (* var *)
     + inversion H2; subst; clear H2. admit. (* todo: finish this Some *)
     + inversion H2; subst. apply IHhas_type in H6. subst. reflexivity.
-    + 
-
-
-      admit. (* trivial on paper but not here ?? *)
+    + admit. (* trivial on paper but not here ?? *)
     + inversion H2; subst. reflexivity.
     + inversion H2; subst. reflexivity.
     + inversion H2; subst. apply IHhas_type2 in H6. assumption.
