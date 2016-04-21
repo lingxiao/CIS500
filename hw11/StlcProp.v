@@ -861,12 +861,12 @@ Fixpoint subst (x : id) (s t : tm) : tm :=
   match t with
   | tvar x'         => if beq_id x x' then s else t
   | tapp t1 t2      => tapp ([x := s] t1) ([x:= s] t2)
-  | tabs x' T t'    => tabs x' T (if beq_id x x' then t' else subst x s t')
+  | tabs x' T t'    => tabs x' T (if beq_id x x' then t' else [x := s] t')
   | tnat _          => t
-  | tsucc t'        => tsucc (subst x s t')
-  | tpred t'        => tpred (subst x s t')
-  | tmult t1 t2     => tmult (subst x s t1) (subst x s t2)
-  | tif0 t1 t2 t3   => tif0 (subst x s t1) (subst x s t2) (subst x s t3)
+  | tsucc t'        => tsucc ([x := s] t')
+  | tpred t'        => tpred ([x := s] t')
+  | tmult t1 t2     => tmult ([x := s] t1) ([x := s] t2) 
+  | tif0 t1 t2 t3   => tif0 ([x := s] t1) ([x := s] t2) ([x := s] t3)
   end
 where "'[' x ':=' s ']' t" := (subst x s t).    
 
@@ -968,11 +968,17 @@ Inductive step : tm -> tm -> Prop :=
   | ST_IfNot : forall n t1 t2,
      tif0 (tnat (S n)) t1 t2  ==> t2
 
-  | ST_If : forall t1 t1' t2 t3
+  | ST_If : forall t1 t1' t2 t3,
      t1 ==> t1' ->              
      tif0 t1 t2 t3 ==> tif0 t1 t2 t3
                      
-  where "t1 '==>' t2" := (step t1 t2).                            
+  where "t1 '==>' t2" := (step t1 t2).
+
+Hint Constructors step.
+
+Notation multistep := (multi step).
+Notation "t1 '==>*' t2" := (multistep t1 t2) (at level 40).
+
 
 
 (* Typing relation *)
@@ -1019,7 +1025,7 @@ Inductive has_type : context -> tm -> ty -> Prop :=
       Gamma |- t3 \in T    ->
       Gamma |- (tif0 t1 t2 t3) \in T                
                
-where "Gamma '|-' t '\in' T" := (has_type Gamma t T).                           
+where "Gamma '|-' t '\in' T" := (has_type Gamma t T).
 
 
 
