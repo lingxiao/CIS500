@@ -600,10 +600,7 @@ Proof.
     (* var *)
     + inversion H2; subst; clear H2. admit. (* todo: finish this Some *)
     + inversion H2; subst. apply IHhas_type in H6. subst. reflexivity.
-    + 
-
-
-      admit. (* trivial on paper but not here ?? *)
+    + admit. (* todo: trivial on paper but not here ?? *)
     + inversion H2; subst. reflexivity.
     + inversion H2; subst. reflexivity.
     + inversion H2; subst. apply IHhas_type2 in H6. assumption.
@@ -937,7 +934,7 @@ Inductive step : tm -> tm -> Prop :=
      t = (tnat (S n))  ->
      tpred t  ==> tnat n                 
 
-  | S_Mult1 : forall t1 t2 n m,
+  | ST_Mult1 : forall t1 t2 n m,
      t1 = (tnat n) ->
      t2 = (tnat m) ->
      tmult t1 t2 ==> tnat (n * m)
@@ -946,10 +943,9 @@ Inductive step : tm -> tm -> Prop :=
      t1 ==> t1'   ->
      tmult t1 t2 ==> tmult t1' t2
 
-  | ST_Mult3 : forall t1 t2 t2' n,
-     t1 = (tnat n) ->                 
+  | ST_Mult3 : forall t2 t2' n,
      t2 ==> t2'   ->
-     tmult t1 t2 ==> tmult t1 t2'
+     tmult (tnat n) t2 ==> tmult (tnat n) t2'
 
   | ST_IfZero : forall t1 t2,
      tif0 (tnat 0) t1 t2 ==> t1
@@ -959,7 +955,7 @@ Inductive step : tm -> tm -> Prop :=
 
   | ST_If : forall t1 t1' t2 t3,
      t1 ==> t1' ->              
-     tif0 t1 t2 t3 ==> tif0 t1 t2 t3
+     tif0 t1 t2 t3 ==> tif0 t1' t2 t3
                      
   where "t1 '==>' t2" := (step t1 t2).
 
@@ -1018,40 +1014,64 @@ where "Gamma '|-' t '\in' T" := (has_type Gamma t T).
 
 
 (* Progress *)
+(* note: not neccesary to finish this on time *)
 Theorem Progress : forall t T,
    empty |- t \in T ->
    value t \/ exists t', t ==> t'.
 Proof with eauto.
-  intros t. induction t; intros T Ht; auto.
-    (* abstraction *) 
-    + left. inversion Ht; subst. inversion H1.
-    (* application *)  
-    + right. admit.
-    (* abstraction *) 
-    + left. apply v_abs.
-    (* nat *)
-    + left. apply v_nat.
-    (* succ of nat *)
-    + right. destruct (IHt T).
-        * inversion Ht; subst. assumption.
-        * inversion Ht; subst. inversion H; subst.
-          inversion H2. exists (tnat (S n)). apply ST_Succ2. reflexivity.
-        * inversion H; subst. apply ST_Succ1 in H0. exists (tsucc x). assumption.
-    (* pred of nat *)
-    + right. destruct (IHt T). clear IHt.
-        * inversion Ht; subst. assumption.
-        * inversion Ht; subst. inversion H; subst.
-          inversion H2.
-          destruct n. exists (tnat 0). apply ST_Pred2. reflexivity.
-          exists (tnat n). apply ST_Pred3. reflexivity.
-        * inversion H; subst. apply ST_Pred1 in H0. exists (tpred x). assumption.
-    (* mult *)      
-    + right. destruct (IHt1 T).
-        * inversion Ht; subst. assumption.
-        * admit.
-        * admit.
-Abort.
+  intros t T H. induction H. 
+    + (* var x *)         exfalso. admit. (* todo: what to do with this *)
+    + (* lambda *)        left. apply v_abs.
+    + (* application *)   right. destruct IHhas_type1; subst.
+        (* t1 is a value *)
+        - inversion H1; subst.
+          (* t1 is lambda abstraction *)
+            * destruct IHhas_type2; subst.
+                (* t2 is a value *)
+                exists ([ x := t2] t). apply ST_AppAbs. assumption.
+                (* t2 takes a step *)
+                inversion H2; subst. exists (tapp (tabs x T t) x0).
+                apply ST_App2. assumption.
+          (* t1 is a tnat n *)
+            * inversion H; subst.
+        (* t1 takes a step *)      
+        - inversion H1; subst. exists (tapp x t2). apply ST_App1. assumption.
+    + (* nat *) left. apply v_nat.
+    + (* succ  *) right. destruct IHhas_type.
+        - (* t is a value *) inversion H0; subst.
+             * (* t is lambda *) inversion H.
+             * (* t is nat *) exists (tnat (S n)). apply ST_Succ2. reflexivity.
+        - (* t steps *) inversion H0; subst.
+          exists (tsucc x). apply ST_Succ1. assumption.
+    + (* pred *) right. destruct IHhas_type.
+       - (* t is a value *) inversion H0; subst.
+             * inversion H.
+             * destruct n. exists (tnat 0). apply ST_Pred2. reflexivity.
+               exists (tnat n). apply ST_Pred3. reflexivity.
+      - (* t steps *) inversion H0; subst.
+                      exists (tpred x). apply ST_Pred1. assumption.
 
+    + (* mult *) right. destruct IHhas_type1.
+         - (* t1 is value *) destruct IHhas_type2.
+             * inversion H1; subst. inversion H.
+               inversion H2; subst. inversion H0.
+               exists (tnat (n * n0)). apply ST_Mult1. reflexivity. reflexivity.
+             * inversion H1; subst. inversion H.
+               inversion H2; subst. exists (tmult (tnat n) x).
+               apply ST_Mult3. assumption.
+         - (* t1 steps *) inversion H1; subst. exists (tmult x t2).
+                          apply ST_Mult2. assumption.
+   + (* if *) right. destruct IHhas_type1.
+        - (* t1 value *) inversion H2; subst. inversion H.
+                         destruct n; subst. exists t2. apply ST_IfZero.
+                         exists t3. apply ST_IfNot.
+        - (* t1 steps *) inversion H2; subst. exists (tif0 x t2 t3).
+                         apply ST_If. assumption.
+Qed.            
+
+
+
+      
 (* free variable *)
 Inductive appears_free_in : id -> tm -> Prop :=
 
@@ -1216,35 +1236,6 @@ Theorem preservation : forall t t' T,
      t ==> t'  ->
      empty |- t' \in T.
 Proof. Admitted.
-
-
-(* ###################################################################### *)
-(** * Type Soundness *)
-
-Corollary soundness : forall t t' T,
-  empty |- t \in T ->
-  t ==>* t' ->
-  ~(stuck t').
-Proof.
-  intros t t' T Hhas_type Hmulti. unfold stuck.
-  intros [Hnf Hnot_val]. unfold normal_form in Hnf.
-  induction Hmulti.
-  (* FILL IN HERE *) Admitted.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
