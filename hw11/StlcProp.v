@@ -1098,6 +1098,169 @@ Inductive appears_free_in : id -> tm -> Prop :=
       appears_free_in x t3 ->
       appears_free_in x (tif0 t1 t2 t3).
 
+Hint Constructors appears_free_in.
+
+(** A term in which no variables appear free is said to be _closed_. *)
+
+Definition closed (t:tm) :=
+  forall x, ~ appears_free_in x t.
+
+
+(* ###################################################################### *)
+(** ** Substitution *)
+
+(** We first need a technical lemma connecting free variables and
+    typing contexts.  If a variable [x] appears free in a term [t],
+    and if we know [t] is well typed in context [Gamma], then it must
+    be the case that [Gamma] assigns a type to [x]. *)
+
+Lemma free_in_context : forall x t T Gamma,
+   appears_free_in x t ->
+   Gamma |- t \in T ->
+   exists T', Gamma x = Some T'.
+Proof.
+  intros x t T Gamma H H0. generalize dependent Gamma.
+  generalize dependent T.
+  induction H;
+         intros; try solve [inversion H0; eauto].
+  - (* afi_abs *)
+    inversion H1; subst.
+    apply IHappears_free_in in H7.
+    rewrite update_neq in H7; assumption.
+Qed.
+
+(** Next, we'll need the fact that any term [t] which is well typed in
+    the empty context is closed -- that is, it has no free variables. *)
+
+Corollary typable_empty__closed : forall t T,
+    empty |- t \in T  ->
+    closed t.
+Proof. Admitted.
+
+
+(** Sometimes, when we have a proof [Gamma |- t : T], we will need to
+    replace [Gamma] by a different context [Gamma'].  When is it safe
+    to do this?  Intuitively, it must at least be the case that
+    [Gamma'] assigns the same types as [Gamma] to all the variables
+    that appear free in [t]. In fact, this is the only condition that
+    is needed. *)
+
+Lemma context_invariance : forall Gamma Gamma' t T,
+     Gamma |- t \in T  ->
+     (forall x, appears_free_in x t -> Gamma x = Gamma' x) ->
+     Gamma' |- t \in T.
+Proof with eauto.
+  intros.
+  generalize dependent Gamma'.
+  induction H; intros; auto.
+  - (* T_Var *)
+    apply T_Var. rewrite <- H0...
+  - (* T_Abs *)
+    apply T_Abs.
+    apply IHhas_type. intros x1 Hafi.
+    (* the only tricky step... the [Gamma'] we use to
+       instantiate is [update Gamma x T11] *)
+    unfold update. unfold t_update. destruct (beq_id x x1) eqn: Hxx1...
+    rewrite beq_id_false_iff in Hxx1. auto.
+  - (* T_App *)
+    apply T_App with T11...
+  - admit.
+  - admit.
+  - admit.
+  - admit.
+  - admit.
+Qed.    
+
+
+Lemma substitution_preserves_typing : forall Gamma x U t v T,
+     update Gamma x U |- t \in T ->
+     empty |- v \in U   ->
+     Gamma |- [x:=v]t \in T.
+
+Proof with eauto.
+  intros Gamma x U t v T Ht Ht'.
+  generalize dependent Gamma. generalize dependent T.
+  induction t; intros T Gamma H;
+    (* in each case, we'll want to get at the derivation of H *)
+    inversion H; subst; simpl...
+  - (* tvar *)
+    rename i into y. destruct (beq_idP x y) as [Hxy|Hxy].
+    + (* x=y *)
+      subst.
+      rewrite update_eq in H2.
+      inversion H2; subst. clear H2.
+                  eapply context_invariance... intros x Hcontra.
+      destruct (free_in_context _ _ T empty Hcontra) as [T' HT']...
+      inversion HT'.
+    + (* x<>y *)
+      apply T_Var. rewrite update_neq in H2...
+  - (* tabs *)
+    rename i into y. apply T_Abs.
+    destruct (beq_idP x y) as [Hxy | Hxy].
+    + (* x=y *)
+      subst.
+      eapply context_invariance...
+      intros x Hafi. unfold update, t_update.
+      destruct (beq_id y x) eqn: Hyx...
+    + (* x<>y *)
+      apply IHt. eapply context_invariance...
+      intros z Hafi. unfold update, t_update.
+      destruct (beq_idP y z) as [Hyz | Hyz]; subst; trivial.
+      rewrite <- beq_id_false_iff in Hxy.
+      rewrite Hxy...
+Qed.
+  
+
+(* ###################################################################### *)
+(** ** Main Theorem for preservation *)
+
+(** We now have the tools we need to prove preservation: if a closed
+    term [t] has type [T], and takes an evaluation step to [t'], then [t']
+    is also a closed term with type [T].  In other words, the small-step
+    evaluation relation preserves types.
+*)
+
+Theorem preservation : forall t t' T,
+     empty |- t \in T  ->
+     t ==> t'  ->
+     empty |- t' \in T.
+Proof. Admitted.
+
+
+(* ###################################################################### *)
+(** * Type Soundness *)
+
+Corollary soundness : forall t t' T,
+  empty |- t \in T ->
+  t ==>* t' ->
+  ~(stuck t').
+Proof.
+  intros t t' T Hhas_type Hmulti. unfold stuck.
+  intros [Hnf Hnot_val]. unfold normal_form in Hnf.
+  induction Hmulti.
+  (* FILL IN HERE *) Admitted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
