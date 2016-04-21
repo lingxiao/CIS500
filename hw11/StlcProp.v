@@ -823,9 +823,9 @@ Inductive ty : Type :=
     successor, predecessor, multiplication, and zero-testing... *)
 
 Inductive tm : Type :=
-  | tvar : id -> tm
-  | tapp : tm -> tm -> tm
-  | tabs : id -> ty -> tm -> tm
+  | tvar  : id -> tm
+  | tapp  : tm -> tm -> tm
+  | tabs  : id -> ty -> tm -> tm
   | tnat  : nat -> tm
   | tsucc : tm -> tm
   | tpred : tm -> tm
@@ -847,7 +847,120 @@ Inductive tm : Type :=
       the original STLC to deal with the new syntactic forms.  Make
       sure Coq accepts the whole file. *)
 
-(* todo: FILL IN HERE *)
+(* specifiy value *)
+Inductive value : tm -> Prop :=
+  | v_abs  : forall x T t,
+      value (tabs x T t)
+  | v_nat  : forall n,
+      value (tnat n).
+
+
+(* substitution  as fixpoint [ x := s] t *)
+Fixpoint subst (x : id) (s t : tm) : tm :=
+  match t with
+  | tvar x'         => if beq_id x x' then s else t
+  | tapp t1 t2      => tapp (subst x s t1) (subst x s t2)
+  | tabs x' T t'    => tabs x' T (if beq_id x x' then t' else subst x s t')
+  | tnat _          => t
+  | tsucc t'        => tsucc (subst x s t')
+  | tpred t'        => tpred (subst x s t')
+  | tmult t1 t2     => tmult (subst x s t1) (subst x s t2)
+  | tif0 t1 t2 t3   => tif0 (subst x s t1) (subst x s t2) (subst x s t3)
+  end.
+
+
+(* substitution as relation [x := s ] t *)
+Inductive substi (s : tm) (x : id) : tm -> tm -> Prop :=
+
+  | s_var1 : substi s x (tvar x) s
+                    
+  | s_var2 : forall y,
+     x <> y -> substi s x (tvar y) (tvar y)
+                      
+  | s_abs1 : forall t T,
+     substi s x (tabs x T t) (tabs x T t)
+            
+  | s_abs2 : forall y t t' T,
+     x <> y            ->
+     substi s x t t'   ->
+     substi s x (tabs y T t) (tabs y T t')
+            
+  | s_app : forall t1 t2 t1' t2',
+     substi s x t1 t1'  ->
+     substi s x t2 t2'  ->
+     substi s x (tapp t1 t2) (tapp t1' t2')
+            
+  | t_succ : forall t t',
+     substi s x t t'    ->
+     substi s x (tsucc t) (tsucc t')               
+                    
+  | t_pred : forall t t',
+     substi s x t t'    ->
+     substi s x (tpred t) (tpred t')
+
+  | t_mult : forall t1 t2 t1' t2',
+     substi s x t1 t1'    ->
+     substi s x t2 t2'    ->
+     substi s x (tmult t1 t2) (tmult t1' t2')
+
+  | t_if : forall t1 t2 t1' t2' t3 t3',
+     substi s x t1 t1'    ->
+     substi s x t2 t2'    ->
+     substi s x t3 t3'    ->
+     substi s x (tif0 t1 t2 t3) (tif0 t1' t2' t3').
+                 
+(* reduction under step *)
+Inductive step : tm -> tm -> Prop :=
+
+  | ST_AppAbs : forall x T t v,
+     value v ->
+     tapp (tabs x T t) v ==> subst x v t
+
+  | ST_App1 : forall t1 t1' t2,
+     t1 ==> t1' ->
+     tapp t1 t2 ==> tapp t1' t2
+
+  | ST_App2 : forall v t t',
+     value v ->
+     tapp v t  ==> tapp v t'
+
+  | ST_Succ : forall t t',
+     t ==> t' ->                
+     tsucc t ==> tsucc t'
+
+  | ST_Pred : forall t t',
+     t ==> t' ->                
+     tpred t ==> tpred t'
+
+  | ST_Mult : forall t1 t1' t2 t2',
+     t1 ==> t1'   ->
+     t2 ==> t2'   ->
+     tmult t1 t2 ==> tmult t1' t2' 
+
+  | ST_IfZero : forall t1 t2,
+     tif0 (tnat 0) t1 t2 ==> t1
+
+  | ST_IfNot : forall n t1 t2,
+     n <> 0  ->
+     tif0 (tnat n) t1 t2  ==> t2
+
+  | ST_If : forall t1 t2 t3 t1' t2' t3',
+     t1 ==> t1' ->              
+     t2 ==> t2' ->              
+     t3 ==> t3' ->
+     tif0 t1 t2 t3 ==> tif0 t1' t2' t3'
+                     
+  where "t1 '==>' t2" := (step t1 t2).                            
+
+
+(* Typing relation *)
+
+
+
+
+
+
+
 (** [] *)
 
 End STLCArith.
