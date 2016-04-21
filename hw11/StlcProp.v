@@ -955,6 +955,50 @@ Inductive step : tm -> tm -> Prop :=
 
 (* Typing relation *)
 
+Definition context := partial_map ty.
+
+
+Reserved Notation "Gamma '|-' t '\in' T" (at level 40).
+
+Inductive has_type : context -> tm -> ty -> Prop :=
+
+  | T_Var : forall Gamma x T,
+      Gamma x = Some T ->
+      Gamma |- tvar x \in T
+
+  | T_Abs : forall Gamma x T11 T12 t12,
+      update Gamma x T11 |- t12 \in T12 ->
+      Gamma |- tabs x T11 t12 \in TArrow T11 T12
+
+  | T_App : forall T11 T12 Gamma t1 t2,
+      Gamma |- t1 \in TArrow T11 T12 ->
+      Gamma |- t2 \in T11 ->
+      Gamma |- tapp t1 t2 \in T12
+
+  | T_Nat : forall Gamma n,
+      Gamma |- (tnat n) \in TNat
+
+  | T_Succ : forall Gamma t,
+      Gamma |- t \in TNat ->
+      Gamma |- (tsucc t) \in TNat               
+
+  | T_Pred : forall Gamma t,
+      Gamma |- t \in TNat ->
+      Gamma |- (tpred t) \in TNat
+
+  | T_Mult : forall Gamma t1 t2,
+      Gamma |- t1 \in TNat ->
+      Gamma |- t2 \in TNat ->
+      Gamma |- (tmult t1 t2) \in TNat
+
+  | T_If   : forall Gamma t1 t2 t3 T,
+      Gamma |- t1 \in TNat ->
+      Gamma |- t2 \in T    ->               
+      Gamma |- t3 \in T    ->
+      Gamma |- (tif0 t1 t2 t3) \in T                
+               
+where "Gamma '|-' t '\in' T" := (has_type Gamma t T).                           
+
 
 
 
