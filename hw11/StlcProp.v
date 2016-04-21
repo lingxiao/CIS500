@@ -549,8 +549,6 @@ Qed.
     then [empty |- t \in T]?  If so, prove it.  If not, give a
     counter-example not involving conditionals.
 
-   (* todo: why is this??? *)
-
 *)
 
 (* we show it formally *)
@@ -1028,7 +1026,6 @@ Inductive has_type : context -> tm -> ty -> Prop :=
 where "Gamma '|-' t '\in' T" := (has_type Gamma t T).
 
 
-
 (* Progress *)
 Theorem Progress : forall t T,
    empty |- t \in T ->
@@ -1038,7 +1035,69 @@ Proof with eauto.
     (* abstraction *) 
     + left. inversion Ht; subst. inversion H1.
     (* application *)  
-    + right. 
+    + right. admit.
+    (* abstraction *) 
+    + left. apply v_abs.
+    (* nat *)
+    + left. apply v_nat.
+    (* succ of nat *)
+    + right. destruct (IHt T).
+        * inversion Ht; subst. assumption.
+        * inversion Ht; subst. inversion H; subst.
+          inversion H2. exists (tnat (S n)). apply ST_Succ2. reflexivity.
+        * inversion H; subst. apply ST_Succ1 in H0. exists (tsucc x). assumption.
+    (* pred of nat *)
+    + right. destruct (IHt T). clear IHt.
+        * inversion Ht; subst. assumption.
+        * inversion Ht; subst. inversion H; subst.
+          inversion H2.
+          destruct n. exists (tnat 0). apply ST_Pred2. reflexivity.
+          exists (tnat n). apply ST_Pred3. reflexivity.
+        * inversion H; subst. apply ST_Pred1 in H0. exists (tpred x). assumption.
+    (* mult *)      
+    + right. destruct (IHt1 T).
+        * inversion Ht; subst. assumption.
+        * admit.
+        * admit.
+Abort.
+
+(* free variable *)
+Inductive appears_free_in : id -> tm -> Prop :=
+
+  | afi_var : forall x,
+      appears_free_in x (tvar x)
+
+  | afi_app1 : forall x t1 t2,
+      appears_free_in x t1 -> appears_free_in x (tapp t1 t2)
+
+  | afi_app2 : forall x t1 t2,
+      appears_free_in x t2 -> appears_free_in x (tapp t1 t2)
+
+  | afi_abs : forall x y T11 t12,
+      y <> x  ->
+      appears_free_in x t12 ->
+      appears_free_in x (tabs y T11 t12)
+
+  | afi_succ: forall x t1,
+       appears_free_in x t1 ->
+       appears_free_in x (tsucc t1)
+
+  | afi_pred: forall x t1,
+       appears_free_in x t1 ->
+       appears_free_in x (tpred t1)
+
+  | afi_if1 : forall x t1 t2 t3,
+      appears_free_in x t1 ->
+      appears_free_in x (tif0 t1 t2 t3)
+
+  | afi_if2 : forall x t1 t2 t3,
+      appears_free_in x t2 ->
+      appears_free_in x (tif0 t1 t2 t3)
+
+  | afi_if3 : forall x t1 t2 t3,
+      appears_free_in x t3 ->
+      appears_free_in x (tif0 t1 t2 t3).
+
 
 
 
