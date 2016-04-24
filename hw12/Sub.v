@@ -598,20 +598,34 @@ Where does the type [Top->Top->Student] fit into this order?
 
 (** **** Exercise: 2 stars (small_large_1)  *)
 (**
+
+   TODO: Check all of these
+    
    - What is the _smallest_ type [T] ("smallest" in the subtype
      relation) that makes the following assertion true?  (Assume we
      have [Unit] among the base types and [unit] as a constant of this
      type.)
-       empty |- (\p:T*Top. p.fst) ((\z:A.z), unit) : A->A
+
+       empty |- (\p:T*Top. p.fst) ((\z:A.z), unit) : A->A            (1)
 
      So our hiearchy is:
-       ...  <:  T_2  <:  T_1  <: unit
-        
+
+       ... <: A_{-2] <: A_{-1} <: A <: A_{1} <: A_{2} <: ... <: Unit
+
+    and expression reduces to
+
+       empty |- (\z : A. Z) : A -> A
+
+      A is smalest type. We can't have some B <: A because then we'd have to say:
+     
+        B -> B <: A -> A  /\  B <: A
+
+      which is false by S_Arrow.
+
+
    - What is the _largest_ type [T] that makes the same assertion true?
 
-   
-     
-
+      Top
 
     
 
@@ -623,7 +637,24 @@ Where does the type [Top->Top->Student] fit into this order?
      assertion true?
        empty |- (\p:(A->A * B->B). p) ((\z:A.z), (\z:B.z)) : T
 
+     so the expression reduces to:
+
+       empty |- ((\z:A.z), (\z:B.z) :  A -> A * B -> B
+
+     There is no smallest type since we can always find some
+        
+        A' <: A   /\ B' <: B                                 (3)
+ 
+     so that
+
+       A' -> A' *  B' -> B'   <:    A -> A *  B -> B         (3)
+
+     given (2), (3) is true by S_Prod. 	
+
+     
    - What is the _largest_ type [T] that makes the same assertion true?
+
+     Top
 
 [] *)
 
@@ -633,11 +664,18 @@ Where does the type [Top->Top->Student] fit into this order?
      assertion true?
        a:A |- (\p:(A*T). (p.snd) (p.fst)) (a , \z:A.z) : A
 
+     expression reduces to:
+
+      (\z : A. z) a  ==> a : A
+
+     So smallest type is A
+     
+
    - What is the _largest_ type [T] that makes the same assertion true?
 
+     Top
+
 [] *)
-
-
 
 
 (** **** Exercise: 2 stars (small_large_4)  *)
@@ -646,6 +684,8 @@ Where does the type [Top->Top->Student] fit into this order?
      assertion true?
        exists S,
          empty |- (\p:(A*T). (p.snd) (p.fst)) : S
+
+     (\(a,g) : (A*T).  g a) : 
 
    - What is the _largest_ type [T] that makes the same
      assertion true?
