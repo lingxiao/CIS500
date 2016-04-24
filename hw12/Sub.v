@@ -685,10 +685,20 @@ Where does the type [Top->Top->Student] fit into this order?
        exists S,
          empty |- (\p:(A*T). (p.snd) (p.fst)) : S
 
-     (\(a,g) : (A*T).  g a) : 
 
+      T has to be some Arrow, ie :[T :=  T1 -> T2] where T2 itself is not necesarily
+      a base type. If we want:
+             T1 -> T2 <: T1' <: T2'
+      then we need
+             T1' <: T1, and T2 <: T2'
+
+      The largest T1 is then Top, but there is no smallest T2 by construction.
+      So we dont have a smallest type T.
+     
    - What is the _largest_ type [T] that makes the same
      assertion true?
+
+     Top.
 
 [] *)
 
@@ -697,14 +707,29 @@ Where does the type [Top->Top->Student] fit into this order?
     assertion true?
       exists S, exists t,
         empty |- (\x:T. x x) t : S
-]] 
+]]
+
+     Top -> Top
+
+
 [] *)
 
 (** **** Exercise: 2 stars (smallest_2)  *)
 (** What is the _smallest_ type [T] that makes the following
     assertion true?
       empty |- (\x:Top. x) ((\z:A.z) , (\z:B.z)) : T
-]] 
+]]
+
+     reduces to : ==> (\z: A. z, \z : B. z) : T
+
+     T has to be some (A -> A * B -> B), which by S_Arrow, is less than:
+        
+           (Top -> A * Top -> B)             (4)
+     
+     we cannot find a smaller type than (4)
+
+
+
 [] *)
 
 (** **** Exercise: 3 stars, optional (count_supertypes)  *)
@@ -722,11 +747,23 @@ Where does the type [Top->Top->Student] fit into this order?
                             S1 <: T1    S2 <: T2
                             --------------------                        (S_Prod)
                                S1*S2 <: T1*T2
-intuitively corresponds to the "depth" subtyping rule for records. Extending the analogy, we might consider adding a "permutation" rule
-                                   --------------
+
+intuitively corresponds to the "depth" subtyping rule for records.
+Extending the analogy, we might consider adding a "permutation" rule
+
+                                   --------------                       
                                    T1*T2 <: T2*T1
+
 for products.
 Is this a good idea? Briefly explain why or why not.
+
+
+No. Suppose T1  = Top and for some T2 <> Top,
+
+      (Top, T2) <: (T2, Top)                      (5)
+
+Cannot be true. Because if it is, then we can show Top < T2
+by applying S_Pord to (5).
 
 [] *)
 
