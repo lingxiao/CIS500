@@ -323,25 +323,6 @@ Require Import Types.
     ... such that the application [g f] will get stuck during
     execution.
 
-   we know student <: Person , so:
-   {name:String, age:Nat, gpa:Nat} <: {name:String, age:Nat}
-
-    f : Student -> Nat
-    f obj = gpa obj
-
-    g : (Person -> Nat) -> Nat
-    g h = h { name : "prince", age : 57 }
-
-    Calling [g f] will reduce to
-
-        g f => f   { name : "prince", age : 57 }
-            => gpa { name : "prince", age 57   }
-            => 'stuck'
-
-    but the prince record does not have field gpa.
-
-    todo: check this
-
 [] *)
 
 (** *** Top *)
@@ -413,41 +394,19 @@ Require Import Types.
     are then true?  Write _true_ or _false_ after each one.
     ([A], [B], and [C] here are base types.)
 
-     S <: T
-     U <: V
-
     - [T->S <: T->S]
-
-      true
 
     - [Top->U <: S->Top]
 
-      true
-
-    - (C->C) -> (A*B)  <:  (C->C) -> (Top*B)
-
-       true      
+    - [(C->C) -> (A*B)  <:  (C->C) -> (Top*B)]
 
     - [T->T->U <: S->S->V]
-
-      T -> ( T -> U )  <: S -> ( S -> V )
-
-          - since S < : T first part is ok, now we require
- 
-                 (T -> U) <: (S -> V)
-             since S <: T, not ok
-
-      false.
-      
 
     - [(T->T)->U <: (S->S)->V]
 
     - [((T->S)->T)->U <: ((S->T)->S)->V]
 
     - [S*V <: T*U]
-
-    todo: consider these, will be mult choice on final exam
-          right or left associativity when looking at types?
 
 [] *)
 
@@ -461,25 +420,9 @@ Require Import Types.
 
 Write these types in order from the most specific to the most general.
 
-       Top     -> Student
-   <:  Person  -> Student
-   <:  Student -> Person 
-   <:  Student -> Top    
-   <:  Top 
 
 Where does the type [Top->Top->Student] fit into this order?
 
-   so we have [Top -> (Top -> Student)], we need to know if
-
-     [Student <: Top -> Student]   or [Top -> Student <: Student]
-
-
-       Top     -> Top -> Student   
-   <:  Top     -> Student
-   <:  Person  -> Student
-   <:  Student -> Person
-   <:  Student -> Top   
-   <:  Top 
 
 *)
 
@@ -488,51 +431,28 @@ Where does the type [Top->Top->Student] fit into this order?
     _false_ after each one.
       forall S T,
           S <: T  ->
-             S -> S
-         <:  T -> T
+          S->S   <:  T->T
 
-      _false_
-      
       forall S,
-           S <: A -> A ->
+           S <: A->A ->
            exists T,
-              S = T -> T  /\  T <: A
-      _false_
-      _true_
-
-      
+              S = T->T  /\  T <: A
 
       forall S T1 T2,
            (S <: T1 -> T2) ->
            exists S1 S2,
-              S = S1 -> S2  /\  T1 <: S1  /\  S2 <: T2
-
-      _false_
-      _true_
-
+              S = S1 -> S2  /\  T1 <: S1  /\  S2 <: T2 
 
       exists S,
-           S <: S->S
-
-      _false_
-      _true_
-
+           S <: S->S 
 
       exists S,
-           S->S <: S
-
-      _false_
-      _true_
-
+           S->S <: S  
 
       forall S T1 T2,
            S <: T1*T2 ->
            exists S1 S2,
-              S = S1*S2  /\  S1 <: T1  /\  S2 <: T2
-
-      _false_
-      _true_
-
+              S = S1*S2  /\  S1 <: T1  /\  S2 <: T2  
 [] *)
 
 (** **** Exercise: 1 star (subtype_concepts_tf)  *)
