@@ -491,37 +491,33 @@ Where does the type [Top->Top->Student] fit into this order?
              S -> S
          <:  T -> T
 
-      _false_
+      _false_     by assumption, we dont have  T <: S
       
       forall S,
            S <: A -> A ->
            exists T,
               S = T -> T  /\  T <: A
-      _false_
-      _true_
 
-      
+        _false_
+  
 
       forall S T1 T2,
            (S <: T1 -> T2) ->
            exists S1 S2,
               S = S1 -> S2  /\  T1 <: S1  /\  S2 <: T2
 
-      _false_
       _true_
 
 
-      exists S,
+      exists S,                                  ???
            S <: S->S
 
       _false_
-      _true_
 
 
       exists S,
            S->S <: S
 
-      _false_
       _true_
 
 
@@ -530,38 +526,59 @@ Where does the type [Top->Top->Student] fit into this order?
            exists S1 S2,
               S = S1*S2  /\  S1 <: T1  /\  S2 <: T2
 
-      _false_
       _true_
 
 [] *)
 
 (** **** Exercise: 1 star (subtype_concepts_tf)  *)
 (** Which of the following statements are true, and which are false?
+
     - There exists a type that is a supertype of every other type.
 
+       true. Top
+
+
     - There exists a type that is a subtype of every other type.
+
+       false.
 
     - There exists a pair type that is a supertype of every other
       pair type.
 
+       true. Top x Top
+
     - There exists a pair type that is a subtype of every other
       pair type.
+
+       false.
 
     - There exists an arrow type that is a supertype of every other
       arrow type.
 
+        false.
+
     - There exists an arrow type that is a subtype of every other
       arrow type.
+
+        false.
 
     - There is an infinite descending chain of distinct types in the
       subtype relation---that is, an infinite sequence of types
       [S0], [S1], etc., such that all the [Si]'s are different and
       each [S(i+1)] is a subtype of [Si].
 
+              ... <: s_{i + 1}  <: s_i <: S_{i-1} <: ... <: Top
+
+      true.
+      
+
     - There is an infinite _ascending_ chain of distinct types in
       the subtype relation---that is, an infinite sequence of types
       [S0], [S1], etc., such that all the [Si]'s are different and
       each [S(i+1)] is a supertype of [Si].
+
+
+      false. bottome out at Top.
 
 [] *)
 
@@ -572,6 +589,10 @@ Where does the type [Top->Top->Student] fit into this order?
          ~(exists n, T = TBase n) ->
          exists S,
             S <: T  /\  S <> T
+
+    True. Given any type T, we can always construct a subclass of T
+    regardless of whether T is base type or not. 
+
 ]] 
 [] *)
 
@@ -583,7 +604,16 @@ Where does the type [Top->Top->Student] fit into this order?
      type.)
        empty |- (\p:T*Top. p.fst) ((\z:A.z), unit) : A->A
 
+     So our hiearchy is:
+       ...  <:  T_2  <:  T_1  <: unit
+        
    - What is the _largest_ type [T] that makes the same assertion true?
+
+   
+     
+
+
+    
 
 [] *)
 
