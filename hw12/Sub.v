@@ -158,7 +158,7 @@ Require Import Types.
     as good as itself:
                                    ------                              (S_Refl)
                                    T <: T
-*)
+S*)
 
 (** *** Products *)
 
@@ -1660,23 +1660,50 @@ Qed.
     starts from the original language.)  In each part, list which
     properties (Progress, Preservation, both, or neither) become
     false.  If a property becomes false, give a counterexample.
+
+    todo: finish and check all these!!
+
+
     - Suppose we add the following typing rule:
+
+
                             Gamma |- t : S1->S2
                     S1 <: T1      T1 <: S1     S2 <: T2
                     -----------------------------------              (T_Funny1)
                             Gamma |- t : T1->T2
 
+
+       Progress:         preserved
+
+
+       Preservation:    preserved
+      
+
+
     - Suppose we add the following reduction rule:
                              ------------------                     (ST_Funny21)
                              unit ==> (\x:Top. x)
+
+      Progress         : preserved
+      Preservation     : Broken. we have unit \in Unit and unit ==> (\x : Top. x)
+                         which is in [Top -> Top], but  [unit \notin Unit].
+
 
     - Suppose we add the following subtyping rule:
                                --------------                        (S_Funny3)
                                Unit <: Top->Top
 
+        Progress      : preserved
+        Preservation  : preserved
+
+
     - Suppose we add the following subtyping rule:
                                --------------                        (S_Funny4)
                                Top->Top <: Unit
+
+      
+      
+
 
     - Suppose we add the following evaluation rule:
                              -----------------                      (ST_Funny5)
