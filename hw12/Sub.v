@@ -828,7 +828,9 @@ Fixpoint subst (x:id) (s:tm)  (t:tm) : tm :=
   | ttrue        =>   ttrue
   | tfalse       =>   tfalse
   | tif t1 t2 t3 =>   tif (subst x s t1) (subst x s t2) (subst x s t3)
-  | tpair t1 t2  =>   tpair (subst x s t1) (subst x s t2)        
+  | tpair t1 t2  =>   tpair (subst x s t1) (subst x s t2)
+  | tfst t       =>   tfst (subst x s t)                         
+  | tsnd t       =>   tsnd (subst x s t)                         
   | tunit        =>   tunit 
   end.
 
@@ -847,7 +849,7 @@ Inductive value : tm -> Prop :=
       value ttrue
   | v_false :
       value tfalse
-  | v_pair : forall t1 t2 
+  | v_pair : forall t1 t2,
       value t1 ->
       value t2 ->
       value (tpair t1 t2)
@@ -889,11 +891,11 @@ Inductive step : tm -> tm -> Prop :=
       t2 ==> t2' ->
       tpair t1 t2 ==> tpair t1 t2'
 
-  | ST_Fst    : forall p t1 t1',
+  | ST_Fst    : forall t1 t1',
       t1 ==> t1' ->
       tfst t1 ==> tfst t1'
                   
-  | ST_Snd    : forall p t1 t1',
+  | ST_Snd    : forall t1 t1',
       t1 ==> t1' ->
       tsnd t1 ==> tsnd t1'
 
@@ -937,6 +939,12 @@ Inductive subtype : ty -> ty -> Prop :=
       T1 <: S1 ->
       S2 <: T2 ->
       (TArrow S1 S2) <: (TArrow T1 T2)
+
+  | S_SubProd : forall S1 T1 S2 T2,
+      S1 <: T1 ->
+      S2 <: T2 ->
+      TProd S1 S2 <: TProd T1 T2
+                  
 where "T '<:' U" := (subtype T U).
 
 (** Note that we don't need any special rules for base types: they are
@@ -944,86 +952,6 @@ where "T '<:' U" := (subtype T U).
     [S_Top]), and that's all we want. *)
 
 Hint Constructors subtype.
-
-Module Examples.
-
-Notation x := (Id 0).
-Notation y := (Id 1).
-Notation z := (Id 2).
-
-Notation A := (TBase (Id 6)).
-Notation B := (TBase (Id 7)).
-Notation C := (TBase (Id 8)).
-
-Notation String := (TBase (Id 9)).
-Notation Float := (TBase (Id 10)).
-Notation Integer := (TBase (Id 11)).
-
-(** **** Exercise: 2 stars, optional (subtyping_judgements)  *)
-
-(** (Do this exercise after you have added product types to the
-    language, at least up to this point in the file).
-
-    Using the encoding of records into pairs, define pair types
-    representing the record types
-    Person   := { name : String }
-    Student  := { name : String ;
-                  gpa  : Float }
-    Employee := { name : String ;
-                  ssn  : Integer }
-
-Recall that in chapter MoreStlc, the optional subsection "Encoding
-Records" describes how records can be encoded as pairs.
-
-*)
-
-Definition Person : ty :=
-(* FILL IN HERE *) admit.
-Definition Student : ty :=
-(* FILL IN HERE *) admit.
-Definition Employee : ty :=
-(* FILL IN HERE *) admit.
-
-Example sub_student_person :
-  Student <: Person.
-Proof.
-(* FILL IN HERE *) Admitted.
-
-Example sub_employee_person :
-  Employee <: Person.
-Proof.
-(* FILL IN HERE *) Admitted.
-(** [] *)
-
-Example subtyping_example_0 :
-  (TArrow C Person) <: (TArrow C TTop).
-  (* C->Person <: C->Top *)
-Proof.
-  apply S_Arrow.
-    apply S_Refl. auto.
-Qed.
-
-(** The following facts are mostly easy to prove in Coq.  To get
-    full benefit from the exercises, make sure you also
-    understand how to prove them on paper! *)
-
-(** **** Exercise: 1 star, optional (subtyping_example_1)  *)
-Example subtyping_example_1 :
-  (TArrow TTop Student) <: (TArrow (TArrow C C) Person).
-  (* Top->Student <: (C->C)->Person *)
-Proof with eauto.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
-(** **** Exercise: 1 star, optional (subtyping_example_2)  *)
-Example subtyping_example_2 :
-  (TArrow TTop Person) <: (TArrow Person TTop).
-  (* Top->Person <: Person->Top *)
-Proof with eauto.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
-End Examples.
 
 
 (* ###################################################################### *)
@@ -1057,6 +985,12 @@ Inductive has_type : context -> tm -> ty -> Prop :=
        Gamma |- t2 \in T ->
        Gamma |- t3 \in T ->
        Gamma |- (tif t1 t2 t3) \in T
+  (* pair *)
+  | T_Pair : forall t1 t2 T1 T2 Gamma,
+       Gamma |- t1 \in T1 ->
+       Gamma |- t2 \in T2 ->
+       Gamma |- (tpair t1 t2) \in TProd T1 T2
+  
   | T_Unit : forall Gamma,
       Gamma |- tunit \in TUnit
   (* New rule of subsumption *)
@@ -1074,38 +1008,6 @@ Hint Constructors has_type.
 Hint Extern 2 (has_type _ (tapp _ _) _) =>
   eapply T_App; auto.
 Hint Extern 2 (_ = _) => compute; reflexivity.
-
-
-(* ############################################### *)
-(** ** Typing examples *)
-
-Module Examples2.
-Import Examples.
-
-(** Do the following exercises after you have added product types to
-    the language.  For each informal typing judgement, write it as a
-    formal statement in Coq and prove it. *)
-
-(** **** Exercise: 1 star, optional (typing_example_0)  *)
-(* empty |- ((\z:A.z), (\z:B.z))
-          : (A->A * B->B) *)
-(* FILL IN HERE *)
-(** [] *)
-
-(** **** Exercise: 2 stars, optional (typing_example_1)  *)
-(* empty |- (\x:(Top * B->B). x.snd) ((\z:A.z), (\z:B.z))
-          : B->B *)
-(* FILL IN HERE *)
-(** [] *)
-
-(** **** Exercise: 2 stars, optional (typing_example_2)  *)
-(* empty |- (\z:(C->C)->(Top * B->B). (z (\x:C.x)).snd)
-              (\z:C->C. ((\z:A.z), (\z:B.z)))
-          : B->B *)
-(* FILL IN HERE *)
-(** [] *)
-
-End Examples2.
 
 (* ###################################################################### *)
 (** * Properties *)
@@ -1790,6 +1692,119 @@ Qed.
       supporting lemmas to deal with the new constructs.  (You'll also
       need to add some completely new lemmas.)
 [] *)
+
+
+Module Examples.
+
+Notation x := (Id 0).
+Notation y := (Id 1).
+Notation z := (Id 2).
+
+Notation A := (TBase (Id 6)).
+Notation B := (TBase (Id 7)).
+Notation C := (TBase (Id 8)).
+
+Notation String := (TBase (Id 9)).
+Notation Float := (TBase (Id 10)).
+Notation Integer := (TBase (Id 11)).
+
+(** **** Exercise: 2 stars, optional (subtyping_judgements)  *)
+
+(** (Do this exercise after you have added product types to the
+    language, at least up to this point in the file).
+
+    Using the encoding of records into pairs, define pair types
+    representing the record types
+    Person   := { name : String }
+    Student  := { name : String ;
+                  gpa  : Float }
+    Employee := { name : String ;
+                  ssn  : Integer }
+
+Recall that in chapter MoreStlc, the optional subsection "Encoding
+Records" describes how records can be encoded as pairs.
+
+*)
+
+Definition Person : ty :=
+(* FILL IN HERE *) admit.
+Definition Student : ty :=
+(* FILL IN HERE *) admit.
+Definition Employee : ty :=
+(* FILL IN HERE *) admit.
+
+Example sub_student_person :
+  Student <: Person.
+Proof.
+(* FILL IN HERE *) Admitted.
+
+Example sub_employee_person :
+  Employee <: Person.
+Proof.
+(* FILL IN HERE *) Admitted.
+(** [] *)
+
+Example subtyping_example_0 :
+  (TArrow C Person) <: (TArrow C TTop).
+  (* C->Person <: C->Top *)
+Proof.
+  apply S_Arrow.
+    apply S_Refl. auto.
+Qed.
+
+(** The following facts are mostly easy to prove in Coq.  To get
+    full benefit from the exercises, make sure you also
+    understand how to prove them on paper! *)
+
+(** **** Exercise: 1 star, optional (subtyping_example_1)  *)
+Example subtyping_example_1 :
+  (TArrow TTop Student) <: (TArrow (TArrow C C) Person).
+  (* Top->Student <: (C->C)->Person *)
+Proof with eauto.
+  (* FILL IN HERE *) Admitted.
+(** [] *)
+
+(** **** Exercise: 1 star, optional (subtyping_example_2)  *)
+Example subtyping_example_2 :
+  (TArrow TTop Person) <: (TArrow Person TTop).
+  (* Top->Person <: Person->Top *)
+Proof with eauto.
+  (* FILL IN HERE *) Admitted.
+(** [] *)
+
+End Examples.
+
+
+(* ############################################### *)
+(** ** Typing examples *)
+
+Module Examples2.
+Import Examples.
+
+(** Do the following exercises after you have added product types to
+    the language.  For each informal typing judgement, write it as a
+    formal statement in Coq and prove it. *)
+
+(** **** Exercise: 1 star, optional (typing_example_0)  *)
+(* empty |- ((\z:A.z), (\z:B.z))
+          : (A->A * B->B) *)
+(* FILL IN HERE *)
+(** [] *)
+
+(** **** Exercise: 2 stars, optional (typing_example_1)  *)
+(* empty |- (\x:(Top * B->B). x.snd) ((\z:A.z), (\z:B.z))
+          : B->B *)
+(* FILL IN HERE *)
+(** [] *)
+
+(** **** Exercise: 2 stars, optional (typing_example_2)  *)
+(* empty |- (\z:(C->C)->(Top * B->B). (z (\x:C.x)).snd)
+              (\z:C->C. ((\z:A.z), (\z:B.z)))
+          : B->B *)
+(* FILL IN HERE *)
+(** [] *)
+
+End Examples2.
 
 
 (** $Date: 2016-03-04 09:33:20 -0500 (Fri, 04 Mar 2016) $ *)
