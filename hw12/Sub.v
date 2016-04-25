@@ -1110,8 +1110,19 @@ Proof with eauto.
 Qed.
 
 (* canonical form of pair ?? *)
-
-
+(* todo: confirm this 
+Lemma canonical_forms_ofPair : forall Gamma T1 T2 s,
+  Gamma |- s \in TProd T1 T2 ->
+  value s                    ->
+  exists t1, exists t2, s = tpair t1 t2.
+Proof with eauto.
+  intros Gamma T1 T2 s Ht Hv. induction Ht; try solve by inversion...
+    + admit.
+    + admit.
+    + admit.
+    + admit.
+Qed.
+*)
 
 (* ########################################## *)
 (** ** Progress *)
@@ -1206,8 +1217,12 @@ Proof with eauto.
         by (eapply canonical_forms_of_Bool; eauto).
       inversion H0; subst...
     + inversion H. rename x into t1'. eauto.
-
+  - (* T_Pair*) destruct IHHt1; subst...
+        + (* t1 is a value *) destruct IHHt2; subst...
+           (* t2 steps *) right. inversion H0; subst...
+        + (* t1 steps *) destruct H; subst...
 Qed.
+
 
 (* ########################################## *)
 (** ** Inversion Lemmas for Typing *)
@@ -1382,6 +1397,20 @@ Inductive appears_free_in : id -> tm -> Prop :=
   | afi_if3 : forall x t1 t2 t3,
       appears_free_in x t3 ->
       appears_free_in x (tif t1 t2 t3)
+
+  (* pair *)
+  | afi_pair1 : forall x t1 t2,
+      appears_free_in x t1 ->
+      appears_free_in x (tpair t1 t2)
+  | afi_pair2 : forall x t1 t2,
+      appears_free_in x t2 ->
+      appears_free_in x (tpair t1 t2)
+  | afi_fst   : forall x t,
+      appears_free_in x t ->
+      appears_free_in x (tfst t)
+  | afi_snd   : forall x t,
+      appears_free_in x t ->
+      appears_free_in x (tsnd t)                      
 .
 
 Hint Constructors appears_free_in.
@@ -1401,7 +1430,7 @@ Proof with eauto.
     unfold update, t_update. destruct (beq_idP x x0)...
   - (* T_If *)
     apply T_If...
-
+  - (* T_Pair *) apply T_Pair...
 Qed.
 
 Lemma free_in_context : forall x t T Gamma,
@@ -1416,7 +1445,8 @@ Proof with eauto.
     destruct (IHHtyp H4) as [T Hctx]. exists T.
     unfold update, t_update in Hctx.
     rewrite <- beq_id_false_iff in H2.
-    rewrite H2 in Hctx... Qed.
+    rewrite H2 in Hctx...
+Qed.
 
 (* ########################################## *)
 (** ** Substitution *)
@@ -1484,10 +1514,13 @@ Proof with eauto.
     inversion H as [H1 [H2 H3]].
     apply IHt1 in H1. apply IHt2 in H2. apply IHt3 in H3.
     auto.
+  - (* tpair *)  admit.
+  -                admit.
+  -  admit.
   - (* tunit *)
     assert (TUnit <: S)
       by apply (typing_inversion_unit _ _  Htypt)... 
-Qed.
+Qed.  (* todo: finish this!! *)
 
 (* ########################################## *)
 (** ** Preservation *)
