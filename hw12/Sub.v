@@ -1109,6 +1109,9 @@ Proof with eauto.
     subst. apply sub_inversion_Bool in H. subst...
 Qed.
 
+(* canonical form of pair ?? *)
+
+
 
 (* ########################################## *)
 (** ** Progress *)
@@ -1160,6 +1163,10 @@ Qed.
          case, [t] can step, using rule [ST_IfTrue] or [ST_IfFalse].
 
        - If [t1] can step, then so can [t], by rule [ST_If].
+
+    - If the final step of the derivation uses rule [T_Pair], then there are
+      terms
+
 
     - If the final step of the derivation is by [T_Sub], then there is
       a type [S] such that [S <: T] and [empty |- t : S].  The desired
