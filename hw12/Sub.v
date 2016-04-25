@@ -797,17 +797,21 @@ Inductive ty : Type :=
   | TBool  : ty
   | TBase  : id -> ty
   | TArrow : ty -> ty -> ty
-  | TUnit  : ty
-.
+  | TProd  : ty -> ty -> ty
+  | TUnit  : ty.
 
 Inductive tm : Type :=
-  | tvar : id -> tm
-  | tapp : tm -> tm -> tm
-  | tabs : id -> ty -> tm -> tm
-  | ttrue : tm
+  | tvar   : id -> tm
+  | tapp   : tm -> tm -> tm
+  | tabs   : id -> ty -> tm -> tm
+  | ttrue  : tm
   | tfalse : tm
-  | tif : tm -> tm -> tm -> tm
-  | tunit : tm 
+  | tif    : tm -> tm -> tm -> tm
+  | tpair  : tm -> tm -> tm
+  | tfst   : tm -> tm
+  | tsnd   : tm -> tm                   
+  | tunit  : tm
+              
 .
 
 (* ################################### *)
@@ -818,20 +822,14 @@ Inductive tm : Type :=
 
 Fixpoint subst (x:id) (s:tm)  (t:tm) : tm :=
   match t with
-  | tvar y =>
-      if beq_id x y then s else t
-  | tabs y T t1 =>
-      tabs y T (if beq_id x y then t1 else (subst x s t1))
-  | tapp t1 t2 =>
-      tapp (subst x s t1) (subst x s t2)
-  | ttrue =>
-      ttrue
-  | tfalse =>
-      tfalse
-  | tif t1 t2 t3 =>
-      tif (subst x s t1) (subst x s t2) (subst x s t3)
-  | tunit =>
-      tunit 
+  | tvar y       =>   if beq_id x y then s else t
+  | tabs y T t1  =>   tabs y T (if beq_id x y then t1 else (subst x s t1))
+  | tapp t1 t2   =>   tapp (subst x s t1) (subst x s t2)
+  | ttrue        =>   ttrue
+  | tfalse       =>   tfalse
+  | tif t1 t2 t3 =>   tif (subst x s t1) (subst x s t2) (subst x s t3)
+  | tpair t1 t2  =>   tpair (subst x s t1) (subst x s t2)        
+  | tunit        =>   tunit 
   end.
 
 Notation "'[' x ':=' s ']' t" := (subst x s t) (at level 20).
@@ -849,6 +847,10 @@ Inductive value : tm -> Prop :=
       value ttrue
   | v_false :
       value tfalse
+  | v_pair : forall t1 t2 
+      value t1 ->
+      value t2 ->
+      value (tpair t1 t2)
   | v_unit :
       value tunit
 .
@@ -1701,9 +1703,10 @@ Qed.
                                --------------                        (S_Funny4)
                                Top->Top <: Unit
 
+       Progress    : preserved
+       Preservation: 
       
       
-
 
     - Suppose we add the following evaluation rule:
                              -----------------                      (ST_Funny5)
@@ -1720,6 +1723,8 @@ Qed.
                           S1 <: T1       S2 <: T2
                           -----------------------                    (S_Arrow')
                                S1->S2 <: T1->T2
+
+      
 
 [] *)
 
