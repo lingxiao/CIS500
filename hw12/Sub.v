@@ -860,23 +860,54 @@ Hint Constructors value.
 Reserved Notation "t1 '==>' t2" (at level 40).
 
 Inductive step : tm -> tm -> Prop :=
-  | ST_AppAbs : forall x T t12 v2,
+
+  (* basic lambda calculus *)
+  | ST_AppAbs  : forall x T t12 v2,
          value v2 ->
          (tapp (tabs x T t12) v2) ==> [x:=v2]t12
-  | ST_App1 : forall t1 t1' t2,
+  | ST_App1    : forall t1 t1' t2,
          t1 ==> t1' ->
          (tapp t1 t2) ==> (tapp t1' t2)
-  | ST_App2 : forall v1 t2 t2',
+  | ST_App2    : forall v1 t2 t2',
          value v1 ->
          t2 ==> t2' ->
          (tapp v1 t2) ==> (tapp v1  t2')
-  | ST_IfTrue : forall t1 t2,
+  | ST_IfTrue  : forall t1 t2,
       (tif ttrue t1 t2) ==> t1
   | ST_IfFalse : forall t1 t2,
       (tif tfalse t1 t2) ==> t2
-  | ST_If : forall t1 t1' t2 t3,
+  | ST_If      : forall t1 t1' t2 t3,
       t1 ==> t1' ->
       (tif t1 t2 t3) ==> (tif t1' t2 t3)
+
+  (* pairs *)                   
+  | ST_Pair1   : forall t1 t1' t2,
+      t1 ==> t1' ->
+      tpair t1 t2  ==> tpair t1' t2
+
+  | ST_Pair2   : forall t1 t2 t2',
+      t2 ==> t2' ->
+      tpair t1 t2 ==> tpair t1 t2'
+
+  | ST_Fst    : forall p t1 t1',
+      t1 ==> t1' ->
+      tfst t1 ==> tfst t1'
+                  
+  | ST_Snd    : forall p t1 t1',
+      t1 ==> t1' ->
+      tsnd t1 ==> tsnd t1'
+
+  | ST_FstPair : forall v1 v2,
+      value v1 ->
+      value v2 ->
+      tfst (tpair v1 v2) ==> v1
+           
+  | ST_SndPair : forall v1 v2,
+      value v1 ->
+      value v2 ->
+      tsnd (tpair v1 v2) ==> v2
+           
+                   
 where "t1 '==>' t2" := (step t1 t2).
 
 Hint Constructors step.
