@@ -317,6 +317,7 @@ S*)
                             S1 <: T1    S2 <: T2
                             --------------------                (S_Arrow_wrong)
                             S1 -> S2 <: T1 -> T2
+
     Give a concrete example of functions [f] and [g] with the following types...
        f : Student -> Nat
        g : (Person -> Nat) -> Nat
@@ -327,7 +328,7 @@ S*)
    {name:String, age:Nat, gpa:Nat} <: {name:String, age:Nat}
 
     f : Student -> Nat
-    f obj = gpa obj
+    f obj = obj.gpa
 
     g : (Person -> Nat) -> Nat
     g h = h { name : "prince", age : 57 }
@@ -335,12 +336,10 @@ S*)
     Calling [g f] will reduce to
 
         g f => f   { name : "prince", age : 57 }
-            => gpa { name : "prince", age 57   }
+            => { name : "prince", age 57 }.gpa
             => 'stuck'
 
     but the prince record does not have field gpa.
-
-    todo: check this
 
 [] *)
 
@@ -486,6 +485,7 @@ Where does the type [Top->Top->Student] fit into this order?
 (** **** Exercise: 1 star (subtype_instances_tf_2)  *)
 (** Which of the following statements are true?  Write _true_ or
     _false_ after each one.
+
       forall S T,
           S <: T  ->
              S -> S
@@ -508,17 +508,18 @@ Where does the type [Top->Top->Student] fit into this order?
 
       _true_
 
-
-      exists S,                                  ???
+      exists S,                                  
            S <: S->S
 
-      _false_
-
+      _false_. By T_Sub, suppose t \in S and if it is the case that
+               t \in S -> S, then it means we can apply t to some other
+               term t' \in S, but we forall t \in S we cannot use t
+               as funtion applied to t', so statement is false.   
 
       exists S,
-           S->S <: S
+           S -> S <: S
 
-      _true_
+      _true. Top is an example.     
 
 
       forall S T1 T2,
@@ -616,7 +617,7 @@ Where does the type [Top->Top->Student] fit into this order?
 
        empty |- (\z : A. Z) : A -> A
 
-      A is smalest type. We can't have some B <: A because then we'd have to say:
+     $A is smalest type$. We can't have some B <: A because then we'd have to say:
      
         B -> B <: A -> A  /\  B <: A
 
@@ -641,7 +642,7 @@ Where does the type [Top->Top->Student] fit into this order?
 
        empty |- ((\z:A.z), (\z:B.z) :  A -> A * B -> B
 
-     There is no smallest type since we can always find some
+     $There is no smallest type$ since we can always find some
         
         A' <: A   /\ B' <: B                                 (3)
  
@@ -654,7 +655,7 @@ Where does the type [Top->Top->Student] fit into this order?
      
    - What is the _largest_ type [T] that makes the same assertion true?
 
-     Top
+     $Top$
 
 [] *)
 
@@ -940,6 +941,7 @@ Inductive subtype : ty -> ty -> Prop :=
       S2 <: T2 ->
       (TArrow S1 S2) <: (TArrow T1 T2)
 
+  (* pair *)                          
   | S_SubProd : forall S1 T1 S2 T2,
       S1 <: T1 ->
       S2 <: T2 ->
@@ -1354,6 +1356,17 @@ Proof with eauto.
     inversion Heqtu; subst; intros...
 Qed.
 
+Lemma typing_inversion_pair : forall Gamma T1 T2 t1 t2,
+  Gamma |- tpair t1 t2 \in TProd T1 T2 ->
+  Gamma |- t1 \in T1                   /\
+  Gamma |- t2 \in T2.
+Proof with eauto.
+  intros. 
+  inversion H; subst.
+    + split. assumption. assumption.
+    + destruct 
+                  
+
 
 (** The inversion lemmas for typing and for subtyping between arrow
     types can be packaged up as a useful "combination lemma" telling
@@ -1369,7 +1382,8 @@ Proof with eauto.
   inversion Hty as [S2 [Hsub Hty1]].
   apply sub_inversion_arrow in Hsub.
   inversion Hsub as [U1 [U2 [Heq [Hsub1 Hsub2]]]].
-  inversion Heq; subst...  Qed.
+  inversion Heq; subst...
+Qed.
 
 (* ########################################## *)
 (** ** Context Invariance *)
@@ -1402,12 +1416,15 @@ Inductive appears_free_in : id -> tm -> Prop :=
   | afi_pair1 : forall x t1 t2,
       appears_free_in x t1 ->
       appears_free_in x (tpair t1 t2)
+                      
   | afi_pair2 : forall x t1 t2,
       appears_free_in x t2 ->
       appears_free_in x (tpair t1 t2)
+                      
   | afi_fst   : forall x t,
       appears_free_in x t ->
       appears_free_in x (tfst t)
+                      
   | afi_snd   : forall x t,
       appears_free_in x t ->
       appears_free_in x (tsnd t)                      
@@ -1462,6 +1479,7 @@ Lemma substitution_preserves_typing : forall Gamma x U v t S,
      (update Gamma x U) |- t \in S  ->
      empty |- v \in U   ->
      Gamma |- ([x:=v]t) \in S.
+
 Proof with eauto.
   intros Gamma x U v t S Htypt Htypv.
   generalize dependent S. generalize dependent Gamma.
@@ -1513,10 +1531,11 @@ Proof with eauto.
       by apply (typing_inversion_if _ _ _ _ _ Htypt).
     inversion H as [H1 [H2 H3]].
     apply IHt1 in H1. apply IHt2 in H2. apply IHt3 in H3.
-    auto.
-  - (* tpair *)  admit.
-  -                admit.
-  -  admit.
+    auto. 
+  - 
+
+
+    
   - (* tunit *)
     assert (TUnit <: S)
       by apply (typing_inversion_unit _ _  Htypt)... 
@@ -1677,13 +1696,18 @@ Qed.
                                Top->Top <: Unit
 
        Progress    : preserved
-       Preservation: 
+       Preservation: preserved
       
       
 
     - Suppose we add the following evaluation rule:
+
                              -----------------                      (ST_Funny5)
                              (unit t) ==> (t unit)
+
+       Progress     : 
+       Preservation : 
+
 
     - Suppose we add the same evaluation rule _and_ a new typing rule:
                              -----------------                      (ST_Funny5)
@@ -1731,6 +1755,8 @@ Qed.
     - Extend the proofs of progress, preservation, and all their
       supporting lemmas to deal with the new constructs.  (You'll also
       need to add some completely new lemmas.)
+
+    - NOTE: I added them to the definitions above.
 [] *)
 
 
