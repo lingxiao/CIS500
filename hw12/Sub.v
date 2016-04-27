@@ -663,12 +663,12 @@ Where does the type [Top->Top->Student] fit into this order?
    - What is the _smallest_ type [T] that makes the following
      assertion true?
        a:A |- (\p:(A*T). (p.snd) (p.fst)) (a , \z:A.z) : A
-
-
+     
+     
 
    - What is the _largest_ type [T] that makes the same assertion true?
 
-
+    
 
 [] *)
 
@@ -680,9 +680,6 @@ Where does the type [Top->Top->Student] fit into this order?
        exists S,
          empty |- (\p:(A*T). (p.snd) (p.fst)) : S
 
-
-   
-
      Since T is a function we know
             T := T1 -> T2
 
@@ -690,22 +687,25 @@ Where does the type [Top->Top->Student] fit into this order?
 
            T := A -> T2
 
+     Since the output is S we know
+
+           T := A -> S
+
       so we look for smallest Ts so that:
 
-          Ts <: A -> T2
+          Ts <: A -> S
 
       thus
-          Ts = Top -> T2
-     
-     
+          Ts = Top -> S
+          
    - What is the _largest_ type [T] that makes the same
      assertion true?
 
          we want largest Tl so that
           
-                A -> T2 <: Tl
+                A -> S <: Tl
 
-     
+      So Tl = A -> Top     
 
 
 [] *)
@@ -717,7 +717,8 @@ Where does the type [Top->Top->Student] fit into this order?
         empty |- (\x:T. x x) t : S
 ]]
 
-     Top -> Top
+     Top -> S
+     
 
 [] *)
 
@@ -727,15 +728,8 @@ Where does the type [Top->Top->Student] fit into this order?
       empty |- (\x:Top. x) ((\z:A.z) , (\z:B.z)) : T
 ]]
 
-     reduces to : ==> (\z: A. z, \z : B. z) : T
+     T = A -> A   *   B -> B
 
-     T has to be some (A -> A * B -> B), which by S_Arrow, is less than:
-        
-           (Top -> A * Top -> B)             (4)
-
-     This is the smallest type.
-
-      todo: check this.
 
 
 [] *)
@@ -1085,9 +1079,7 @@ Proof with eauto.
       destruct  H as [H1 H2]. apply IHHs1 in H1. admit.
     + admit.
 Qed.      
-      
-      
-      
+            
   
 
 (** [] *)
@@ -1151,29 +1143,19 @@ Lemma canonical_forms_of_Pair : forall Gamma T1 T2 s,
   s = tpair t1 t2.                         
 Proof with eauto.	
   intros Gamma T1 T2 s Ht Hv. remember (TProd T1 T2) as T.
-  induction Ht; try solve by inversion...
-    - inversion Hv; subst; try solve by inversion...
-        * 
-
-          
-        * admit.
-        * admit.
-        * admit.
+  induction Hv; try solve by inversion...
+    + rewrite HeqT in Ht. inversion Ht; subst.
+      admit.
+    + admit.
+    + admit.
+    + admit.
 Qed.
 
-Lemma sub_inversion_prod : forall S T1 T2,
+(*Lemma sub_inversion_prod : forall S T1 T2,
   S <: (TProd T1 T2) ->
   exists S1, exists S2,
   S = (TProd S1 S2) /\ (S1 <: T1) /\ (S2 <: T2).             
-Proof with eauto.
-  intros S T1 T2 Hs. remember (TProd T1 T2) as T.
-  generalize dependent T2. generalize dependent T1.
-  induction Hs; intros; try solve by inversion...
-    + apply IHHs2 in HeqT. destruct HeqT; subst. destruct H; subst.
-      destruct  H as [H1 H2]. apply IHHs1 in H1. admit.
-    + admit.
-Qed.      
-      
+  *)    
       
 
 
@@ -1430,7 +1412,8 @@ Proof with eauto.
   intros. 
   inversion H; subst.
     + split. assumption. assumption.
-    + destruct 
+    + admit.
+Qed.      
                   
 
 
@@ -1598,10 +1581,10 @@ Proof with eauto.
     inversion H as [H1 [H2 H3]].
     apply IHt1 in H1. apply IHt2 in H2. apply IHt3 in H3.
     auto. 
-  - 
-
-
-    
+  - admit.
+  - admit.
+  -  admit.
+       
   - (* tunit *)
     assert (TUnit <: S)
       by apply (typing_inversion_unit _ _  Htypt)... 
@@ -1680,8 +1663,11 @@ Proof with eauto.
     inversion HE; subst...
     + (* ST_AppAbs *)
       destruct (abs_arrow _ _ _ _ _ HT1) as [HA1 HA2].
-      apply substitution_preserves_typing with T... 
+      apply substitution_preserves_typing with T...
+  - inversion HT... subst. admit.
+  - admit.
 Qed.
+
 
 (** ** Records, via Products and Top *)
 
@@ -1755,7 +1741,7 @@ Qed.
                                --------------                        (S_Funny3)
                                Unit <: Top->Top
 
-        Progress      : preserved
+        Progress      : broken.
         Preservation  : preserved
 
 
@@ -1771,8 +1757,8 @@ Qed.
                              -----------------                      (ST_Funny5)
                              (unit t) ==> (t unit)
 
-       Progress     : 
-       Preservation : 
+       Progress     : preserved
+       Preservation : preserved
 
 
     - Suppose we add the same evaluation rule _and_ a new typing rule:
@@ -1782,12 +1768,20 @@ Qed.
                            ----------------------                    (T_Funny6)
                            empty |- Unit : Top->Top
 
+      Progress     : preseerve
+      Preservation : break
+
+
     - Suppose we _change_ the arrow subtyping rule to:
                           S1 <: T1       S2 <: T2
                           -----------------------                    (S_Arrow')
                                S1->S2 <: T1->T2
 
       
+      Progress     : broken. See example with student and person.
+      Preservation : preserved.
+
+
 [] *)
 
 (* ###################################################################### *)
