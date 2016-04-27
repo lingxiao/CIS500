@@ -591,8 +591,8 @@ Where does the type [Top->Top->Student] fit into this order?
          exists S,
             S <: T  /\  S <> T
 
-    True. Given any type T, we can always construct a subclass of T
-    regardless of whether T is base type or not. 
+    False. For some n, let T := TBase n * TBase n is not a base type. But by def
+    there is no S such that S <: TBase n.
 
 ]] 
 [] *)
@@ -600,7 +600,6 @@ Where does the type [Top->Top->Student] fit into this order?
 (** **** Exercise: 2 stars (small_large_1)  *)
 (**
 
-   TODO: Check all of these
     
    - What is the _smallest_ type [T] ("smallest" in the subtype
      relation) that makes the following assertion true?  (Assume we
@@ -609,24 +608,20 @@ Where does the type [Top->Top->Student] fit into this order?
 
        empty |- (\p:T*Top. p.fst) ((\z:A.z), unit) : A->A            (1)
 
-     So our hiearchy is:
 
-       ... <: A_{-2] <: A_{-1} <: A <: A_{1} <: A_{2} <: ... <: Unit
+      We know
+           (1)   T <: A -> A   and  (2) (A -> A) x Unit <: T x Top
+      but by (2) we also know that
+           (3)  A -> A <: T
 
-    and expression reduces to
+      so by (1) and (3) we know T = A -> A.
 
-       empty |- (\z : A. Z) : A -> A
-
-     $A is smalest type$. We can't have some B <: A because then we'd have to say:
+      the smallest T is A -> A      
+   
      
-        B -> B <: A -> A  /\  B <: A
-
-      which is false by S_Arrow.
-
-
    - What is the _largest_ type [T] that makes the same assertion true?
 
-      Top
+     by the same arg agove the largest T is A -> A
 
     
 
@@ -638,24 +633,28 @@ Where does the type [Top->Top->Student] fit into this order?
      assertion true?
        empty |- (\p:(A->A * B->B). p) ((\z:A.z), (\z:B.z)) : T
 
-     so the expression reduces to:
+      Since the function just outputs its arguement, and the result
+      need to be of type T, we know that
 
-       empty |- ((\z:A.z), (\z:B.z) :  A -> A * B -> B
+             A -> A * B -> B <: T
+      we need some
+            Ts <: A -> A * B -> B
 
-     $There is no smallest type$ since we can always find some
-        
-        A' <: A   /\ B' <: B                                 (3)
- 
-     so that
+      so T1s <: A-> A and T2s <: B -> B, which would be Top -> A and Top -> B by
+      T_arrow. So
 
-       A' -> A' *  B' -> B'   <:    A -> A *  B -> B         (3)
-
-     given (2), (3) is true by S_Prod. 	
-
-     
+            Ts = Top -> A   *   Top -> B
+      
+   
    - What is the _largest_ type [T] that makes the same assertion true?
 
-     $Top$
+     we need some Tb so that
+               A -> A * B -> B <: Tl < T
+
+     or A -> A <: T1l and B -> B <: T2l so we have by T_arrow :
+
+              Tl = A -> Top   * B -> Top
+
 
 [] *)
 
@@ -665,16 +664,11 @@ Where does the type [Top->Top->Student] fit into this order?
      assertion true?
        a:A |- (\p:(A*T). (p.snd) (p.fst)) (a , \z:A.z) : A
 
-     expression reduces to:
 
-      (\z : A. z) a  ==> a : A
-
-     So smallest type is A
-     
 
    - What is the _largest_ type [T] that makes the same assertion true?
 
-     Top
+
 
 [] *)
 
@@ -687,19 +681,32 @@ Where does the type [Top->Top->Student] fit into this order?
          empty |- (\p:(A*T). (p.snd) (p.fst)) : S
 
 
-      T has to be some Arrow, ie :[T :=  T1 -> T2] where T2 itself is not necesarily
-      a base type. If we want:
-             T1 -> T2 <: T1' <: T2'
-      then we need
-             T1' <: T1, and T2 <: T2'
+   
 
-      The largest T1 is then Top, but there is no smallest T2 by construction.
-      So we dont have a smallest type T.
+     Since T is a function we know
+            T := T1 -> T2
+
+     Since the function is applied to p.fst which is type A, we know
+
+           T := A -> T2
+
+      so we look for smallest Ts so that:
+
+          Ts <: A -> T2
+
+      thus
+          Ts = Top -> T2
+     
      
    - What is the _largest_ type [T] that makes the same
      assertion true?
 
-     Top.
+         we want largest Tl so that
+          
+                A -> T2 <: Tl
+
+     
+
 
 [] *)
 
@@ -711,7 +718,6 @@ Where does the type [Top->Top->Student] fit into this order?
 ]]
 
      Top -> Top
-
 
 [] *)
 
@@ -726,9 +732,10 @@ Where does the type [Top->Top->Student] fit into this order?
      T has to be some (A -> A * B -> B), which by S_Arrow, is less than:
         
            (Top -> A * Top -> B)             (4)
-     
-     we cannot find a smaller type than (4)
 
+     This is the smallest type.
+
+      todo: check this.
 
 
 [] *)
@@ -992,7 +999,16 @@ Inductive has_type : context -> tm -> ty -> Prop :=
        Gamma |- t1 \in T1 ->
        Gamma |- t2 \in T2 ->
        Gamma |- (tpair t1 t2) \in TProd T1 T2
-  
+                                        
+  | T_Fst : forall Gamma t T1 T2,
+      Gamma |- t \in (TProd T1 T2) ->
+      Gamma |- (tfst t) \in T1
+                              
+  | T_Snd : forall Gamma t T1 T2,
+      Gamma |- t \in (TProd T1 T2) ->
+      Gamma |- (tsnd t) \in T2                                        
+
+  (* tunit *)                             
   | T_Unit : forall Gamma,
       Gamma |- tunit \in TUnit
   (* New rule of subsumption *)
@@ -1057,6 +1073,22 @@ Proof with eauto.
   generalize dependent V2. generalize dependent V1.
   (* FILL IN HERE *) Admitted.
 
+Lemma sub_inversion_prod : forall S T1 T2,
+  S <: (TProd T1 T2) ->
+  exists S1, exists S2,
+  S = (TProd S1 S2) /\ (S1 <: T1) /\ (S2 <: T2).             
+Proof with eauto.
+  intros S T1 T2 Hs. remember (TProd T1 T2) as T.
+  generalize dependent T2. generalize dependent T1.
+  induction Hs; intros; try solve by inversion...
+    + apply IHHs2 in HeqT. destruct HeqT; subst. destruct H; subst.
+      destruct  H as [H1 H2]. apply IHHs1 in H1. admit.
+    + admit.
+Qed.      
+      
+      
+      
+  
 
 (** [] *)
 
@@ -1111,20 +1143,39 @@ Proof with eauto.
     subst. apply sub_inversion_Bool in H. subst...
 Qed.
 
-(* canonical form of pair ?? *)
-(* todo: confirm this 
-Lemma canonical_forms_ofPair : forall Gamma T1 T2 s,
+
+Lemma canonical_forms_of_Pair : forall Gamma T1 T2 s,
   Gamma |- s \in TProd T1 T2 ->
   value s                    ->
-  exists t1, exists t2, s = tpair t1 t2.
-Proof with eauto.
-  intros Gamma T1 T2 s Ht Hv. induction Ht; try solve by inversion...
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+  exists t1, exists t2,
+  s = tpair t1 t2.                         
+Proof with eauto.	
+  intros Gamma T1 T2 s Ht Hv. remember (TProd T1 T2) as T.
+  induction Ht; try solve by inversion...
+    - inversion Hv; subst; try solve by inversion...
+        * 
+
+          
+        * admit.
+        * admit.
+        * admit.
 Qed.
-*)
+
+Lemma sub_inversion_prod : forall S T1 T2,
+  S <: (TProd T1 T2) ->
+  exists S1, exists S2,
+  S = (TProd S1 S2) /\ (S1 <: T1) /\ (S2 <: T2).             
+Proof with eauto.
+  intros S T1 T2 Hs. remember (TProd T1 T2) as T.
+  generalize dependent T2. generalize dependent T1.
+  induction Hs; intros; try solve by inversion...
+    + apply IHHs2 in HeqT. destruct HeqT; subst. destruct H; subst.
+      destruct  H as [H1 H2]. apply IHHs1 in H1. admit.
+    + admit.
+Qed.      
+      
+      
+
 
 (* ########################################## *)
 (** ** Progress *)
@@ -1219,10 +1270,25 @@ Proof with eauto.
         by (eapply canonical_forms_of_Bool; eauto).
       inversion H0; subst...
     + inversion H. rename x into t1'. eauto.
-  - (* T_Pair*) destruct IHHt1; subst...
+
+  - (* T_Pair *) destruct IHHt1; subst...
         + (* t1 is a value *) destruct IHHt2; subst...
            (* t2 steps *) right. inversion H0; subst...
         + (* t1 steps *) destruct H; subst...
+
+  - (* T_Fst  *)  right.
+    destruct IHHt...
+    (* t is a value *)
+    + assert (exists t1 t2, t = tpair t1 t2) by (eapply canonical_forms_of_Pair; eauto).
+      inversion H0 as [t1 [t2 H2]]; subst... exists t1... constructor.
+      inversion H; subst... inversion H; subst...
+    (* t steps to t' *)  
+    + inversion H; subst...
+ - (* T_Snd *) right. destruct IHHt...
+     + assert (exists t1 t2, t = tpair t1 t2) by (eapply canonical_forms_of_Pair; eauto).
+       inversion H0 as [t1 [t2 H2]]. subst... exists t2... constructor.
+       inversion H; subst... inversion H; subst...
+     + inversion H; subst...
 Qed.
 
 
@@ -1667,9 +1733,7 @@ Qed.
                             Gamma |- t : T1->T2
 
 
-       Progress:         preserved
-
-
+       Progress    :    preserved
        Preservation:    preserved
       
 
@@ -1678,9 +1742,13 @@ Qed.
                              ------------------                     (ST_Funny21)
                              unit ==> (\x:Top. x)
 
+
+
       Progress         : preserved
       Preservation     : Broken. we have unit \in Unit and unit ==> (\x : Top. x)
-                         which is in [Top -> Top], but  [unit \notin Unit].
+                         which is in [Top -> Top].      
+
+
 
 
     - Suppose we add the following subtyping rule:
@@ -1697,8 +1765,6 @@ Qed.
 
        Progress    : preserved
        Preservation: preserved
-      
-      
 
     - Suppose we add the following evaluation rule:
 
@@ -1722,11 +1788,12 @@ Qed.
                                S1->S2 <: T1->T2
 
       
-
 [] *)
 
 (* ###################################################################### *)
 (** * Exercise: Adding Products *)
+
+(* I Modified the original definitions and proofs. *)
 
 (** **** Exercise: 4 stars (products)  *)
 (** Adding pairs, projections, and product types to the system we have
